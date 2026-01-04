@@ -4,9 +4,8 @@ import GoogleProvider from 'next-auth/providers/google'
 import FacebookProvider from 'next-auth/providers/facebook'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
-import { findUserByEmail } from '@/lib/users'
+import { findUserByEmail, createUser } from '@/lib/users'
 
-// Build providers array conditionally based on environment variables
 const providers = [
   CredentialsProvider({
     name: 'Credentials',
@@ -19,8 +18,8 @@ const providers = [
         throw new Error('Please enter email and password')
       }
 
-      const user = findUserByEmail(credentials.email)
-      
+      const user = await findUserByEmail(credentials.email)
+
       if (!user) {
         throw new Error('No user found with this email')
       }
@@ -43,7 +42,6 @@ const providers = [
   }),
 ]
 
-// Only add GitHub provider if credentials are set
 if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
   providers.push(
     GitHubProvider({
@@ -52,8 +50,6 @@ if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
     })
   )
 }
-
-// Only add Google provider if credentials are set
 if (process.env.GOOGLE_ID && process.env.GOOGLE_SECRET) {
   providers.push(
     GoogleProvider({
@@ -63,8 +59,7 @@ if (process.env.GOOGLE_ID && process.env.GOOGLE_SECRET) {
   )
 }
 
-// Only add Facebook provider if credentials are set
-if (process.env.FACEBOOK_ID && process.env.FACEBOOK_SECRET && 
+if (process.env.FACEBOOK_ID && process.env.FACEBOOK_SECRET &&
     process.env.FACEBOOK_ID !== 'your-facebook-app-id-here') {
   providers.push(
     FacebookProvider({
@@ -85,11 +80,34 @@ export const authOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account, profile }) {
+
+      if (account.provider !== 'credentials') {
+        try {
+          const existingUser = await findUserByEmail(user.email)
+
+          if (!existingUser) {
+
+            await createUser(
+              user.email,
+              '',
+              user.name || profile.name,
+              account.provider
+            )
+          }
+        } catch (error) {
+          console.error('Error in signIn callback:', error)
+          return false
+        }
+      }
+      return true
+    },
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id
         token.name = user.name
         token.email = user.email
+        token.provider = account?.provider || 'credentials'
       }
       return token
     },
@@ -98,6 +116,7 @@ export const authOptions = {
         session.user.id = token.id
         session.user.name = token.name
         session.user.email = token.email
+        session.user.provider = token.provider
       }
       return session
     },

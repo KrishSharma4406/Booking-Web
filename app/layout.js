@@ -3,7 +3,6 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SessionWrapper from "@/components/SessionProvider";
-import Image from "next/image";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -11,10 +10,10 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Buy me a Chai",
-  description: "Support my work by buying me a chai!",
+  title: "Booking Web - Live Booking System",
+  description: "Book your table with real-time availability and instant confirmation",
   icons: {
-    icon: '/logo.png', // or '/icon.png' if you use PNG
+    icon: '/logo.png',
     shortcut: '/favicon.ico',
     apple: '/apple-icon.png',
   },

@@ -102,7 +102,6 @@ const Login = () => {
           </p>
         </div>
         <div className="space-y-4 text-sm font-medium">
-          {/* Google Button */}
           <button
             onClick={() => handleSocialLogin('google')}
             className="w-full flex items-center justify-center gap-x-3 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-800 duration-150 active:bg-gray-700"
@@ -117,7 +116,6 @@ const Login = () => {
             />
             Continue with Google
           </button>
-          {/* Facebook Button */}
           <button
             onClick={() => handleSocialLogin('facebook')}
             className="w-full flex items-center justify-center gap-x-3 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-800 duration-150 active:bg-gray-700"
@@ -127,8 +125,7 @@ const Login = () => {
             </svg>
             Continue with Facebook
           </button>
-          {/* Twitter Button */}
-          <button 
+          <button
             onClick={() => handleSocialLogin('twitter')}
             className="w-full flex items-center justify-center gap-x-3 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-800 duration-150 active:bg-gray-700"
           >
@@ -142,8 +139,7 @@ const Login = () => {
             />
             Continue with X
           </button>
-          {/* Github Button */}
-          <button 
+          <button
             onClick={() => handleSocialLogin('github')}
             className="w-full flex items-center justify-center gap-x-3 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-800 duration-150 active:bg-gray-700"
           >

@@ -1,13 +1,36 @@
 import { NextResponse } from 'next/server'
-import { getAllUsers } from '@/lib/users'
+import { getServerSession } from 'next-auth'
+import connectDB from '@/lib/mongodb'
+import User from '@/models/User'
 
-// Get all users (for debugging)
+
 export async function GET() {
-  // In production, this should be protected with authentication
-  const users = getAllUsers()
-  
-  return NextResponse.json({ 
-    count: users.length,
-    users: users 
-  })
+  try {
+    const session = await getServerSession()
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    await connectDB()
+
+    const currentUser = await User.findOne({ email: session.user.email })
+
+    if (currentUser.role !== 'admin') {
+      return NextResponse.json({ error: 'Only admins can view all users' }, { status: 403 })
+    }
+
+    const users = await User.find()
+      .select('-password')
+      .populate('approvedBy', 'name email')
+      .sort({ createdAt: -1 })
+
+    return NextResponse.json({
+      count: users.length,
+      users: users
+    })
+  } catch (error) {
+    console.error('Error fetching users:', error)
+    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })
+  }
 }

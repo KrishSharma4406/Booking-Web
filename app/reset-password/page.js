@@ -72,7 +72,6 @@ function ResetPasswordForm() {
     return (
       <main className="w-full h-screen flex flex-col items-center justify-center px-4">
         <div className="max-w-sm w-full text-center space-y-4">
-          <div className="text-6xl">✅</div>
           <h3 className="text-white text-2xl font-bold">Password Reset Successful!</h3>
           <p className="text-gray-400">
             Your password has been reset successfully. Redirecting to login...

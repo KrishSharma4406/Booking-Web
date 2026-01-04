@@ -15,7 +15,6 @@ const ForgotPassword = () => {
     setError('')
 
     try {
-      // Call your password reset API endpoint
       const response = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: {

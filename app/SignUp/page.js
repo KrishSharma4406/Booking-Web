@@ -25,7 +25,6 @@ const Signup = () => {
       return
     }
 
-    // Validate password length
     if (password.length < 6) {
       setError('Password must be at least 6 characters')
       setIsLoading(false)
@@ -33,7 +32,6 @@ const Signup = () => {
     }
 
     try {
-      // Create user
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
@@ -50,7 +48,6 @@ const Signup = () => {
         return
       }
 
-      // Auto login after signup
       const result = await signIn('credentials', {
         redirect: false,
         email,
@@ -58,10 +55,11 @@ const Signup = () => {
       })
 
       if (result?.error) {
-        setError('Account created! Please login.')
-        setTimeout(() => router.push('/Login'), 2000)
+        setError('Account created! Please wait for admin approval before logging in.')
+        setTimeout(() => router.push('/Login'), 3000)
       } else {
-        router.push('/dashboard')
+        setError('Account created! Please wait for admin approval to access all features.')
+        setTimeout(() => router.push('/dashboard'), 2000)
       }
     } catch (error) {
       console.error('Signup error:', error)

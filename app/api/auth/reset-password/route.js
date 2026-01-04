@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { findUserByEmail } from '@/lib/users'
 
-// Import the resetTokens from forgot-password route
-// In production, use a database to store tokens
 let resetTokens = new Map()
 
 export async function POST(req) {
@@ -24,9 +22,8 @@ export async function POST(req) {
       )
     }
 
-    // Check if token exists and is valid
     const tokenData = resetTokens.get(token)
-    
+
     if (!tokenData) {
       return NextResponse.json(
         { error: 'Invalid or expired reset token' },
@@ -34,7 +31,6 @@ export async function POST(req) {
       )
     }
 
-    // Check if token has expired
     if (Date.now() > tokenData.expiry) {
       resetTokens.delete(token)
       return NextResponse.json(
@@ -43,9 +39,8 @@ export async function POST(req) {
       )
     }
 
-    // Find user
     const user = findUserByEmail(tokenData.email)
-    
+
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },
@@ -53,13 +48,10 @@ export async function POST(req) {
       )
     }
 
-    // Hash new password
     const hashedPassword = await bcrypt.hash(password, 10)
-    
-    // Update user password (in your users database)
+
     user.password = hashedPassword
 
-    // Delete the used token
     resetTokens.delete(token)
 
     return NextResponse.json(
@@ -75,7 +67,6 @@ export async function POST(req) {
   }
 }
 
-// Function to set resetTokens from forgot-password route
 export function setResetTokens(tokens) {
   resetTokens = tokens
 }

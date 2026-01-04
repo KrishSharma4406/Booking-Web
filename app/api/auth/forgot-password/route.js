@@ -3,7 +3,6 @@ import crypto from 'crypto'
 import { findUserByEmail } from '@/lib/users'
 import { sendPasswordResetEmail } from '@/lib/email'
 
-// In-memory storage for reset tokens (in production, use a database)
 const resetTokens = new Map()
 
 export async function POST(req) {
@@ -17,28 +16,24 @@ export async function POST(req) {
       )
     }
 
-    // Check if user exists
     const user = findUserByEmail(email)
 
     if (!user) {
-      // For security, don't reveal if user exists or not
+
       return NextResponse.json(
         { message: 'If an account exists with this email, you will receive a password reset link.' },
         { status: 200 }
       )
     }
 
-    // Generate reset token
     const resetToken = crypto.randomBytes(32).toString('hex')
-    const tokenExpiry = Date.now() + 3600000 // 1 hour from now
+    const tokenExpiry = Date.now() + 3600000
 
-    // Store token with expiry
     resetTokens.set(resetToken, {
       email: user.email,
       expiry: tokenExpiry
     })
 
-    // Send email
     try {
       const emailResult = await sendPasswordResetEmail(user.email, resetToken)
 
@@ -70,5 +65,4 @@ export async function POST(req) {
   }
 }
 
-// Export resetTokens for use in reset password route
 export { resetTokens }
