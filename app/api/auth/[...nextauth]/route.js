@@ -42,19 +42,19 @@ const providers = [
   }),
 ]
 
-if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
+if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   providers.push(
     GitHubProvider({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
     })
   )
 }
-if (process.env.GOOGLE_ID && process.env.GOOGLE_SECRET) {
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   providers.push(
     GoogleProvider({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     })
   )
 }
@@ -81,17 +81,17 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ user, account, profile }) {
-
-      if (account.provider !== 'credentials') {
+      // For OAuth providers, sync with database
+      if (account?.provider !== 'credentials') {
         try {
           const existingUser = await findUserByEmail(user.email)
 
           if (!existingUser) {
-
+            // Create new user for OAuth login
             await createUser(
               user.email,
-              '',
-              user.name || profile.name,
+              '', // No password for OAuth users
+              user.name || profile?.name || user.email,
               account.provider
             )
           }

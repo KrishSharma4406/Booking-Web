@@ -1,4 +1,4 @@
-# ReserveTable - Restaurant Booking System 🍽️
+# Booking Web - Restaurant Booking System 🍽️
 
 A modern, full-featured restaurant table booking system built with Next.js, MongoDB, and NextAuth.
 
@@ -219,7 +219,7 @@ Required variables in `.env.local`:
 
 ```env
 NEXTAUTH_SECRET=your-secret-key-here
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3001
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-gmail-app-password
 ```

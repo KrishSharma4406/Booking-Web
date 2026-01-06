@@ -1,13 +1,7 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SessionWrapper from "@/components/SessionProvider";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
 
 export const metadata = {
   title: "Booking Web - Live Booking System",
@@ -23,7 +17,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} antialiased overflow-x-hidden`}
+        className="antialiased overflow-x-hidden"
+        style={{ fontFamily: "Candara, 'Trebuchet MS', sans-serif" }}
       >
         <SessionWrapper>
           <Navbar/>

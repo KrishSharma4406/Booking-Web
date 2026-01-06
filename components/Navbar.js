@@ -107,15 +107,38 @@ const Navbar = () => {
                       </Link>
                     </li>
                     {userRole === 'admin' && (
-                      <li>
-                        <Link
-                          href="/admin-dashboard"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-800 hover:text-white"
-                        >
-                          Admin Panel
-                        </Link>
-                      </li>
+                      <>
+                        <li className="border-t border-gray-700 mt-2 pt-2">
+                          <div className="px-4 py-1 text-xs text-gray-500 font-semibold uppercase">Admin</div>
+                        </li>
+                        <li>
+                          <Link
+                            href="/admin-dashboard"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className="block px-4 py-2 text-sm text-purple-400 hover:bg-slate-800 hover:text-purple-300"
+                          >
+                            Admin Dashboard
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/admin-users"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className="block px-4 py-2 text-sm text-purple-400 hover:bg-slate-800 hover:text-purple-300"
+                          >
+                            👥 Manage Users
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/admin-tables"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className="block px-4 py-2 text-sm text-purple-400 hover:bg-slate-800 hover:text-purple-300"
+                          >
+                            Manage Tables
+                          </Link>
+                        </li>
+                      </>
                     )}
                     <li className="border-t border-gray-700 mt-2 pt-2">
                       <button
