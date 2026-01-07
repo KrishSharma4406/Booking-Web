@@ -64,7 +64,7 @@ export default function Home() {
             </div>
             <div className="h-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-full"></div>
           </div>
-          
+
           <p className="text-center text-2xl md:text-3xl font-semibold text-gray-100 max-w-3xl mx-auto">
             Experience fine dining with seamless table reservations
           </p>
@@ -83,7 +83,7 @@ export default function Home() {
               <>
                 {userRole === 'admin' ? (
                   <>
-                    <button 
+                    <button
                       onClick={() => router.push('/admin-dashboard')}
                       className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50"
                     >
@@ -168,7 +168,7 @@ export default function Home() {
           {/* Stats Section */}
           <div className="grid grid-cols-3 gap-8 mt-16 max-w-3xl mx-auto">
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">1000+</div>
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">500+</div>
               <div className="text-sm md:text-base text-gray-400 mt-2">Happy Diners</div>
             </div>
             <div className="text-center">
@@ -176,19 +176,18 @@ export default function Home() {
               <div className="text-sm md:text-base text-gray-400 mt-2">Live Booking</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">100%</div>
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">95%</div>
               <div className="text-sm md:text-base text-gray-400 mt-2">Satisfaction</div>
             </div>
           </div>
         </div>
       </div>
-      {/* Divider */}
+
       <div className="relative h-32">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/20 to-transparent"></div>
         <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
       </div>
 
-      {/* Features Section */}
       <div className="text-white container mx-auto pb-32 pt-14 px-10">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
@@ -196,7 +195,7 @@ export default function Home() {
           </h2>
           <p className="text-gray-400 text-lg">Discover the features that make us stand out</p>
         </div>
-        
+
         <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
           <div className="group item space-y-4 flex flex-col items-center justify-start p-8 rounded-2xl bg-gradient-to-br from-purple-900/20 to-blue-900/20 border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
             <div className="bg-gradient-to-br from-purple-600 to-blue-500 rounded-2xl p-5 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-purple-500/50">
@@ -207,7 +206,7 @@ export default function Home() {
             <p className="font-bold text-center text-2xl">Real-Time Booking</p>
             <p className="text-center text-gray-300 leading-relaxed">Instant confirmation with live table availability updates. Know your status immediately.</p>
           </div>
-          
+
           <div className="group item space-y-4 flex flex-col items-center justify-start p-8 rounded-2xl bg-gradient-to-br from-green-900/20 to-teal-900/20 border border-green-500/20 hover:border-green-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20">
             <div className="bg-gradient-to-br from-green-600 to-teal-500 rounded-2xl p-5 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-green-500/50">
               <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -217,7 +216,7 @@ export default function Home() {
             <p className="font-bold text-center text-2xl">Instant Approval</p>
             <p className="text-center text-gray-300 leading-relaxed">Get approved by our team and start booking immediately. Fast and hassle-free process.</p>
           </div>
-          
+
           <div className="group item space-y-4 flex flex-col items-center justify-start p-8 rounded-2xl bg-gradient-to-br from-orange-900/20 to-red-900/20 border border-orange-500/20 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/20">
             <div className="bg-gradient-to-br from-orange-600 to-red-500 rounded-2xl p-5 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-orange-500/50">
               <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -229,14 +228,12 @@ export default function Home() {
           </div>
         </div>
       </div>
-      
-      {/* Divider */}
+
       <div className="relative h-32">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-900/20 to-transparent"></div>
         <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
       </div>
 
-      {/* How It Works Section */}
       <div className="text-white container mx-auto pb-32 px-10">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -244,11 +241,11 @@ export default function Home() {
           </h2>
           <p className="text-gray-400 text-lg">Simple steps to your perfect dining experience</p>
         </div>
-        
+
         <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto relative">
-          {/* Connection Line */}
+
           <div className="hidden md:block absolute top-8 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 opacity-20"></div>
-          
+
           <div className="text-center relative">
             <div className="bg-gradient-to-br from-blue-600 to-blue-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-2xl shadow-blue-500/50 hover:scale-110 transition-transform duration-300 relative z-10">
               1
@@ -256,7 +253,7 @@ export default function Home() {
             <h3 className="font-bold mb-3 text-xl">Sign Up</h3>
             <p className="text-sm text-gray-300 leading-relaxed">Create your account in seconds with our simple registration process</p>
           </div>
-          
+
           <div className="text-center relative">
             <div className="bg-gradient-to-br from-green-600 to-green-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-2xl shadow-green-500/50 hover:scale-110 transition-transform duration-300 relative z-10">
               2
@@ -264,7 +261,7 @@ export default function Home() {
             <h3 className="font-bold mb-3 text-xl">Get Approved</h3>
             <p className="text-sm text-gray-300 leading-relaxed">Quick admin verification to ensure quality service for all guests</p>
           </div>
-          
+
           <div className="text-center relative">
             <div className="bg-gradient-to-br from-purple-600 to-purple-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-2xl shadow-purple-500/50 hover:scale-110 transition-transform duration-300 relative z-10">
               3
@@ -272,7 +269,7 @@ export default function Home() {
             <h3 className="font-bold mb-3 text-xl">Book Table</h3>
             <p className="text-sm text-gray-300 leading-relaxed">Select your preferred date, time, and party size instantly</p>
           </div>
-          
+
           <div className="text-center relative">
             <div className="bg-gradient-to-br from-orange-600 to-orange-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-2xl shadow-orange-500/50 hover:scale-110 transition-transform duration-300 relative z-10">
               4

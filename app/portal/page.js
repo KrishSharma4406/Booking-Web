@@ -26,12 +26,7 @@ export default function RoleBasedRedirect() {
             if (data.role === 'admin') {
               router.push('/admin-dashboard')
             } else {
-              // Check if user is approved
-              if (data.approved) {
-                router.push('/bookings')
-              } else {
-                router.push('/dashboard')
-              }
+              router.push('/bookings')
             }
           }
         } catch (error) {

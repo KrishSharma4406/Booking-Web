@@ -64,20 +64,6 @@ export default function Dashboard() {
           <p className="text-gray-400">Manage your reservations and account</p>
         </div>
 
-        {userData && !userData.approved && userData.role !== 'admin' && (
-          <div className="bg-yellow-900 border border-yellow-600 rounded-lg p-6 mb-8">
-            <div className="flex items-start gap-3">
-              <div>
-                <h3 className="text-xl font-bold text-yellow-400 mb-2">Account Pending Approval</h3>
-                <p className="text-yellow-200">
-                  Your account is awaiting admin approval. You&apos;ll be able to make bookings once approved.
-                  We&apos;ll notify you via email once your account is activated.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg p-6">
             <div className="text-3xl font-bold mb-1">{stats.bookings}</div>

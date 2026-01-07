@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -47,49 +48,68 @@ const Login = () => {
   }
 
   return (
-    <main className="w-full h-screen flex flex-col items-center justify-center px-4">
-      <div className="max-w-sm w-full text-gray-400 space-y-8">
+    <main className="w-full min-h-screen flex flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+      <div className="max-w-sm sm:max-w-md w-full text-gray-400 space-y-6 sm:space-y-8">
         <div className="text-center">
-          <div className="mt-5 space-y-2">
-            <h3 className="text-gray-300 text-2xl font-bold sm:text-3xl">
+          <div className="space-y-2 sm:space-y-3">
+            <h3 className="text-gray-300 text-xl sm:text-2xl md:text-3xl font-bold">
               Log in to your account
             </h3>
-            <p className="">
+            <p className="text-sm sm:text-base">
               Choose your preferred login method
             </p>
           </div>
         </div>
         {error && (
-          <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
+          <div className="p-3 sm:p-4 bg-red-100 border border-red-400 text-red-700 rounded-md text-xs sm:text-sm">
             {error}
           </div>
         )}
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
+          <div className="space-y-4 sm:space-y-5">
             <div>
-              <label className="font-medium text-gray-300"> Email </label>
+              <label className="font-medium text-gray-300 text-sm sm:text-base"> Email </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full mt-2 px-3 py-2 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
+                className="w-full mt-2 px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg transition-colors"
               />
             </div>
             <div>
-              <label className="font-medium text-gray-300"> Password </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full mt-2 px-3 py-2 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
-              />
+              <label className="font-medium text-gray-300 text-sm sm:text-base"> Password </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full mt-2 px-3 py-2 pr-10 sm:px-4 sm:py-2.5 sm:pr-12 text-sm sm:text-base text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 mt-1 text-gray-400 hover:text-gray-200 transition-colors focus:outline-none"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-4 px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full mt-4 sm:mt-6 px-4 py-2 sm:py-2.5 text-sm sm:text-base text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
@@ -97,75 +117,52 @@ const Login = () => {
         </form>
         <div className="relative">
           <span className="block w-full h-px bg-gray-600"></span>
-          <p className="inline-block w-fit text-sm bg-black px-2 absolute -top-2 inset-x-0 mx-auto">
+          <p className="inline-block w-fit text-xs sm:text-sm bg-black px-2 absolute -top-2 inset-x-0 mx-auto">
             Or Continue with
           </p>
         </div>
-        <div className="space-y-4 text-sm font-medium">
+        <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm font-medium">
           <button
             onClick={() => handleSocialLogin('google')}
-            className="w-full flex items-center justify-center gap-x-3 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-800 duration-150 active:bg-gray-700"
+            className="w-full flex items-center justify-center gap-x-2 sm:gap-x-3 py-2 sm:py-2.5 border border-gray-600 rounded-lg hover:bg-gray-800 duration-150 active:bg-gray-700 transition-colors"
           >
             <Image
               src="http://pluspng.com/img-png/google-logo-png-open-2000.png"
               alt="Google"
               width={20}
               height={20}
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
               unoptimized
             />
-            Continue with Google
-          </button>
-          <button
-            onClick={() => handleSocialLogin('facebook')}
-            className="w-full flex items-center justify-center gap-x-3 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-800 duration-150 active:bg-gray-700"
-          >
-            <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
-            Continue with Facebook
-          </button>
-          <button
-            onClick={() => handleSocialLogin('twitter')}
-            className="w-full flex items-center justify-center gap-x-3 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-800 duration-150 active:bg-gray-700"
-          >
-            <Image
-              src="https://freepnglogo.com/images/all_img/logo-x-modern-2023-7cbd.png"
-              alt="Twitter"
-              width={20}
-              height={20}
-              className="w-5 h-5"
-              unoptimized
-            />
-            Continue with X
+            <span className="text-xs sm:text-sm">Continue with Google</span>
           </button>
           <button
             onClick={() => handleSocialLogin('github')}
-            className="w-full flex items-center justify-center gap-x-3 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-800 duration-150 active:bg-gray-700"
+            className="w-full flex items-center justify-center gap-x-2 sm:gap-x-3 py-2 sm:py-2.5 border border-gray-600 rounded-lg hover:bg-gray-800 duration-150 active:bg-gray-700 transition-colors"
           >
             <Image
               src="https://raw.githubusercontent.com/sidiDev/remote-assets/0d3b55a09c6bb8155ca19f43283dc6d88ff88bf5/github-icon.svg"
               alt="Github"
               width={20}
               height={20}
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
               unoptimized
             />
-            Continue with Github
+            <span className="text-xs sm:text-sm">Continue with Github</span>
           </button>
         </div>
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-2 sm:space-y-3">
           <Link
             href="/Forgotpwd"
-            className="block text-indigo-600 hover:text-indigo-500 hover:underline font-medium"
+            className="block text-xs sm:text-sm text-indigo-600 hover:text-indigo-500 hover:underline font-medium transition-colors"
           >
             Forgot password?
           </Link>
-          <p className="text-gray-400">
+          <p className="text-gray-400 text-xs sm:text-sm">
             Don&apos;t have an account?{' '}
             <Link
               href="/SignUp"
-              className="text-indigo-600 hover:text-indigo-500 font-medium"
+              className="text-indigo-600 hover:text-indigo-500 font-medium transition-colors"
             >
               Sign up
             </Link>

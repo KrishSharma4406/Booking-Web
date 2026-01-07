@@ -370,12 +370,12 @@ export default function BookingsPage() {
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-3 text-gray-300">
-                      <div>📧 {booking.guestEmail}</div>
-                      <div>📱 {booking.guestPhone}</div>
-                      <div>👥 {booking.numberOfGuests} guests</div>
-                      <div>📅 {new Date(booking.bookingDate).toLocaleDateString()}</div>
-                      <div>🕐 {booking.bookingTime}</div>
-                      <div>🆔 {booking._id.slice(-8)}</div>
+                      <div>E-Mail - {booking.guestEmail}</div>
+                      <div>Contact - {booking.guestPhone}</div>
+                      <div>Guests - {booking.numberOfGuests}</div>
+                      <div>Date - {new Date(booking.bookingDate).toLocaleDateString()}</div>
+                      <div>Time - {booking.bookingTime}</div>
+                      <div>ID - {booking._id.slice(-8)}</div>
                     </div>
 
                     {booking.specialRequests && (

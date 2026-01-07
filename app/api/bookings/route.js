@@ -46,10 +46,6 @@ export async function POST(req) {
 
     const user = await User.findOne({ email: session.user.email })
 
-    if (!user.approved && user.role !== 'admin') {
-      return NextResponse.json({ error: 'Your account is pending approval' }, { status: 403 })
-    }
-
     const body = await req.json()
     const { guestName, guestEmail, guestPhone, numberOfGuests, bookingDate, bookingTime, specialRequests } = body
 
