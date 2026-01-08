@@ -4,6 +4,8 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { calculateBookingPrice, getAreaDisplayName, AREA_PRICING } from '@/lib/pricing'
+import PaymentForm from '@/components/PaymentForm'
 
 export default function BookingsPage() {
   const { data: session, status } = useSession()
@@ -21,8 +23,13 @@ export default function BookingsPage() {
     bookingDate: '',
     bookingTime: '',
     tableNumber: '',
+    tableArea: 'indoor',
     specialRequests: ''
   })
+  const [orderId, setOrderId] = useState('')
+  const [keyId, setKeyId] = useState('')
+  const [showPayment, setShowPayment] = useState(false)
+  const [totalAmount, setTotalAmount] = useState(0)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -52,34 +59,35 @@ export default function BookingsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
+    // Calculate price
+    const amount = calculateBookingPrice(formData.numberOfGuests, formData.tableArea)
+    setTotalAmount(amount)
+    
+    // Create payment order
     try {
-      const res = await fetch('/api/bookings', {
+      const res = await fetch('/api/payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          amount,
+          numberOfGuests: formData.numberOfGuests,
+          tableArea: formData.tableArea,
+          bookingDate: formData.bookingDate,
+          bookingTime: formData.bookingTime
+        })
       })
 
       const data = await res.json()
 
       if (res.ok) {
-        toast.success(data.message || 'Booking created successfully!')
-        setShowForm(false)
-        setFormData({
-          guestName: '',
-          guestEmail: '',
-          guestPhone: '',
-          numberOfGuests: 2,
-          bookingDate: '',
-          bookingTime: '',
-          tableNumber: '',
-          specialRequests: ''
-        })
-        fetchBookings()
+        setOrderId(data.orderId)
+        setKeyId(data.keyId)
+        setShowPayment(true)
       } else {
-        toast.error(data.error || 'Failed to create booking')
+        toast.error(data.error || 'Failed to initialize payment')
       }
     } catch (error) {
-      toast.error('Error creating booking')
+      toast.error('Error initializing payment')
     }
   }
 
@@ -229,6 +237,22 @@ export default function BookingsPage() {
               </div>
 
               <div>
+                <label className="block mb-2 font-medium">Dining Area *</label>
+                <select
+                  required
+                  value={formData.tableArea}
+                  onChange={(e) => setFormData({...formData, tableArea: e.target.value})}
+                  className="w-full px-4 py-2 bg-gray-700 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                >
+                  {Object.entries(AREA_PRICING).map(([area, price]) => (
+                    <option key={area} value={area}>
+                      {getAreaDisplayName(area)} - ${price}/person
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
                 <label className="block mb-2 font-medium">Date *</label>
                 <input
                   type="date"
@@ -333,15 +357,65 @@ export default function BookingsPage() {
                 />
               </div>
 
+              {/* Pricing Summary */}
+              <div className="md:col-span-2">
+                <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 rounded-lg border border-purple-500/30">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-lg font-semibold">Total Price</p>
+                      <p className="text-sm text-gray-400">
+                        {formData.numberOfGuests} guests × ₹{AREA_PRICING[formData.tableArea]}/person ({getAreaDisplayName(formData.tableArea)})
+                      </p>
+                    </div>
+                    <div className="text-3xl font-bold text-green-400">
+                      ₹{calculateBookingPrice(formData.numberOfGuests, formData.tableArea).toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="md:col-span-2">
                 <button
                   type="submit"
                   className="w-full px-6 py-3 bg-gradient-to-r from-green-600 to-teal-500 hover:from-green-700 hover:to-teal-600 rounded-lg font-semibold transition-all"
                 >
-                  Create Booking
+                  Proceed to Payment
                 </button>
               </div>
             </form>
+          </div>
+        )}
+
+        {/* Payment Section */}
+        {showPayment && orderId && (
+          <div className="mb-8">
+            <PaymentForm
+              formData={formData}
+              orderId={orderId}
+              keyId={keyId}
+              totalAmount={totalAmount}
+              onSuccess={() => {
+                setShowPayment(false)
+                setShowForm(false)
+                setOrderId('')
+                setFormData({
+                  guestName: '',
+                  guestEmail: '',
+                  guestPhone: '',
+                  numberOfGuests: 2,
+                  bookingDate: '',
+                  bookingTime: '',
+                  tableNumber: '',
+                  tableArea: 'indoor',
+                  specialRequests: ''
+                })
+                fetchBookings()
+              }}
+              onCancel={() => {
+                setShowPayment(false)
+                setOrderId('')
+              }}
+            />
           </div>
         )}
 
@@ -367,15 +441,22 @@ export default function BookingsPage() {
                           Table #{booking.tableNumber}
                         </span>
                       )}
+                      {booking.paymentStatus === 'paid' && (
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-600 text-white">
+                          ✓ PAID ₹{booking.paymentAmount}
+                        </span>
+                      )}
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-3 text-gray-300">
-                      <div>E-Mail - {booking.guestEmail}</div>
-                      <div>Contact - {booking.guestPhone}</div>
-                      <div>Guests - {booking.numberOfGuests}</div>
-                      <div>Date - {new Date(booking.bookingDate).toLocaleDateString()}</div>
-                      <div>Time - {booking.bookingTime}</div>
-                      <div>ID - {booking._id.slice(-8)}</div>
+                      <div>📧 {booking.guestEmail}</div>
+                      <div>📱 {booking.guestPhone}</div>
+                      <div>👥 {booking.numberOfGuests} guests</div>
+                      <div>📅 {new Date(booking.bookingDate).toLocaleDateString()}</div>
+                      <div>🕐 {booking.bookingTime}</div>
+                      {booking.tableArea && (
+                        <div>📍 {getAreaDisplayName(booking.tableArea)}</div>
+                      )}
                     </div>
 
                     {booking.specialRequests && (

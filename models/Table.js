@@ -21,6 +21,10 @@ const TableSchema = new mongoose.Schema({
     enum: ['indoor', 'outdoor', 'private-room', 'bar-area', 'patio', 'rooftop'],
     default: 'indoor',
   },
+  pricePerPerson: {
+    type: Number,
+    default: 0,
+  },
   status: {
     type: String,
     enum: ['available', 'occupied', 'reserved', 'maintenance'],

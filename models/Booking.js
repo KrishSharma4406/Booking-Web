@@ -35,12 +35,32 @@ const BookingSchema = new mongoose.Schema({
   tableNumber: {
     type: Number,
   },
+  tableArea: {
+    type: String,
+    enum: ['indoor', 'outdoor', 'private-room', 'bar-area', 'patio', 'rooftop'],
+  },
   status: {
     type: String,
     enum: ['pending', 'confirmed', 'cancelled', 'completed'],
     default: 'pending',
   },
   specialRequests: {
+    type: String,
+  },
+  // Payment fields
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'paid', 'failed', 'refunded'],
+    default: 'pending',
+  },
+  paymentAmount: {
+    type: Number,
+    required: true,
+  },
+  paymentId: {
+    type: String,
+  },
+  paymentMethod: {
     type: String,
   },
   confirmedBy: {

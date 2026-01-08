@@ -21,16 +21,16 @@ async function resetPassword(email, newPassword) {
   try {
     console.log('🔌 Connecting to MongoDB...')
     await mongoose.connect(MONGODB_URI)
-    console.log('✅ Connected to MongoDB')
+    console.log('Connected to MongoDB')
 
     const user = await User.findOne({ email: email.toLowerCase() })
 
     if (!user) {
-      console.log('❌ User not found:', email)
+      console.log('User not found:', email)
       process.exit(1)
     }
 
-    console.log('👤 Found user:', user.email)
+    console.log('Found user:', user.email)
 
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10)
@@ -38,14 +38,14 @@ async function resetPassword(email, newPassword) {
     user.password = hashedPassword
     await user.save()
 
-    console.log('✅ Password reset successfully!')
-    console.log('📧 Email:', user.email)
-    console.log('🔑 New password:', newPassword)
-    console.log('\n🔄 You can now login with your new password.')
+    console.log('Password reset successfully!')
+    console.log('Email:', user.email)
+    console.log('New password:', newPassword)
+    console.log('\nYou can now login with your new password.')
     
     process.exit(0)
   } catch (error) {
-    console.error('❌ Error:', error.message)
+    console.error('Error:', error.message)
     process.exit(1)
   }
 }
@@ -54,7 +54,7 @@ const email = process.argv[2]
 const newPassword = process.argv[3]
 
 if (!email || !newPassword) {
-  console.log('❌ Please provide email and new password')
+  console.log('Please provide email and new password')
   console.log('Usage: node scripts/reset-password.js your-email@example.com newpassword')
   process.exit(1)
 }

@@ -22,16 +22,16 @@ const User = mongoose.models.User || mongoose.model('User', userSchema)
 
 async function makeAdmin(email) {
   try {
-    console.log('🔌 Connecting to MongoDB...')
+    console.log('Connecting to MongoDB...')
     await mongoose.connect(MONGODB_URI)
-    console.log('✅ Connected to MongoDB')
+    console.log('Connected to MongoDB')
 
     // Find user by email
     const user = await User.findOne({ email: email.toLowerCase() })
     
     if (!user) {
-      console.log('❌ User not found with email:', email)
-      console.log('\n📋 Available users:')
+      console.log('User not found with email:', email)
+      console.log('\nAvailable users:')
       const allUsers = await User.find({}).select('email name role')
       allUsers.forEach(u => {
         console.log(`  - ${u.email} (${u.name}) - Role: ${u.role || 'user'}`)
@@ -39,8 +39,8 @@ async function makeAdmin(email) {
       process.exit(1)
     }
 
-    console.log('👤 Found user:', user.email)
-    console.log('📝 Current role:', user.role || 'user')
+    console.log('Found user:', user.email)
+    console.log('Current role:', user.role || 'user')
 
     // Update to admin
     user.role = 'admin'
@@ -48,13 +48,13 @@ async function makeAdmin(email) {
     user.approvedAt = new Date()
     await user.save()
 
-    console.log('✅ SUCCESS! User is now an admin!')
-    console.log('👑 Updated role:', user.role)
-    console.log('\n🔄 Please logout and login again to see admin features.')
+    console.log('SUCCESS! User is now an admin!')
+    console.log('Updated role:', user.role)
+    console.log('\nPlease logout and login again to see admin features.')
     
     process.exit(0)
   } catch (error) {
-    console.error('❌ Error:', error.message)
+    console.error('Error:', error.message)
     process.exit(1)
   }
 }
@@ -63,7 +63,7 @@ async function makeAdmin(email) {
 const email = process.argv[2]
 
 if (!email) {
-  console.log('❌ Please provide an email address')
+  console.log('Please provide an email address')
   console.log('Usage: node scripts/make-admin.js your-email@example.com')
   process.exit(1)
 }
