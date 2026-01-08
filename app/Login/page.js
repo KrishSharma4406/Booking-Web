@@ -48,14 +48,18 @@ const Login = () => {
   }
 
   return (
-    <main className="w-full min-h-screen flex flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-      <div className="max-w-sm sm:max-w-md w-full text-gray-400 space-y-6 sm:space-y-8">
+    <main className="relative w-full min-h-screen flex flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+      {/* Background Image */}
+      <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{backgroundImage: "url('https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1920&q=80')"}}></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/50 to-blue-900/50"></div>
+      
+      <div className="relative z-10 max-w-sm sm:max-w-md w-full text-gray-400 space-y-6 sm:space-y-8">
         <div className="text-center">
           <div className="space-y-2 sm:space-y-3">
-            <h3 className="text-gray-300 text-xl sm:text-2xl md:text-3xl font-bold">
+            <h3 className="text-gray-100 text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
               Log in to your account
             </h3>
-            <p className="text-sm sm:text-base">
+            <p className="text-sm sm:text-base text-gray-300">
               Choose your preferred login method
             </p>
           </div>

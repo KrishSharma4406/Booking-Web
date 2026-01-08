@@ -172,12 +172,24 @@ export default function BookingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4 md:p-8">
+    <div className="min-h-screen bg-gray-900 text-white">
       <ToastContainer position="top-right" theme="dark" />
+      
+      {/* Header Section with Image */}
+      <div className="relative h-64 md:h-80 mb-8">
+        <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1920&q=80')"}}>
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/80 to-gray-900"></div>
+        </div>
+        <div className="relative z-10 h-full flex items-end pb-8 px-4 md:px-8">
+          <div className="max-w-7xl mx-auto w-full">
+            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">🍽️ My Bookings</h1>
+            <p className="text-gray-300 mt-2 text-lg">Manage your restaurant reservations</p>
+          </div>
+        </div>
+      </div>
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 pb-8">
         <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
-          <h1 className="text-3xl md:text-4xl font-bold">🍽️ My Bookings</h1>
           <button
             onClick={() => setShowForm(!showForm)}
             className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 rounded-lg font-semibold transition-all"

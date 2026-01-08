@@ -81,14 +81,18 @@ const Signup = () => {
   }
 
   return (
-    <main className="w-full h-screen flex flex-col items-center justify-center px-4">
-      <div className="max-w-sm w-full text-gray-400 space-y-8">
+    <main className="relative w-full h-screen flex flex-col items-center justify-center px-4">
+      {/* Background Image */}
+      <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{backgroundImage: "url('https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=1920&q=80')"}}></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900/50 to-purple-900/50"></div>
+      
+      <div className="relative z-10 max-w-sm w-full text-gray-400 space-y-8">
         <div className="text-center">
           <div className="mt-5 space-y-2">
-            <h3 className="text-gray-300 text-2xl font-bold sm:text-3xl">
+            <h3 className="text-gray-100 text-2xl font-bold sm:text-3xl bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
               Create your account
             </h3>
-            <p className="">
+            <p className="text-gray-300">
               Join us today
             </p>
           </div>

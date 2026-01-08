@@ -49,6 +49,9 @@ export default function Home() {
     <>
       {/* Hero Section */}
       <div className="relative flex justify-center flex-col gap-6 items-center text-white min-h-[60vh] px-5 md:px-10 py-20">
+        {/* Background Image */}
+        <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{backgroundImage: "url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920&q=80')"}}></div>
+        
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
@@ -198,30 +201,42 @@ export default function Home() {
 
         <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
           <div className="group item space-y-4 flex flex-col items-center justify-start p-8 rounded-2xl bg-gradient-to-br from-purple-900/20 to-blue-900/20 border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
-            <div className="bg-gradient-to-br from-purple-600 to-blue-500 rounded-2xl p-5 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-purple-500/50">
-              <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            <div className="relative w-full h-48 rounded-xl overflow-hidden mb-4">
+              <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80" alt="Real-Time Booking" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-purple-900/80 to-transparent"></div>
+              <div className="absolute bottom-4 left-4 bg-gradient-to-br from-purple-600 to-blue-500 rounded-xl p-3 shadow-lg">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
             </div>
             <p className="font-bold text-center text-2xl">Real-Time Booking</p>
             <p className="text-center text-gray-300 leading-relaxed">Instant confirmation with live table availability updates. Know your status immediately.</p>
           </div>
 
           <div className="group item space-y-4 flex flex-col items-center justify-start p-8 rounded-2xl bg-gradient-to-br from-green-900/20 to-teal-900/20 border border-green-500/20 hover:border-green-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20">
-            <div className="bg-gradient-to-br from-green-600 to-teal-500 rounded-2xl p-5 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-green-500/50">
-              <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            <div className="relative w-full h-48 rounded-xl overflow-hidden mb-4">
+              <img src="https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=400&q=80" alt="Instant Approval" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-green-900/80 to-transparent"></div>
+              <div className="absolute bottom-4 left-4 bg-gradient-to-br from-green-600 to-teal-500 rounded-xl p-3 shadow-lg">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
             </div>
             <p className="font-bold text-center text-2xl">Instant Approval</p>
             <p className="text-center text-gray-300 leading-relaxed">Get approved by our team and start booking immediately. Fast and hassle-free process.</p>
           </div>
 
           <div className="group item space-y-4 flex flex-col items-center justify-start p-8 rounded-2xl bg-gradient-to-br from-orange-900/20 to-red-900/20 border border-orange-500/20 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/20">
-            <div className="bg-gradient-to-br from-orange-600 to-red-500 rounded-2xl p-5 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-orange-500/50">
-              <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
+            <div className="relative w-full h-48 rounded-xl overflow-hidden mb-4">
+              <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=80" alt="Easy Management" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-orange-900/80 to-transparent"></div>
+              <div className="absolute bottom-4 left-4 bg-gradient-to-br from-orange-600 to-red-500 rounded-xl p-3 shadow-lg">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </div>
             </div>
             <p className="font-bold text-center text-2xl">Easy Management</p>
             <p className="text-center text-gray-300 leading-relaxed">Track all your reservations in one convenient dashboard. Manage bookings effortlessly.</p>
