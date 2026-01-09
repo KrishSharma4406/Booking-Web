@@ -30,17 +30,6 @@ const UserSchema = new mongoose.Schema({
     default: 'user',
     enum: ['user', 'admin']
   },
-  approved: {
-    type: Boolean,
-    default: true,
-  },
-  approvedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  approvedAt: {
-    type: Date,
-  },
   phone: {
     type: String,
   },

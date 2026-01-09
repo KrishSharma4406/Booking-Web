@@ -12,8 +12,6 @@ const userSchema = new mongoose.Schema({
   name: String,
   password: String,
   role: { type: String, default: 'user' },
-  approved: { type: Boolean, default: false },
-  approvedAt: Date,
   provider: String,
   createdAt: { type: Date, default: Date.now }
 })
@@ -44,8 +42,6 @@ async function makeAdmin(email) {
 
     // Update to admin
     user.role = 'admin'
-    user.approved = true
-    user.approvedAt = new Date()
     await user.save()
 
     console.log('SUCCESS! User is now an admin!')

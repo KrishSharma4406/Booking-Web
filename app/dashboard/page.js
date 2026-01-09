@@ -92,18 +92,12 @@ export default function Dashboard() {
               <div className="font-semibold">View Bookings</div>
             </Link>
 
-            {userData?.approved || userData?.role === 'admin' ? (
-              <Link
-                href="/bookings"
-                className="bg-gradient-to-br from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 rounded-lg p-6 text-center transition-all group"
-              >
-                <div className="font-semibold">New Booking</div>
-              </Link>
-            ) : (
-              <div className="bg-gray-700 opacity-50 rounded-lg p-6 text-center cursor-not-allowed">
-                <div className="font-semibold">Approval Required</div>
-              </div>
-            )}
+            <Link
+              href="/bookings"
+              className="bg-gradient-to-br from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 rounded-lg p-6 text-center transition-all group"
+            >
+              <div className="font-semibold">New Booking</div>
+            </Link>
 
             {userData?.role === 'admin' && (
               <Link
@@ -138,29 +132,11 @@ export default function Dashboard() {
               </div>
             </div>
             <div>
-              <div className="text-gray-400 text-sm mb-1">Status</div>
-              <div>
-                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  userData?.approved || userData?.role === 'admin' ? 'bg-green-600' : 'bg-yellow-600'
-                }`}>
-                  {userData?.approved || userData?.role === 'admin' ? 'Approved' : 'Pending'}
-                </span>
-              </div>
-            </div>
-            <div>
               <div className="text-gray-400 text-sm mb-1">Member Since</div>
               <div className="font-semibold">
                 {userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'N/A'}
               </div>
             </div>
-            {userData?.approvedAt && (
-              <div>
-                <div className="text-gray-400 text-sm mb-1">Approved On</div>
-                <div className="font-semibold">
-                  {new Date(userData.approvedAt).toLocaleDateString()}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

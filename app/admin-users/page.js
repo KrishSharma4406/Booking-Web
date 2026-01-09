@@ -96,7 +96,6 @@ export default function AdminUsers() {
                       <th className="px-6 py-3 text-left">Name</th>
                       <th className="px-6 py-3 text-left">Email</th>
                       <th className="px-6 py-3 text-left">Role</th>
-                      <th className="px-6 py-3 text-left">Status</th>
                       <th className="px-6 py-3 text-left">Created At</th>
                     </tr>
                   </thead>
@@ -111,13 +110,6 @@ export default function AdminUsers() {
                             user.role === 'admin' ? 'bg-purple-600' : 'bg-blue-600'
                           }`}>
                             {user.role || 'user'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                            user.approved || user.role === 'admin' ? 'bg-green-600' : 'bg-yellow-600'
-                          }`}>
-                            {user.approved || user.role === 'admin' ? 'Approved' : 'Pending'}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-gray-400 text-sm">

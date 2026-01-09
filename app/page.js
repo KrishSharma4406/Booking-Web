@@ -216,16 +216,16 @@ export default function Home() {
 
           <div className="group item space-y-4 flex flex-col items-center justify-start p-8 rounded-2xl bg-gradient-to-br from-green-900/20 to-teal-900/20 border border-green-500/20 hover:border-green-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20">
             <div className="relative w-full h-48 rounded-xl overflow-hidden mb-4">
-              <img src="https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=400&q=80" alt="Instant Approval" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+              <img src="https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=400&q=80" alt="Secure Payments" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
               <div className="absolute inset-0 bg-gradient-to-t from-green-900/80 to-transparent"></div>
               <div className="absolute bottom-4 left-4 bg-gradient-to-br from-green-600 to-teal-500 rounded-xl p-3 shadow-lg">
                 <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
             </div>
-            <p className="font-bold text-center text-2xl">Instant Approval</p>
-            <p className="text-center text-gray-300 leading-relaxed">Get approved by our team and start booking immediately. Fast and hassle-free process.</p>
+            <p className="font-bold text-center text-2xl">Secure Payments</p>
+            <p className="text-center text-gray-300 leading-relaxed">Safe and secure payment processing with multiple payment options. Your data is protected.</p>
           </div>
 
           <div className="group item space-y-4 flex flex-col items-center justify-start p-8 rounded-2xl bg-gradient-to-br from-orange-900/20 to-red-900/20 border border-orange-500/20 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/20">
@@ -273,8 +273,8 @@ export default function Home() {
             <div className="bg-gradient-to-br from-green-600 to-green-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-2xl shadow-green-500/50 hover:scale-110 transition-transform duration-300 relative z-10">
               2
             </div>
-            <h3 className="font-bold mb-3 text-xl">Get Approved</h3>
-            <p className="text-sm text-gray-300 leading-relaxed">Quick admin verification to ensure quality service for all guests</p>
+            <h3 className="font-bold mb-3 text-xl">Browse Tables</h3>
+            <p className="text-sm text-gray-300 leading-relaxed">View available tables and choose your perfect spot for dining</p>
           </div>
 
           <div className="text-center relative">
