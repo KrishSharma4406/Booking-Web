@@ -22,7 +22,6 @@ export async function GET() {
 
     const users = await User.find()
       .select('-password')
-      .populate('approvedBy', 'name email')
       .sort({ createdAt: -1 })
 
     return NextResponse.json({

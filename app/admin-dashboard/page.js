@@ -47,27 +47,6 @@ export default function AdminDashboard() {
     }
   }
 
-  const approveUser = async (userId, approved) => {
-    try {
-      const res = await fetch('/api/users/approve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, approved })
-      })
-
-      const data = await res.json()
-
-      if (res.ok) {
-        toast.success(data.message)
-        fetchData()
-      } else {
-        toast.error(data.error)
-      }
-    } catch (error) {
-      toast.error('Error updating user')
-    }
-  }
-
   const updateBookingStatus = async (bookingId, status, table) => {
     try {
       const res = await fetch(`/api/bookings/${bookingId}`, {
@@ -90,8 +69,6 @@ export default function AdminDashboard() {
     }
   }
 
-  const pendingUsers = users.filter(u => !u.approved && u.role !== 'admin')
-  const approvedUsers = users.filter(u => u.approved || u.role === 'admin')
   const pendingBookings = bookings.filter(b => b.status === 'pending')
   const confirmedBookings = bookings.filter(b => b.status === 'confirmed')
 
@@ -136,46 +113,9 @@ export default function AdminDashboard() {
 
         {activeTab === 'users' && (
           <div className="space-y-6">
-            <div className="bg-gray-800 rounded-lg p-6 border border-yellow-600">
-              <h2 className="text-2xl font-bold mb-4 text-yellow-400">
-                ⏳ Pending Approvals ({pendingUsers.length})
-              </h2>
-              {pendingUsers.length === 0 ? (
-                <p className="text-gray-400">No pending user approvals</p>
-              ) : (
-                <div className="space-y-3">
-                  {pendingUsers.map(user => (
-                    <div key={user._id} className="bg-gray-700 rounded-lg p-4 flex justify-between items-center flex-wrap gap-4">
-                      <div>
-                        <h3 className="font-bold text-lg">{user.name}</h3>
-                        <p className="text-gray-300">{user.email}</p>
-                        <p className="text-sm text-gray-400">
-                          Registered: {new Date(user.createdAt).toLocaleString()}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => approveUser(user._id, true)}
-                          className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold"
-                        >
-                          ✓ Approve
-                        </button>
-                        <button
-                          onClick={() => approveUser(user._id, false)}
-                          className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-semibold"
-                        >
-                          ✗ Reject
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
             <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-              <h2 className="text-2xl font-bold mb-4 text-green-400">
-                Approved Users ({approvedUsers.length})
+              <h2 className="text-2xl font-bold mb-4 text-blue-400">
+                All Users ({users.length})
               </h2>
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -184,12 +124,11 @@ export default function AdminDashboard() {
                       <th className="px-4 py-3 text-left">Name</th>
                       <th className="px-4 py-3 text-left">Email</th>
                       <th className="px-4 py-3 text-left">Role</th>
-                      <th className="px-4 py-3 text-left">Status</th>
-                      <th className="px-4 py-3 text-left">Actions</th>
+                      <th className="px-4 py-3 text-left">Created</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700">
-                    {approvedUsers.map(user => (
+                    {users.map(user => (
                       <tr key={user._id} className="hover:bg-gray-700">
                         <td className="px-4 py-3">{user.name}</td>
                         <td className="px-4 py-3 text-gray-300">{user.email}</td>
@@ -200,20 +139,8 @@ export default function AdminDashboard() {
                             {user.role}
                           </span>
                         </td>
-                        <td className="px-4 py-3">
-                          <span className="px-2 py-1 rounded text-xs font-semibold bg-green-600">
-                            {user.approved ? 'Approved' : 'Admin'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          {user.role !== 'admin' && (
-                            <button
-                              onClick={() => approveUser(user._id, false)}
-                              className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-sm"
-                            >
-                              Revoke
-                            </button>
-                          )}
+                        <td className="px-4 py-3 text-sm text-gray-400">
+                          {new Date(user.createdAt).toLocaleDateString()}
                         </td>
                       </tr>
                     ))}

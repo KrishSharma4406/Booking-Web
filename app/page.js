@@ -1,5 +1,4 @@
 'use client'
-import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -202,7 +201,7 @@ export default function Home() {
         <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
           <div className="group item space-y-4 flex flex-col items-center justify-start p-8 rounded-2xl bg-gradient-to-br from-purple-900/20 to-blue-900/20 border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
             <div className="relative w-full h-48 rounded-xl overflow-hidden mb-4">
-              <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80" alt="Real-Time Booking" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+              <img src="https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=400&q=80" alt="Real-Time Booking" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
               <div className="absolute inset-0 bg-gradient-to-t from-purple-900/80 to-transparent"></div>
               <div className="absolute bottom-4 left-4 bg-gradient-to-br from-purple-600 to-blue-500 rounded-xl p-3 shadow-lg">
                 <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -216,7 +215,7 @@ export default function Home() {
 
           <div className="group item space-y-4 flex flex-col items-center justify-start p-8 rounded-2xl bg-gradient-to-br from-green-900/20 to-teal-900/20 border border-green-500/20 hover:border-green-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20">
             <div className="relative w-full h-48 rounded-xl overflow-hidden mb-4">
-              <img src="https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=400&q=80" alt="Secure Payments" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+              <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&q=80" alt="Secure Payments" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
               <div className="absolute inset-0 bg-gradient-to-t from-green-900/80 to-transparent"></div>
               <div className="absolute bottom-4 left-4 bg-gradient-to-br from-green-600 to-teal-500 rounded-xl p-3 shadow-lg">
                 <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,7 +229,7 @@ export default function Home() {
 
           <div className="group item space-y-4 flex flex-col items-center justify-start p-8 rounded-2xl bg-gradient-to-br from-orange-900/20 to-red-900/20 border border-orange-500/20 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/20">
             <div className="relative w-full h-48 rounded-xl overflow-hidden mb-4">
-              <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=80" alt="Easy Management" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+              <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80" alt="Easy Management" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
               <div className="absolute inset-0 bg-gradient-to-t from-orange-900/80 to-transparent"></div>
               <div className="absolute bottom-4 left-4 bg-gradient-to-br from-orange-600 to-red-500 rounded-xl p-3 shadow-lg">
                 <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -23,7 +23,7 @@ export default function AuthTest() {
             <div className="text-red-400">Not authenticated</div>
           )}
           {status === 'authenticated' && (
-            <div className="text-green-400">✅ Authenticated!</div>
+            <div className="text-green-400">Authenticated!</div>
           )}
         </div>
 

@@ -46,6 +46,7 @@ const Navbar = () => {
         <div className='flex justify-between items-center h-16'>
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+            <Image src="/newlogo.png" alt="Logo" width={40} height={40} className="object-contain rounded-full" />
             <span className="text-lg sm:text-xl md:text-2xl font-bold">Booking Web</span>
           </Link>
 

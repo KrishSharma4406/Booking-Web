@@ -182,7 +182,7 @@ export default function BookingsPage() {
         </div>
         <div className="relative z-10 h-full flex items-end pb-8 px-4 md:px-8">
           <div className="max-w-7xl mx-auto w-full">
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">🍽️ My Bookings</h1>
+            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">My Bookings</h1>
             <p className="text-gray-300 mt-2 text-lg">Manage your restaurant reservations</p>
           </div>
         </div>
@@ -248,20 +248,39 @@ export default function BookingsPage() {
                 />
               </div>
 
-              <div>
-                <label className="block mb-2 font-medium">Dining Area *</label>
-                <select
-                  required
-                  value={formData.tableArea}
-                  onChange={(e) => setFormData({...formData, tableArea: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
-                >
-                  {Object.entries(AREA_PRICING).map(([area, price]) => (
-                    <option key={area} value={area}>
-                      {getAreaDisplayName(area)} - ${price}/person
-                    </option>
-                  ))}
-                </select>
+              <div className="md:col-span-2">
+                <label className="block mb-3 font-medium text-lg">Select Dining Area *</label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {Object.entries(AREA_PRICING).map(([area, price]) => {
+                    const areaImages = {
+                      'indoor': 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80',
+                      'outdoor': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=80',
+                      'private-room': 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&q=80',
+                      'rooftop': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&q=80',
+                      'bar-area': 'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=400&q=80',
+                      'patio': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80'
+                    }
+                    return (
+                      <div
+                        key={area}
+                        onClick={() => setFormData({...formData, tableArea: area})}
+                        className={`cursor-pointer rounded-lg border-2 transition-all overflow-hidden ${
+                          formData.tableArea === area 
+                            ? 'border-purple-500 shadow-lg shadow-purple-500/50' 
+                            : 'border-gray-600 hover:border-gray-500'
+                        }`}
+                      >
+                        <div className="relative h-32">
+                          <img src={areaImages[area]} alt={getAreaDisplayName(area)} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="p-3 bg-gray-800">
+                          <div className="font-semibold text-sm">{getAreaDisplayName(area)}</div>
+                          <div className="text-xs text-purple-400 mt-1">₹{price}/person</div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
 
               <div>
@@ -305,7 +324,6 @@ export default function BookingsPage() {
                       }`}
                     >
                       <div className="text-center">
-                        <div className="text-2xl mb-1">🎲</div>
                         <div className="font-semibold">Any Table</div>
                         <div className="text-xs text-gray-400">Auto-assign</div>
                       </div>
@@ -414,7 +432,7 @@ export default function BookingsPage() {
                   guestName: '',
                   guestEmail: '',
                   guestPhone: '',
-                  numberOfGuests: 2,
+                  numberOfGuests: '',
                   bookingDate: '',
                   bookingTime: '',
                   tableNumber: '',
@@ -434,7 +452,6 @@ export default function BookingsPage() {
         <div className="grid gap-4">
           {bookings.length === 0 ? (
             <div className="bg-gray-800 rounded-lg p-12 text-center border border-gray-700">
-              <div className="text-6xl mb-4">🍽️</div>
               <p className="text-xl text-gray-400 mb-4">No bookings yet</p>
               <p className="text-gray-500">Create your first reservation to get started!</p>
             </div>
@@ -461,13 +478,13 @@ export default function BookingsPage() {
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-3 text-gray-300">
-                      <div>📧 {booking.guestEmail}</div>
-                      <div>📱 {booking.guestPhone}</div>
-                      <div>👥 {booking.numberOfGuests} guests</div>
-                      <div>📅 {new Date(booking.bookingDate).toLocaleDateString()}</div>
-                      <div>🕐 {booking.bookingTime}</div>
+                      <div>Email - {booking.guestEmail}</div>
+                      <div>Contact - {booking.guestPhone}</div>
+                      <div>Guests - {booking.numberOfGuests}</div>
+                      <div>Date - {new Date(booking.bookingDate).toLocaleDateString()}</div>
+                      <div>Time - {booking.bookingTime}</div>
                       {booking.tableArea && (
-                        <div>📍 {getAreaDisplayName(booking.tableArea)}</div>
+                        <div>Area - {getAreaDisplayName(booking.tableArea)}</div>
                       )}
                     </div>
 

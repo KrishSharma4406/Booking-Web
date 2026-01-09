@@ -7,7 +7,7 @@ export const metadata = {
   title: "Booking Web - Live Booking System",
   description: "Book your table with real-time availability and instant confirmation",
   icons: {
-    icon: '/logo.png',
+    icon: '/newlogo.png',
     shortcut: '/favicon.ico',
     apple: '/apple-icon.png',
   },
