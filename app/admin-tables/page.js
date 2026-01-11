@@ -142,14 +142,15 @@ export default function AdminTablesPage() {
   if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="relative z-10 animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4 md:p-8">
-      <ToastContainer position="top-right" theme="dark" />
+      <div className="relative z-10">
+        <ToastContainer position="top-right" theme="dark" />
       
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
@@ -367,6 +368,7 @@ export default function AdminTablesPage() {
             <p className="text-gray-400 text-lg">No tables found. Add your first table!</p>
           </div>
         )}
+      </div>
       </div>
     </div>
   )

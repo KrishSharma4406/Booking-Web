@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import AnimatedBackground from '@/components/AnimatedBackground'
 
 const Login = () => {
   const [email, setEmail] = useState('')

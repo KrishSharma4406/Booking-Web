@@ -70,7 +70,8 @@ function ResetPasswordForm() {
 
   if (success) {
     return (
-      <main className="w-full h-screen flex flex-col items-center justify-center px-4">
+      <>
+        <main className="w-full h-screen flex flex-col items-center justify-center px-4 relative z-10">
         <div className="max-w-sm w-full text-center space-y-4">
           <h3 className="text-white text-2xl font-bold">Password Reset Successful!</h3>
           <p className="text-gray-400">
@@ -82,7 +83,8 @@ function ResetPasswordForm() {
   }
 
   return (
-    <main className="w-full h-screen flex flex-col items-center justify-center px-4">
+    <>
+      <main className="w-full h-screen flex flex-col items-center justify-center px-4 relative z-10">
       <div className="max-w-sm w-full text-gray-400 space-y-8">
         <div className="text-center">
           <div className="mt-5 space-y-2">
@@ -155,6 +157,7 @@ function ResetPasswordForm() {
         </div>
       </div>
     </main>
+    </>
   )
 }
 

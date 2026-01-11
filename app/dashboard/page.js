@@ -57,8 +57,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="relative min-h-screen bg-gray-900 text-white p-4 md:p-8">
+      <div className="relative max-w-6xl mx-auto z-10">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Welcome, {session?.user?.name || 'User'}!</h1>
           <p className="text-gray-400">Manage your reservations and account</p>
@@ -81,14 +81,13 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-lg p-6 mb-8 border border-gray-700">
+        <div className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 mb-8 border border-gray-700/50">
           <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
           <div className="grid md:grid-cols-3 gap-4">
             <Link
               href="/bookings"
               className="bg-gray-700 hover:bg-gray-600 rounded-lg p-6 text-center transition-all group"
             >
-              <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">📅</div>
               <div className="font-semibold">View Bookings</div>
             </Link>
 
@@ -110,7 +109,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <div className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 border border-gray-700/50">
           <h2 className="text-2xl font-bold mb-4">Account Information</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>

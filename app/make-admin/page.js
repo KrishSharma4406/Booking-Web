@@ -41,7 +41,7 @@ export default function MakeAdminPage() {
   if (status === 'loading') {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="relative z-10 animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     )
   }
@@ -53,7 +53,7 @@ export default function MakeAdminPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-lg p-8 max-w-md w-full border border-gray-700">
+      <div className="relative z-10 bg-gray-800 rounded-lg p-8 max-w-md w-full border border-gray-700">
         <div className="text-center mb-6">
           <div className="text-6xl mb-4">👑</div>
           <h1 className="text-3xl font-bold mb-2">Become Admin</h1>

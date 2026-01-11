@@ -1,11 +1,12 @@
+'use client'
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
 const About = () => {
   return (
-    <div className="min-h-screen text-white">
-      <div className="container mx-auto px-6 md:px-10 py-16">
+    <div className="relative min-h-screen text-white">
+      <div className="relative container mx-auto px-6 md:px-10 py-16 z-10">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
             About Booking Web
@@ -29,32 +30,38 @@ const About = () => {
             </p>
           </div>
           <div className="relative h-80 rounded-lg overflow-hidden bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-            <div className="text-9xl"><Image src="/group.gif" alt="Dining" width={150} height={150} /></div>
+            <Image 
+              src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80" 
+              alt="Restaurant dining experience" 
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
           </div>
         </div>
 
         <div className="mb-20">
           <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-4 gap-8">
-            <div className="bg-slate-900 rounded-lg p-8 border border-gray-800 hover:border-purple-500 transition">
+            <div className="bg-slate-900/50 backdrop-blur-md rounded-lg p-8 border border-gray-800 hover:border-purple-500 transition-all hover:scale-105">
               <h3 className="text-xl font-bold mb-3">1. Sign Up</h3>
               <p className="text-gray-300">
                 Sign up and create your personalized creator page. Share your story, showcase your work, and connect with your audience.
               </p>
             </div>
-            <div className="bg-slate-900 rounded-lg p-8 border border-gray-800 hover:border-purple-500 transition">
+            <div className="bg-slate-900/50 backdrop-blur-md rounded-lg p-8 border border-gray-800 hover:border-purple-500 transition-all hover:scale-105">
               <h3 className="text-xl font-bold mb-3">2. Get Approved</h3>
               <p className="text-gray-300">
                 Wait for admin approval to ensure quality and security for all users on our platform.
               </p>
             </div>
-            <div className="bg-slate-900 rounded-lg p-8 border border-gray-800 hover:border-purple-500 transition">
+            <div className="bg-slate-900/50 backdrop-blur-md rounded-lg p-8 border border-gray-800 hover:border-purple-500 transition-all hover:scale-105">
               <h3 className="text-xl font-bold mb-3">3. Book Tables</h3>
               <p className="text-gray-300">
                 Browse available time slots, select your preferred date and time, and reserve your table instantly.
               </p>
             </div>
-            <div className="bg-slate-900 rounded-lg p-8 border border-gray-800 hover:border-purple-500 transition">
+            <div className="bg-slate-900/50 backdrop-blur-md rounded-lg p-8 border border-gray-800 hover:border-purple-500 transition-all hover:scale-105">
               <h3 className="text-xl font-bold mb-3">4. Enjoy Dining</h3>
               <p className="text-gray-300">
                 Arrive at your reserved time and enjoy a wonderful dining experience with your guests.
@@ -89,15 +96,15 @@ const About = () => {
           <h2 className="text-3xl font-bold text-center mb-12">Platform Statistics</h2>
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-5xl font-bold text-blue-400 mb-2">5K+</div>
+              <div className="text-5xl font-bold text-blue-400 mb-2">500+</div>
               <p className="text-gray-300">Happy Diners</p>
             </div>
             <div>
-              <div className="text-5xl font-bold text-purple-400 mb-2">15K+</div>
+              <div className="text-5xl font-bold text-purple-400 mb-2">5K+</div>
               <p className="text-gray-300">Bookings Completed</p>
             </div>
             <div>
-              <div className="text-5xl font-bold text-green-400 mb-2">98%</div>
+              <div className="text-5xl font-bold text-green-400 mb-2">95%</div>
               <p className="text-gray-300">Satisfaction Rate</p>
             </div>
           </div>
@@ -114,7 +121,7 @@ const About = () => {
               {title: "Group Dining", desc: "Accommodate parties of any size with advance booking" },
               {title: "Celebrations", desc: "Make your special occasions even more memorable" },
             ].map((item, index) => (
-              <div key={index} className="bg-slate-900 rounded-lg p-6 border border-gray-800 hover:border-purple-500 transition hover:scale-105">
+              <div key={index} className="bg-slate-900/50 backdrop-blur-md rounded-lg p-6 border border-gray-800 hover:border-purple-500 transition-all hover:scale-105">
                 <h3 className="font-bold mb-2">{item.title}</h3>
                 <p className="text-gray-400 text-sm">{item.desc}</p>
               </div>

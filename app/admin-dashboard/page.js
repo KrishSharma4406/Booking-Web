@@ -81,10 +81,10 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4 md:p-8">
+    <div className="relative min-h-screen bg-gray-900 text-white p-4 md:p-8">
       <ToastContainer position="top-right" theme="dark" />
       
-      <div className="max-w-7xl mx-auto">
+      <div className="relative max-w-7xl mx-auto z-10">
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">Admin Dashboard</h1>
           <div className="flex gap-2 flex-wrap">
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
 
         {activeTab === 'users' && (
           <div className="space-y-6">
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 border border-gray-700/50">
               <h2 className="text-2xl font-bold mb-4 text-blue-400">
                 All Users ({users.length})
               </h2>
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
 
         {activeTab === 'bookings' && (
           <div className="space-y-6">
-            <div className="bg-gray-800 rounded-lg p-6 border border-yellow-600">
+            <div className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 border border-yellow-600/50">
               <h2 className="text-2xl font-bold mb-4 text-yellow-400">
                 Pending Bookings ({pendingBookings.length})
               </h2>
@@ -213,7 +213,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Confirmed Bookings */}
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 border border-gray-700/50">
               <h2 className="text-2xl font-bold mb-4 text-green-400">
                 ✓ Confirmed Bookings ({confirmedBookings.length})
               </h2>

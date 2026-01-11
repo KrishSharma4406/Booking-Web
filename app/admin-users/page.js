@@ -43,6 +43,7 @@ export default function AdminUsers() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
+      <div className="relative z-10">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">All Users</h1>
@@ -123,6 +124,7 @@ export default function AdminUsers() {
             )}
           </div>
         )}
+      </div>
       </div>
     </div>
   )

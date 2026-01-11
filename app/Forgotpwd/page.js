@@ -40,7 +40,8 @@ const ForgotPassword = () => {
   }
 
   return (
-    <main id="content" role="main" className="w-full max-w-md mx-auto p-6">
+    <>
+      <main id="content" role="main" className="w-full max-w-md mx-auto p-6 relative z-10">
       <div className="mt-7 bg-white rounded-xl shadow-lg dark:bg-gray-900 dark:border-gray-700 border-2 border-indigo-300">
         <div className="p-4 sm:p-7">
           <div className="text-center">
@@ -108,6 +109,7 @@ const ForgotPassword = () => {
         </Link>
       </p>
     </main>
+    </>
   )
 }
 

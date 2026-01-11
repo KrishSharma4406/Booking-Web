@@ -47,39 +47,53 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <div className="relative flex justify-center flex-col gap-6 items-center text-white min-h-[60vh] px-5 md:px-10 py-20">
-        {/* Background Image */}
-        <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{backgroundImage: "url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920&q=80')"}}></div>
-        
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-          <div className="absolute top-40 right-10 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse animation-delay-2000"></div>
-          <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse animation-delay-4000"></div>
-        </div>
+      <div className="relative flex justify-center flex-col gap-8 items-center text-white min-h-[70vh] px-5 md:px-10 py-16 md:py-24">
 
-        {/* Content */}
-        <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6">
-          <div className="inline-block">
-            <div className="font-extrabold flex md:text-7xl justify-center items-center text-4xl gap-3 mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent animate-gradient">
-              <span>Booking Web</span>
+        <div className="relative z-10 max-w-5xl mx-auto space-y-8">
+
+          <div className="flex justify-center">
+            <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/30 px-4 py-2 rounded-full text-sm backdrop-blur-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+              </span>
+              <span className="text-purple-200">Live booking system active</span>
             </div>
-            <div className="h-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-full"></div>
           </div>
 
-          <p className="text-center text-2xl md:text-3xl font-semibold text-gray-100 max-w-3xl mx-auto">
-            Experience fine dining with seamless table reservations
-          </p>
-          <p className="text-center text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Book your perfect dining experience in real-time. Our live booking system ensures you never miss a spot at your favorite restaurant.
+          <div className="text-center space-y-4">
+            <h1 className="font-bold text-5xl md:text-7xl lg:text-8xl leading-tight">
+              <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+                Booking Web
+              </span>
+            </h1>
+
+            <div className="flex items-center justify-center gap-3 text-gray-400 text-sm">
+              <span className="flex items-center gap-1">
+                Instant confirmations
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                Secure payments
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                No hidden fees
+              </span>
+            </div>
+          </div>
+
+          <p className="text-center text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-light">
+            Reserve your table in seconds. Real-time availability, instant confirmation,
+            and a dining experience worth coming back for.
           </p>
 
           {/* Role-based button display */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-10">
             {status === 'loading' || loading ? (
               <div className="animate-pulse flex gap-4">
-                <div className="h-14 w-40 bg-gray-700 rounded-xl"></div>
-                <div className="h-14 w-40 bg-gray-700 rounded-xl"></div>
+                <div className="h-14 w-40 bg-gray-700/50 rounded-2xl"></div>
+                <div className="h-14 w-40 bg-gray-700/50 rounded-2xl"></div>
               </div>
             ) : status === 'authenticated' ? (
               <>
@@ -87,54 +101,38 @@ export default function Home() {
                   <>
                     <button
                       onClick={() => router.push('/admin-dashboard')}
-                      className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50"
+                      className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-bold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50 border-2 border-purple-400/20"
                     >
                       <span className="relative z-10 flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
                         Admin Dashboard
                       </span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </button>
                     <button
                       onClick={() => router.push('/admin-tables')}
-                      className="group relative px-8 py-4 bg-gradient-to-r from-orange-600 to-red-500 text-white font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/50"
+                      className="group relative px-8 py-4 bg-gray-800/50 backdrop-blur-sm text-white font-bold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 border-2 border-gray-600/50 hover:border-purple-400/50"
                     >
                       <span className="relative z-10 flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
                         Manage Tables
                       </span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </button>
                   </>
                 ) : (
                   <>
                     <button
                       onClick={() => router.push('/bookings')}
-                      className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50"
+                      className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-bold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50 border-2 border-purple-400/20"
                     >
                       <span className="relative z-10 flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        Book Table Now
+                        Book a Table
                       </span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </button>
                     <button
                       onClick={() => router.push('/dashboard')}
-                      className="group relative px-8 py-4 bg-gradient-to-r from-green-600 to-teal-500 text-white font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/50"
+                      className="group relative px-8 py-4 bg-gray-800/50 backdrop-blur-sm text-white font-bold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 border-2 border-gray-600/50 hover:border-purple-400/50"
                     >
                       <span className="relative z-10 flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
                         My Dashboard
                       </span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-teal-600 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </button>
                   </>
                 )}
@@ -142,25 +140,18 @@ export default function Home() {
             ) : (
               <>
                 <Link href="/Login">
-                  <button className="group relative px-10 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold text-lg rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50">
+                  <button className="group relative px-10 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-lg rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:border-2 border-purple-400/20">
                     <span className="relative z-10 flex items-center gap-2">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
-                      Book Now
+                      Get Started
                     </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </button>
                 </Link>
                 <Link href="/about">
-                  <button className="group relative px-10 py-4 bg-transparent border-2 border-white/30 text-white font-bold text-lg rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:border-white/60 backdrop-blur-sm">
+                  <button className="group relative px-10 py-3 bg-gray-800/40 backdrop-blur-sm border-2 border-gray-600/50 text-white font-bold text-lg rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:border-gray-400/50">
                     <span className="relative z-10 flex items-center gap-2">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Learn More
+                      How it works
+                      <span className="group-hover:translate-x-1 transition-transform">→</span>
                     </span>
-                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </button>
                 </Link>
               </>
@@ -186,7 +177,7 @@ export default function Home() {
       </div>
 
       <div className="relative h-32">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/20 to-transparent"></div>
+        
         <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
       </div>
 

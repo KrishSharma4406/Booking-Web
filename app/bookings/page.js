@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { calculateBookingPrice, getAreaDisplayName, AREA_PRICING } from '@/lib/pricing'
 import PaymentForm from '@/components/PaymentForm'
+import AnimatedBackground from '@/components/AnimatedBackground'
 
 export default function BookingsPage() {
   const { data: session, status } = useSession()
@@ -172,7 +173,7 @@ export default function BookingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="relative min-h-screen bg-gray-900 text-white overflow-hidden">
       <ToastContainer position="top-right" theme="dark" />
       
       {/* Header Section with Image */}
@@ -199,7 +200,7 @@ export default function BookingsPage() {
         </div>
 
         {showForm && (
-          <div className="bg-gray-800 rounded-lg p-6 mb-8 border border-gray-700">
+          <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 mb-8 border border-gray-700 shadow-lg shadow-purple-500/10">
             <h2 className="text-2xl font-bold mb-6">Create New Booking</h2>
             <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
               <div>
@@ -266,14 +267,14 @@ export default function BookingsPage() {
                         onClick={() => setFormData({...formData, tableArea: area})}
                         className={`cursor-pointer rounded-lg border-2 transition-all overflow-hidden ${
                           formData.tableArea === area 
-                            ? 'border-purple-500 shadow-lg shadow-purple-500/50' 
-                            : 'border-gray-600 hover:border-gray-500'
+                            ? 'border-purple-500 shadow-lg shadow-purple-500/50 scale-[1.02]' 
+                            : 'border-gray-600 hover:border-gray-500 hover:scale-[1.01]'
                         }`}
                       >
                         <div className="relative h-32">
                           <img src={areaImages[area]} alt={getAreaDisplayName(area)} className="w-full h-full object-cover" />
                         </div>
-                        <div className="p-3 bg-gray-800">
+                        <div className="p-3 bg-gray-800/80">
                           <div className="font-semibold text-sm">{getAreaDisplayName(area)}</div>
                           <div className="text-xs text-purple-400 mt-1">₹{price}/person</div>
                         </div>
@@ -317,9 +318,9 @@ export default function BookingsPage() {
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     <div
                       onClick={() => setFormData({...formData, tableNumber: ''})}
-                      className={`cursor-pointer p-4 rounded-lg border-2 transition-all ${
+                      className={`cursor-pointer p-4 rounded-lg border-2 transition-all hover:translate-y-[-1px] ${
                         formData.tableNumber === ''
-                          ? 'border-blue-500 bg-blue-900/30'
+                          ? 'border-blue-500 bg-blue-900/30 shadow-blue-500/20'
                           : 'border-gray-600 bg-gray-700 hover:border-gray-500'
                       }`}
                     >
@@ -332,9 +333,9 @@ export default function BookingsPage() {
                       <div
                         key={table._id}
                         onClick={() => setFormData({...formData, tableNumber: table.tableNumber})}
-                        className={`cursor-pointer p-4 rounded-lg border-2 transition-all ${
+                        className={`cursor-pointer p-4 rounded-lg border-2 transition-all hover:translate-y-[-1px] ${
                           formData.tableNumber === table.tableNumber
-                            ? 'border-green-500 bg-green-900/30'
+                            ? 'border-green-500 bg-green-900/30 shadow-green-500/20'
                             : 'border-gray-600 bg-gray-700 hover:border-gray-500'
                         }`}
                       >
@@ -451,13 +452,13 @@ export default function BookingsPage() {
 
         <div className="grid gap-4">
           {bookings.length === 0 ? (
-            <div className="bg-gray-800 rounded-lg p-12 text-center border border-gray-700">
+            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-12 text-center border border-gray-700">
               <p className="text-xl text-gray-400 mb-4">No bookings yet</p>
               <p className="text-gray-500">Create your first reservation to get started!</p>
             </div>
           ) : (
             bookings.map((booking) => (
-              <div key={booking._id} className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-gray-600 transition-all">
+              <div key={booking._id} className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 border border-gray-700 hover:border-gray-600 transition-all hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-[2px]">
                 <div className="flex justify-between items-start flex-wrap gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">

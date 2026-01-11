@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
 import crypto from 'crypto'
-import { findUserByEmail } from '@/lib/users'
+import connectDB from '@/lib/mongodb'
+import User from '@/models/User'
 import { sendPasswordResetEmail } from '@/lib/email'
-
-const resetTokens = new Map()
 
 export async function POST(req) {
   try {
@@ -16,10 +15,11 @@ export async function POST(req) {
       )
     }
 
-    const user = findUserByEmail(email)
+    await connectDB()
+    const user = await User.findOne({ email })
 
     if (!user) {
-
+      // Return success message even if user not found (security best practice)
       return NextResponse.json(
         { message: 'If an account exists with this email, you will receive a password reset link.' },
         { status: 200 }
@@ -27,12 +27,12 @@ export async function POST(req) {
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex')
-    const tokenExpiry = Date.now() + 3600000
+    const tokenExpiry = Date.now() + 3600000 // 1 hour
 
-    resetTokens.set(resetToken, {
-      email: user.email,
-      expiry: tokenExpiry
-    })
+    // Store token in database
+    user.resetToken = resetToken
+    user.resetTokenExpiry = new Date(tokenExpiry)
+    await user.save()
 
     try {
       const emailResult = await sendPasswordResetEmail(user.email, resetToken)
@@ -64,5 +64,3 @@ export async function POST(req) {
     )
   }
 }
-
-export { resetTokens }

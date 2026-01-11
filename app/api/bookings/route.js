@@ -6,6 +6,7 @@ import User from '@/models/User'
 import Table from '@/models/Table'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
+import { sendBookingConfirmation } from '@/lib/email'
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_dummy_key',
@@ -160,9 +161,32 @@ export async function POST(req) {
 
     await booking.populate('user', 'name email')
 
+    // Send confirmation email with PDF receipt
+    try {
+      await sendBookingConfirmation({
+        guestName,
+        guestEmail,
+        guestPhone,
+        numberOfGuests,
+        bookingDate,
+        bookingTime,
+        specialRequests,
+        tableNumber,
+        tableArea: tableArea || 'indoor',
+        paymentAmount,
+        paymentId: razorpayPaymentId,
+        paymentStatus: 'paid',
+        paymentMethod: 'razorpay'
+      })
+      console.log('Confirmation email sent successfully')
+    } catch (emailError) {
+      console.error('Failed to send confirmation email:', emailError)
+      // Don't fail the booking if email fails
+    }
+
     return NextResponse.json({ 
       booking, 
-      message: 'Booking created successfully! Payment confirmed.' 
+      message: 'Booking created successfully! Payment confirmed. Confirmation email sent.' 
     }, { status: 201 })
   } catch (error) {
     console.error('Error creating booking:', error)

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
+import AnimatedBackground from '@/components/AnimatedBackground'
 
 const Signup = () => {
   const [name, setName] = useState('')
@@ -85,7 +86,7 @@ const Signup = () => {
       {/* Background Image */}
       <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{backgroundImage: "url('https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=1920&q=80')"}}></div>
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900/50 to-purple-900/50"></div>
-      
+
       <div className="relative z-10 max-w-sm w-full text-gray-400 space-y-8">
         <div className="text-center">
           <div className="mt-5 space-y-2">

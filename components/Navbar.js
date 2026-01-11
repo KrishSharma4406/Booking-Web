@@ -112,6 +112,15 @@ const Navbar = () => {
                           My Bookings
                         </Link>
                       </li>
+                      <li>
+                        <Link
+                          href="/settings"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-800 hover:text-white transition-colors"
+                        >
+                          Settings
+                        </Link>
+                      </li>
                     {userRole === 'admin' && (
                       <>
                         <li className="border-t border-gray-700 mt-2 pt-2">
@@ -219,6 +228,13 @@ const Navbar = () => {
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-slate-800 transition-colors"
                 >
                   My Bookings
+                </Link>
+                <Link
+                  href="/settings"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-slate-800 transition-colors"
+                >
+                  Settings
                 </Link>
                 {userRole === 'admin' && (
                   <>
