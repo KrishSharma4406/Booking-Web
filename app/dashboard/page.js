@@ -86,22 +86,24 @@ export default function Dashboard() {
           <div className="grid md:grid-cols-3 gap-4">
             <Link
               href="/bookings"
-              className="bg-gray-700 hover:bg-gray-600 rounded-lg p-6 text-center transition-all group"
+              className="bg-gray-700 hover:bg-gray-600 rounded-lg p-6 text-center group"
             >
               <div className="font-semibold">View Bookings</div>
             </Link>
 
-            <Link
-              href="/bookings"
-              className="bg-gradient-to-br from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 rounded-lg p-6 text-center transition-all group"
-            >
-              <div className="font-semibold">New Booking</div>
-            </Link>
+            {userData?.role !== 'admin' && (
+              <Link
+                href="/bookings"
+                className="bg-gradient-to-br from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 rounded-lg p-6 text-center group"
+              >
+                <div className="font-semibold">New Booking</div>
+              </Link>
+            )}
 
             {userData?.role === 'admin' && (
               <Link
                 href="/admin-dashboard"
-                className="bg-gradient-to-br from-orange-600 to-red-500 hover:from-orange-700 hover:to-red-600 rounded-lg p-6 text-center transition-all group"
+                className="bg-gradient-to-br from-orange-600 to-red-500 hover:from-orange-700 hover:to-red-600 rounded-lg p-6 text-center group"
               >
                 <div className="font-semibold">Admin Panel</div>
               </Link>

@@ -163,7 +163,8 @@ export async function POST(req) {
 
     // Send confirmation email with PDF receipt
     try {
-      await sendBookingConfirmation({
+      console.log('📧 Preparing to send booking confirmation email to:', guestEmail)
+      const emailResult = await sendBookingConfirmation({
         guestName,
         guestEmail,
         guestPhone,
@@ -178,9 +179,15 @@ export async function POST(req) {
         paymentStatus: 'paid',
         paymentMethod: 'razorpay'
       })
-      console.log('Confirmation email sent successfully')
+      
+      if (emailResult.success) {
+        console.log('✅ Confirmation email sent successfully! Message ID:', emailResult.messageId)
+      } else {
+        console.error('❌ Email failed to send:', emailResult.error)
+      }
     } catch (emailError) {
-      console.error('Failed to send confirmation email:', emailError)
+      console.error('❌ Failed to send confirmation email:', emailError)
+      console.error('Error details:', emailError.message)
       // Don't fail the booking if email fails
     }
 

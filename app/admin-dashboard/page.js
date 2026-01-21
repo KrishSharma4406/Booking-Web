@@ -90,7 +90,7 @@ export default function AdminDashboard() {
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => setActiveTab('users')}
-              className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+              className={`px-6 py-2 rounded-lg font-semibold ${
                 activeTab === 'users'
                   ? 'bg-gradient-to-r from-purple-600 to-blue-500'
                   : 'bg-gray-700 hover:bg-gray-600'
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab('bookings')}
-              className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+              className={`px-6 py-2 rounded-lg font-semibold ${
                 activeTab === 'bookings'
                   ? 'bg-gradient-to-r from-purple-600 to-blue-500'
                   : 'bg-gray-700 hover:bg-gray-600'

@@ -36,10 +36,9 @@ export default function PrivacyPolicy() {
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-3" style={{ lineHeight: '1.1' }}>
             Privacy Policy{' '}
-            <span className="text-2xl md:text-3xl">🔒</span>
           </h1>
           <p className="text-gray-400 text-base md:text-lg">
-            We're serious about protecting your data. Here's everything you need to know.
+            We are serious about protecting your data. Here is everything you need to know.
           </p>
           <p className="text-sm text-gray-500 mt-2">
             Last updated: January 11, 2026
@@ -74,8 +73,7 @@ export default function PrivacyPolicy() {
           transition={{ delay: 0.3 }}
           className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-sm rounded-2xl p-6 mb-10 border-l-4 border-purple-500"
         >
-          <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
-            <span>⚡</span> TL;DR
+          <h2 className="text-xl font-bold mb-3 flex items-center gap-2">TL;DR
           </h2>
           <ul className="space-y-2 text-gray-300">
             <li className="flex gap-3">
@@ -84,7 +82,7 @@ export default function PrivacyPolicy() {
             </li>
             <li className="flex gap-3">
               <span className="text-green-400 flex-shrink-0">✓</span>
-              <span>We'll never sell your data to third parties</span>
+              <span>We will never sell your data to third parties</span>
             </li>
             <li className="flex gap-3">
               <span className="text-green-400 flex-shrink-0">✓</span>
@@ -197,28 +195,28 @@ export default function PrivacyPolicy() {
             
             <div className="space-y-5 pl-11">
               <p className="text-gray-300 leading-relaxed font-medium">
-                We're not in the business of selling your data. Period. But we do share it in a few specific cases:
+                We are not in the business of selling your data. Period. But we do share it in a few specific cases:
               </p>
 
               <div>
                 <h3 className="font-semibold text-purple-300 mb-2">Service Providers</h3>
                 <p className="text-gray-300 leading-relaxed">
                   We work with trusted partners for things like payment processing and email delivery. They only get the data they need 
-                  to do their job, and they're contractually obligated to keep it safe.
+                  to do their job, and they are contractually obligated to keep it safe.
                 </p>
               </div>
 
               <div>
                 <h3 className="font-semibold text-purple-300 mb-2">Legal Stuff</h3>
                 <p className="text-gray-300 leading-relaxed">
-                  If the law requires it or if we need to protect someone's safety, we might have to share your information. 
-                  We'll always be transparent about this when possible.
+                  If the law requires it or if we need to protect someone safety, we might have to share your information.
+                  We will always be transparent about this when possible.
                 </p>
               </div>
 
               <div className="bg-yellow-900/20 border-l-4 border-yellow-500 p-4 rounded">
                 <p className="text-yellow-200 text-sm">
-                  <strong>Important:</strong> We will NEVER sell your personal information to advertisers or data brokers. That's not our business model.
+                  <strong>Important:</strong> We will NEVER sell your personal information to advertisers or data brokers. That is not our business model.
                 </p>
               </div>
             </div>
@@ -232,30 +230,25 @@ export default function PrivacyPolicy() {
             className="bg-gray-800/20 backdrop-blur-sm rounded-3xl p-6 md:p-8 border border-gray-700/30"
           >
             <h2 className="text-2xl md:text-3xl font-bold mb-4 flex items-start gap-3">
-              <span className="text-3xl">🔐</span>
               <span>How Do We Keep Your Data Safe?</span>
             </h2>
             
             <div className="space-y-4 pl-11">
               <p className="text-gray-300 leading-relaxed">
-                Security is a big deal to us. Here's what we do:
+                Security is a big deal to us. Here is what we do:
               </p>
 
               <ul className="space-y-3">
                 <li className="flex gap-3">
-                  <span className="text-green-400">🔒</span>
                   <span className="text-gray-300">All data is encrypted in transit using SSL/TLS</span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="text-green-400">🔒</span>
                   <span className="text-gray-300">Passwords are hashed with industry-standard algorithms</span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="text-green-400">🔒</span>
                   <span className="text-gray-300">Regular security audits and updates</span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="text-green-400">🔒</span>
                   <span className="text-gray-300">Limited employee access—only who needs it</span>
                 </li>
               </ul>
@@ -275,18 +268,17 @@ export default function PrivacyPolicy() {
             className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 backdrop-blur-sm rounded-3xl p-6 md:p-8 border border-purple-500/30"
           >
             <h2 className="text-2xl md:text-3xl font-bold mb-4 flex items-start gap-3">
-              <span className="text-3xl">⚡</span>
               <span>Your Rights (The Important Stuff)</span>
             </h2>
             
             <div className="space-y-5 pl-11">
               <p className="text-gray-300 leading-relaxed font-medium">
-                You're in control of your data. Here's what you can do:
+                You are in control of your data. Here is what you can do:
               </p>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="bg-gray-800/40 p-4 rounded-xl">
-                  <h3 className="font-semibold text-white mb-2">✏️ Access & Edit</h3>
+                  <h3 className="font-semibold text-white mb-2">Access & Edit</h3>
                   <p className="text-sm text-gray-300">
                     View and update your information anytime in your settings
                   </p>
@@ -300,14 +292,14 @@ export default function PrivacyPolicy() {
                 </div>
 
                 <div className="bg-gray-800/40 p-4 rounded-xl">
-                  <h3 className="font-semibold text-white mb-2">📦 Download</h3>
+                  <h3 className="font-semibold text-white mb-2">Download</h3>
                   <p className="text-sm text-gray-300">
                     Export all your data in a portable format
                   </p>
                 </div>
 
                 <div className="bg-gray-800/40 p-4 rounded-xl">
-                  <h3 className="font-semibold text-white mb-2">🔕 Opt Out</h3>
+                  <h3 className="font-semibold text-white mb-2">Opt Out</h3>
                   <p className="text-sm text-gray-300">
                     Unsubscribe from marketing emails anytime
                   </p>
@@ -327,29 +319,26 @@ export default function PrivacyPolicy() {
             
             <div className="space-y-6">
               <div>
-                <h3 className="font-semibold text-purple-300 mb-2 flex items-center gap-2">
-                  <span>👶</span> Kids
+                <h3 className="font-semibold text-purple-300 mb-2 flex items-center gap-2">Kids
                 </h3>
                 <p className="text-gray-300 text-sm leading-relaxed">
-                  This service isn't for anyone under 13. If we find out a child has signed up, we'll delete their account immediately.
+                  This service is not for anyone under 13. If we find out a child has signed up, we will delete their account immediately.
                 </p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-purple-300 mb-2 flex items-center gap-2">
-                  <span>🌍</span> International Users
+                <h3 className="font-semibold text-purple-300 mb-2 flex items-center gap-2">International Users
                 </h3>
                 <p className="text-gray-300 text-sm leading-relaxed">
-                  Your data might be stored on servers in different countries. We ensure it's protected no matter where it lives.
+                  Your data might be stored on servers in different countries. We ensure it is protected no matter where it lives.
                 </p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-purple-300 mb-2 flex items-center gap-2">
-                  <span>🔄</span> Changes to This Policy
+                <h3 className="font-semibold text-purple-300 mb-2 flex items-center gap-2">Changes to This Policy
                 </h3>
                 <p className="text-gray-300 text-sm leading-relaxed">
-                  We might update this policy occasionally. If we make big changes, we'll let you know via email or a notification on the site.
+                  We might update this policy occasionally. If we make big changes, we will let you know via email or a notification on the site.
                 </p>
               </div>
             </div>
@@ -364,22 +353,20 @@ export default function PrivacyPolicy() {
             className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 backdrop-blur-sm rounded-3xl p-6 md:p-8 border border-purple-500/40"
           >
             <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-              <span>💬</span> Questions?
+              Questions?
             </h2>
             <p className="text-gray-300 mb-5 leading-relaxed">
-              If anything here is unclear or you have concerns about your privacy, we're here to help. 
+              If anything here is unclear or you have concerns about your privacy, we are here to help. 
               Seriously—reach out anytime.
             </p>
             <div className="space-y-2 text-gray-300">
               <p className="flex items-center gap-3">
-                <span className="text-xl">📧</span>
                 <a href="mailto:privacy@example.com" className="hover:text-purple-400 transition-colors">
                   privacy@example.com
                 </a>
               </p>
               <p className="flex items-center gap-3">
-                <span className="text-xl">📱</span>
-                <span>+1 (555) 123-4567</span>
+                <span>+91 7302013395</span>
               </p>
             </div>
           </motion.section>
@@ -397,7 +384,6 @@ export default function PrivacyPolicy() {
             onClick={() => router.push('/settings')}
             className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105"
           >
-            <span>⚙️</span>
             Manage Your Privacy Settings
           </button>
         </motion.div>

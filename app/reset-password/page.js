@@ -79,6 +79,7 @@ function ResetPasswordForm() {
           </p>
         </div>
       </main>
+    </>
     )
   }
 

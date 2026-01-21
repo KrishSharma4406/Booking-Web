@@ -54,7 +54,6 @@ export default function Home() {
           <div className="flex justify-center">
             <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/30 px-4 py-2 rounded-full text-sm backdrop-blur-sm">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
               </span>
               <span className="text-purple-200">Live booking system active</span>
@@ -101,7 +100,7 @@ export default function Home() {
                   <>
                     <button
                       onClick={() => router.push('/admin-dashboard')}
-                      className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-bold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50 border-2 border-purple-400/20"
+                      className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-bold rounded-2xl overflow-hidden transition-all duration-300  border-2 border-purple-400/20"
                     >
                       <span className="relative z-10 flex items-center gap-2">
                         Admin Dashboard
@@ -109,7 +108,7 @@ export default function Home() {
                     </button>
                     <button
                       onClick={() => router.push('/admin-tables')}
-                      className="group relative px-8 py-4 bg-gray-800/50 backdrop-blur-sm text-white font-bold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 border-2 border-gray-600/50 hover:border-purple-400/50"
+                      className="group relative px-8 py-4 bg-gray-800/50 backdrop-blur-sm text-white font-bold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 border-2 border-gray-600/50"
                     >
                       <span className="relative z-10 flex items-center gap-2">
                         Manage Tables

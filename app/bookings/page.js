@@ -6,7 +6,6 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { calculateBookingPrice, getAreaDisplayName, AREA_PRICING } from '@/lib/pricing'
 import PaymentForm from '@/components/PaymentForm'
-import AnimatedBackground from '@/components/AnimatedBackground'
 
 export default function BookingsPage() {
   const { data: session, status } = useSession()
@@ -14,6 +13,7 @@ export default function BookingsPage() {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [userRole, setUserRole] = useState('user')
   const [availableTables, setAvailableTables] = useState([])
   const [loadingTables, setLoadingTables] = useState(false)
   const [formData, setFormData] = useState({
@@ -37,9 +37,22 @@ export default function BookingsPage() {
       router.push('/Login')
     }
     if (status === 'authenticated') {
+      fetchUserRole()
       fetchBookings()
     }
   }, [status, router])
+
+  const fetchUserRole = async () => {
+    try {
+      const res = await fetch('/api/users/me')
+      if (res.ok) {
+        const data = await res.json()
+        setUserRole(data.role)
+      }
+    } catch (error) {
+      console.error('Error fetching user role:', error)
+    }
+  }
 
   const fetchBookings = async () => {
     try {
@@ -59,11 +72,11 @@ export default function BookingsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     // Calculate price
     const amount = calculateBookingPrice(formData.numberOfGuests, formData.tableArea)
     setTotalAmount(amount)
-    
+
     // Create payment order
     try {
       const res = await fetch('/api/payment', {
@@ -175,8 +188,7 @@ export default function BookingsPage() {
   return (
     <div className="relative min-h-screen bg-gray-900 text-white overflow-hidden">
       <ToastContainer position="top-right" theme="dark" />
-      
-      {/* Header Section with Image */}
+
       <div className="relative h-64 md:h-80 mb-8">
         <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1920&q=80')"}}>
           <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/80 to-gray-900"></div>
@@ -190,17 +202,19 @@ export default function BookingsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 pb-8">
-        <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 rounded-lg font-semibold transition-all"
-          >
-            {showForm ? '✖ Cancel' : 'New Booking'}
-          </button>
-        </div>
+        {userRole !== 'admin' && (
+          <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 rounded-lg font-semibold"
+            >
+              {showForm ? 'Cancel' : 'New Booking'}
+            </button>
+          </div>
+        )}
 
-        {showForm && (
-          <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 mb-8 border border-gray-700 shadow-lg shadow-purple-500/10">
+        {showForm && userRole !== 'admin' && (
+          <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 mb-8 border border-gray-700">
             <h2 className="text-2xl font-bold mb-6">Create New Booking</h2>
             <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
               <div>
@@ -265,10 +279,10 @@ export default function BookingsPage() {
                       <div
                         key={area}
                         onClick={() => setFormData({...formData, tableArea: area})}
-                        className={`cursor-pointer rounded-lg border-2 transition-all overflow-hidden ${
-                          formData.tableArea === area 
-                            ? 'border-purple-500 shadow-lg shadow-purple-500/50 scale-[1.02]' 
-                            : 'border-gray-600 hover:border-gray-500 hover:scale-[1.01]'
+                        className={`cursor-pointer rounded-lg border-2 overflow-hidden ${
+                          formData.tableArea === area
+                            ? 'border-purple-500'
+                            : 'border-gray-600 hover:border-gray-500'
                         }`}
                       >
                         <div className="relative h-32">
@@ -318,7 +332,7 @@ export default function BookingsPage() {
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     <div
                       onClick={() => setFormData({...formData, tableNumber: ''})}
-                      className={`cursor-pointer p-4 rounded-lg border-2 transition-all hover:translate-y-[-1px] ${
+                      className={`cursor-pointer p-4 rounded-lg border-2 ${
                         formData.tableNumber === ''
                           ? 'border-blue-500 bg-blue-900/30 shadow-blue-500/20'
                           : 'border-gray-600 bg-gray-700 hover:border-gray-500'
@@ -333,7 +347,7 @@ export default function BookingsPage() {
                       <div
                         key={table._id}
                         onClick={() => setFormData({...formData, tableNumber: table.tableNumber})}
-                        className={`cursor-pointer p-4 rounded-lg border-2 transition-all hover:translate-y-[-1px] ${
+                        className={`cursor-pointer p-4 rounded-lg border-2 ${
                           formData.tableNumber === table.tableNumber
                             ? 'border-green-500 bg-green-900/30 shadow-green-500/20'
                             : 'border-gray-600 bg-gray-700 hover:border-gray-500'
@@ -343,7 +357,7 @@ export default function BookingsPage() {
                           <div className="text-2xl mb-1">
                             {table.location === 'outdoor' ? '' :
                              table.location === 'private-room' ? '' :
-                             table.location === 'rooftop' ? '🌆' : ''}
+                             table.location === 'rooftop' ? '' : ''}
                           </div>
                           <div className="font-semibold">Table #{table.tableNumber}</div>
                           <div className="text-xs text-gray-400">{table.tableName}</div>
@@ -388,14 +402,13 @@ export default function BookingsPage() {
                 />
               </div>
 
-              {/* Pricing Summary */}
               <div className="md:col-span-2">
                 <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 rounded-lg border border-purple-500/30">
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-lg font-semibold">Total Price</p>
                       <p className="text-sm text-gray-400">
-                        {formData.numberOfGuests} guests × ₹{AREA_PRICING[formData.tableArea]}/person ({getAreaDisplayName(formData.tableArea)})
+                        {formData.numberOfGuests} guests * ₹{AREA_PRICING[formData.tableArea]}/person ({getAreaDisplayName(formData.tableArea)})
                       </p>
                     </div>
                     <div className="text-3xl font-bold text-green-400">
@@ -408,7 +421,7 @@ export default function BookingsPage() {
               <div className="md:col-span-2">
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-gradient-to-r from-green-600 to-teal-500 hover:from-green-700 hover:to-teal-600 rounded-lg font-semibold transition-all"
+                  className="w-full px-6 py-3 bg-gradient-to-r from-green-600 to-teal-500 hover:from-green-700 hover:to-teal-600 rounded-lg font-semibold"
                 >
                   Proceed to Payment
                 </button>
@@ -458,7 +471,7 @@ export default function BookingsPage() {
             </div>
           ) : (
             bookings.map((booking) => (
-              <div key={booking._id} className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 border border-gray-700 hover:border-gray-600 transition-all hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-[2px]">
+              <div key={booking._id} className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 border border-gray-700 hover:border-gray-600">
                 <div className="flex justify-between items-start flex-wrap gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
@@ -505,7 +518,7 @@ export default function BookingsPage() {
                     {booking.status === 'pending' && (
                       <button
                         onClick={() => cancelBooking(booking._id)}
-                        className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-all"
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-semibold"
                       >
                         Cancel
                       </button>
