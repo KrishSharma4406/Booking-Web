@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 
+
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -32,6 +33,19 @@ const UserSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
+    unique: true,
+    sparse: true,
+    trim: true,
+  },
+  phoneVerified: {
+    type: Boolean,
+    default: false,
+  },
+  otpCode: {
+    type: String,
+  },
+  otpExpiry: {
+    type: Date,
   },
   resetToken: {
     type: String,

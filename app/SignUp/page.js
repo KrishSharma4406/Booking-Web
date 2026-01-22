@@ -9,6 +9,7 @@ import AnimatedBackground from '@/components/AnimatedBackground'
 const Signup = () => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -50,7 +51,7 @@ const Signup = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({ email, password, name, phone }),
       })
 
       const data = await response.json()
@@ -128,6 +129,17 @@ const Signup = () => {
                 required
                 className="w-full mt-2 px-3 py-2 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
               />
+            </div>
+            <div>
+              <label className="font-medium text-gray-300"> Phone Number (Optional) </label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+1234567890"
+                className="w-full mt-2 px-3 py-2 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
+              />
+              <p className="mt-1 text-xs text-gray-400">Include country code for phone login (e.g., +1 for US)</p>
             </div>
             <div>
               <label className="font-medium text-gray-300"> Password </label>

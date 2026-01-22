@@ -3,7 +3,7 @@ import { createUser, findUserByEmail } from '@/lib/users'
 
 export async function POST(req) {
   try {
-    const { email, password, name } = await req.json()
+    const { email, password, name, phone } = await req.json()
 
     if (!email || !password) {
       return NextResponse.json(
@@ -19,6 +19,14 @@ export async function POST(req) {
       )
     }
 
+    // Validate phone number format if provided
+    if (phone && !phone.startsWith('+')) {
+      return NextResponse.json(
+        { error: 'Phone number must include country code (e.g., +1234567890)' },
+        { status: 400 }
+      )
+    }
+
     const existingUser = await findUserByEmail(email)
     if (existingUser) {
       return NextResponse.json(
@@ -27,19 +35,24 @@ export async function POST(req) {
       )
     }
 
-    const user = await createUser(email, password, name)
+    const user = await createUser(email, password, name, 'credentials', phone)
 
     return NextResponse.json(
       {
         message: 'User created successfully',
-        user: { id: user.id, email: user.email, name: user.name }
+        user: { 
+          id: user.id, 
+          email: user.email, 
+          name: user.name,
+          phone: user.phone 
+        }
       },
       { status: 201 }
     )
   } catch (error) {
     console.error('Signup error:', error)
     return NextResponse.json(
-      { error: 'Failed to create user' },
+      { error: error.message || 'Failed to create user' },
       { status: 500 }
     )
   }

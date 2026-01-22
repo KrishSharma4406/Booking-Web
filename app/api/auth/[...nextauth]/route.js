@@ -5,9 +5,12 @@ import FacebookProvider from 'next-auth/providers/facebook'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { findUserByEmail, createUser } from '@/lib/users'
+import { connectDB } from '@/lib/mongodb'
+import User from '@/models/User'
 
 const providers = [
   CredentialsProvider({
+    id: 'credentials',
     name: 'Credentials',
     credentials: {
       email: { label: "Email", type: "email" },
@@ -37,6 +40,61 @@ const providers = [
         id: user.id,
         email: user.email,
         name: user.name || user.email,
+        phone: user.phone,
+        role: user.role,
+      }
+    }
+  }),
+  CredentialsProvider({
+    id: 'phone',
+    name: 'Phone',
+    credentials: {
+      phone: { label: "Phone", type: "text" },
+      otp: { label: "OTP", type: "text" }
+    },
+    async authorize(credentials) {
+      if (!credentials?.phone || !credentials?.otp) {
+        throw new Error('Please enter phone number and OTP')
+      }
+
+      await connectDB()
+
+      const user = await User.findOne({ phone: credentials.phone })
+
+      if (!user) {
+        throw new Error('No user found with this phone number')
+      }
+
+      // Check if OTP exists
+      if (!user.otpCode) {
+        throw new Error('No OTP found. Please request a new one.')
+      }
+
+      // Check if OTP has expired
+      if (new Date() > user.otpExpiry) {
+        user.otpCode = undefined
+        user.otpExpiry = undefined
+        await user.save()
+        throw new Error('OTP has expired. Please request a new one.')
+      }
+
+      // Verify OTP
+      if (user.otpCode !== credentials.otp) {
+        throw new Error('Invalid OTP code')
+      }
+
+      // Mark phone as verified and clear OTP
+      user.phoneVerified = true
+      user.otpCode = undefined
+      user.otpExpiry = undefined
+      await user.save()
+
+      return {
+        id: user._id.toString(),
+        email: user.email,
+        name: user.name || user.phone,
+        phone: user.phone,
+        role: user.role,
       }
     }
   }),
