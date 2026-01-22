@@ -246,7 +246,7 @@ const Login = () => {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+1234567890"
+                    placeholder=""
                     required
                     disabled={otpSent}
                     className="flex-1 px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg transition-colors disabled:opacity-50"
@@ -273,7 +273,6 @@ const Login = () => {
                     </button>
                   )}
                 </div>
-                <p className="mt-1 text-xs text-gray-400">Include country code (e.g., +1 for US)</p>
               </div>
 
               {otpSent && (
@@ -290,7 +289,7 @@ const Login = () => {
                       className="w-full mt-2 px-3 py-2 sm:px-4 sm:py-2.5 text-xl text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg transition-colors text-center tracking-widest"
                     />
                     <div className="mt-2 flex justify-between items-center">
-                      <p className="text-xs text-green-400">✓ OTP sent successfully</p>
+                      <p className="text-xs text-green-400">OTP sent successfully</p>
                       {otpTimer > 0 ? (
                         <p className="text-xs text-gray-400">Resend in {otpTimer}s</p>
                       ) : (
