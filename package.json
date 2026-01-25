@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aws-sdk/client-sns": "^3.972.0",
+    "@aws-sdk/client-sns": "^3.975.0",
     "@sendgrid/mail": "^8.1.6",
     "bcryptjs": "^2.4.3",
     "dotenv": "^17.2.3",

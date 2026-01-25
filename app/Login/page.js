@@ -88,7 +88,7 @@ const Login = () => {
       setOtpSent(true)
       setOtpTimer(60) // 60 seconds countdown
       setError('')
-      setSuccess('✅ OTP sent successfully! Check your phone or server console (dev mode)')
+      setSuccess('OTP sent successfully! Check your phone or server console (dev mode)')
       // Store dev OTP if provided (for development only)
       if (data.devOTP) {
         setDevOTP(data.devOTP)
@@ -144,7 +144,7 @@ const Login = () => {
       <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
       <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
       <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-      
+
       <div className="relative z-10 max-w-md w-full">
         {/* Login Card */}
         <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-8 space-y-6">

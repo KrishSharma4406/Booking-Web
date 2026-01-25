@@ -9,8 +9,16 @@ export async function POST(request) {
 
     if (!phone || !validatePhoneNumber(phone)) {
       return NextResponse.json(
-        { error: 'Invalid phone number format. Use format: +1234567890' },
+        { error: 'Invalid phone number format. Use Indian number with format: +91XXXXXXXXXX' },
         { status: 400 }
+      )
+    }
+
+    // Check if number is from India
+    if (!phone.startsWith('+91')) {
+      return NextResponse.json(
+        { error: 'OTP service is only available for Indian phone numbers (+91)' },
+        { status: 403 }
       )
     }
 
