@@ -56,7 +56,7 @@ const Navbar = () => {
               <>
                 <li className="hidden lg:block">
                   <Link href="/bookings" className="hover:text-blue-400 transition-colors">
-                    My Bookings
+                    All Bookings
                   </Link>
                 </li>
                 {userRole === 'admin' && (

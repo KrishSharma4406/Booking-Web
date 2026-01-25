@@ -62,7 +62,7 @@ export default function Home() {
 
           <div className="text-center space-y-4">
             <h1 className="font-bold text-5xl md:text-7xl lg:text-8xl leading-tight">
-              <span className="block bg-gradient-to-r text-purple-800 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r text-purple-800 bg-clip-text">
                 Booking Web
               </span>
             </h1>
@@ -160,7 +160,7 @@ export default function Home() {
           {/* Stats Section */}
           <div className="grid grid-cols-3 gap-8 mt-16 max-w-3xl mx-auto">
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r text-purple-800  bg-clip-text text-transparent">500+</div>
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r text-blue-700  bg-clip-text">500+</div>
               <div className="text-sm md:text-base text-gray-400 mt-2">Happy Diners</div>
             </div>
             <div className="text-center">
@@ -176,13 +176,12 @@ export default function Home() {
       </div>
 
       <div className="relative h-32">
-        
         <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
       </div>
 
       <div className="text-white container mx-auto pb-32 pt-14 px-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r text-blue-800 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r text-blue-800 bg-clip-text">
             Why Choose Our Booking System?
           </h2>
           <p className="text-gray-400 text-lg">Discover the features that make us stand out</p>

@@ -195,7 +195,7 @@ export default function BookingsPage() {
         </div>
         <div className="relative z-10 h-full flex items-end pb-8 px-4 md:px-8">
           <div className="max-w-7xl mx-auto w-full">
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">My Bookings</h1>
+            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r text-blue-400 bg-clip-text">All Bookings</h1>
             <p className="text-gray-300 mt-2 text-lg">Manage your restaurant reservations</p>
           </div>
         </div>
