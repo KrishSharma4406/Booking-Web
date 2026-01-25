@@ -62,7 +62,7 @@ export default function Home() {
 
           <div className="text-center space-y-4">
             <h1 className="font-bold text-5xl md:text-7xl lg:text-8xl leading-tight">
-              <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r text-purple-800 bg-clip-text text-transparent">
                 Booking Web
               </span>
             </h1>
@@ -160,7 +160,7 @@ export default function Home() {
           {/* Stats Section */}
           <div className="grid grid-cols-3 gap-8 mt-16 max-w-3xl mx-auto">
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">500+</div>
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r text-purple-800  bg-clip-text text-transparent">500+</div>
               <div className="text-sm md:text-base text-gray-400 mt-2">Happy Diners</div>
             </div>
             <div className="text-center">
@@ -182,7 +182,7 @@ export default function Home() {
 
       <div className="text-white container mx-auto pb-32 pt-14 px-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r text-blue-800 bg-clip-text text-transparent">
             Why Choose Our Booking System?
           </h2>
           <p className="text-gray-400 text-lg">Discover the features that make us stand out</p>
@@ -234,13 +234,12 @@ export default function Home() {
       </div>
 
       <div className="relative h-32">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-900/20 to-transparent"></div>
         <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
       </div>
 
       <div className="text-white container mx-auto pb-32 px-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r text-blue-400 bg-clip-text">
             How It Works
           </h2>
           <p className="text-gray-400 text-lg">Simple steps to your perfect dining experience</p>
@@ -251,7 +250,7 @@ export default function Home() {
           <div className="hidden md:block absolute top-8 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 opacity-20"></div>
 
           <div className="text-center relative">
-            <div className="bg-gradient-to-br from-blue-600 to-blue-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-2xl shadow-blue-500/50 hover:scale-110 transition-transform duration-300 relative z-10">
+            <div className="bg-gradient-to-br from-blue-600 to-blue-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold hover:scale-110 transition-transform duration-300 relative z-10">
               1
             </div>
             <h3 className="font-bold mb-3 text-xl">Sign Up</h3>
@@ -259,7 +258,7 @@ export default function Home() {
           </div>
 
           <div className="text-center relative">
-            <div className="bg-gradient-to-br from-green-600 to-green-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-2xl shadow-green-500/50 hover:scale-110 transition-transform duration-300 relative z-10">
+            <div className="bg-gradient-to-br from-green-600 to-green-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold hover:scale-110 transition-transform duration-300 relative z-10">
               2
             </div>
             <h3 className="font-bold mb-3 text-xl">Browse Tables</h3>
@@ -267,7 +266,7 @@ export default function Home() {
           </div>
 
           <div className="text-center relative">
-            <div className="bg-gradient-to-br from-purple-600 to-purple-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-2xl shadow-purple-500/50 hover:scale-110 transition-transform duration-300 relative z-10">
+            <div className="bg-gradient-to-br from-purple-600 to-purple-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold hover:scale-110 transition-transform duration-300 relative z-10">
               3
             </div>
             <h3 className="font-bold mb-3 text-xl">Book Table</h3>
@@ -275,7 +274,7 @@ export default function Home() {
           </div>
 
           <div className="text-center relative">
-            <div className="bg-gradient-to-br from-orange-600 to-orange-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-2xl shadow-orange-500/50 hover:scale-110 transition-transform duration-300 relative z-10">
+            <div className="bg-gradient-to-br from-orange-600 to-orange-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 text-3xl font-bold hover:scale-110 transition-transform duration-300 relative z-10">
               4
             </div>
             <h3 className="font-bold mb-3 text-xl">Enjoy</h3>

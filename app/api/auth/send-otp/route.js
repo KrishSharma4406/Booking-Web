@@ -35,6 +35,12 @@ export async function POST(request) {
     user.otpExpiry = otpExpiry
     await user.save()
 
+    console.log('=================================')
+    console.log('📱 OTP GENERATED FOR:', phone)
+    console.log('🔑 OTP CODE:', otpCode)
+    console.log('⏰ EXPIRES AT:', otpExpiry.toLocaleString())
+    console.log('=================================')
+
     // Send OTP via SMS
     const sent = await sendOTP(phone, otpCode)
 
@@ -48,7 +54,9 @@ export async function POST(request) {
     return NextResponse.json({
       success: true,
       message: 'OTP sent successfully',
-      expiresIn: 600
+      expiresIn: 600,
+      // In development, include OTP for testing (remove in production!)
+      ...(process.env.NODE_ENV === 'development' && { devOTP: otpCode })
     })
 
   } catch (error) {

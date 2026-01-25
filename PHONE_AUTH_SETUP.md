@@ -127,12 +127,15 @@ By default, the system uses console logging for OTP codes. Check your server con
 
 ### OTP not received
 - **Development mode**: Check your server console for the OTP code
+  - Look for console logs like: `📱 OTP GENERATED FOR: +1234567890`
+  - The OTP will also be displayed in the UI (yellow box) in development mode
 - **Production mode**: Verify SMS provider credentials in `.env.local`
 - **Phone format**: Ensure phone number includes country code (e.g., +1234567890)
 
 ### "No account found" error
 - User must sign up first with their phone number
 - Phone number must match exactly (including country code)
+- Go to `/SignUp` and create an account with your phone number
 
 ### OTP expired
 - Request a new OTP by clicking "Resend OTP"
@@ -141,6 +144,54 @@ By default, the system uses console logging for OTP codes. Check your server con
 ### Phone number already registered
 - Each phone number can only be used once
 - Use a different phone number or contact support
+
+### Development Mode Testing
+
+**IMPORTANT**: In development mode, OTP is NOT sent via SMS. Instead:
+
+1. **Check Server Console**: After clicking "Send OTP", look at your terminal/console where `npm run dev` is running
+2. **Look for the OTP**: You'll see output like:
+   ```
+   =================================
+   📱 OTP GENERATED FOR: +1234567890
+   🔑 OTP CODE: 123456
+   ⏰ EXPIRES AT: 1/24/2026, 2:30:45 PM
+   =================================
+   ```
+3. **UI Display**: In development, the OTP will also appear in a yellow box on the login page
+4. **Copy & Enter**: Copy the 6-digit code and enter it in the OTP field
+
+### Setting Up Real SMS (Production)
+
+If you want to test with real SMS:
+
+1. **Choose a provider** (Twilio or AWS SNS)
+2. **Add credentials** to `.env.local`
+3. **Set SMS_PROVIDER**:
+   ```env
+   SMS_PROVIDER=twilio  # or aws-sns
+   ```
+4. **Restart the dev server**: Stop (`Ctrl+C`) and restart (`npm run dev`)
+
+### Common Issues
+
+**Issue**: "OTP not generated" or no console output
+- **Solution**: Make sure the phone number has a registered account
+- **Solution**: Check MongoDB connection is working
+- **Solution**: Restart the dev server
+
+**Issue**: Can't find OTP in console
+- **Solution**: Scroll up in the terminal where `npm run dev` is running
+- **Solution**: Look for the large bordered output with 🔑 emoji
+
+**Issue**: OTP field not accepting numbers
+- **Solution**: The field only accepts 6-digit numbers (automatically filtered)
+- **Solution**: Make sure you're not pasting extra characters
+
+**Issue**: "Failed to send OTP" error
+- **Solution**: Check that you have a user account with that phone number
+- **Solution**: Verify MongoDB is connected
+- **Solution**: Check server console for detailed error messages
 
 ## Database Schema
 

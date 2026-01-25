@@ -4,7 +4,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import AnimatedBackground from '@/components/AnimatedBackground'
 
 const Signup = () => {
   const [name, setName] = useState('')
@@ -111,7 +110,7 @@ const Signup = () => {
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="font-medium text-gray-300"> Name </label>
+              <label className="font-medium text-gray-300"> Name* </label>
               <input
                 type="text"
                 value={name}
@@ -121,7 +120,7 @@ const Signup = () => {
               />
             </div>
             <div>
-              <label className="font-medium text-gray-300"> Email </label>
+              <label className="font-medium text-gray-300"> Email* </label>
               <input
                 type="email"
                 value={email}
@@ -131,18 +130,17 @@ const Signup = () => {
               />
             </div>
             <div>
-              <label className="font-medium text-gray-300"> Phone Number (Optional) </label>
+              <label className="font-medium text-gray-300"> Phone Number* </label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="+1234567890"
+                placeholder=" "
                 className="w-full mt-2 px-3 py-2 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
               />
-              <p className="mt-1 text-xs text-gray-400">Include country code for phone login (e.g., +1 for US)</p>
             </div>
             <div>
-              <label className="font-medium text-gray-300"> Password </label>
+              <label className="font-medium text-gray-300"> Password* </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
