@@ -1,7 +1,7 @@
-import { Document } from 'mongoose'
+import { Document, Types } from 'mongoose'
 
 export interface IUser extends Document {
-  _id: string
+  _id: Types.ObjectId
   name: string
   email: string
   password?: string
@@ -17,7 +17,7 @@ export interface IUser extends Document {
 }
 
 export interface ITable extends Document {
-  _id: string
+  _id: Types.ObjectId
   tableNumber: number
   seats: number
   description?: string
@@ -28,7 +28,7 @@ export interface ITable extends Document {
 }
 
 export interface IBooking extends Document {
-  _id: string
+  _id: Types.ObjectId
   user: string
   table: string
   date: Date
