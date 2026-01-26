@@ -1,35 +1,20 @@
 'use client'
 import React, { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import { motion } from 'framer-motion'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { Mail, Lock, Eye, EyeOff, Loader } from 'lucide-react'
 
 const Login = () => {
-  const [loginMethod, setLoginMethod] = useState('email')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [phone, setPhone] = useState('')
-  const [otp, setOtp] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [otpSent, setOtpSent] = useState(false)
-  const [otpTimer, setOtpTimer] = useState(0)
-  const [rememberMe, setRememberMe] = useState(false)
-  const [devOTP, setDevOTP] = useState('')
   const router = useRouter()
 
-
-  React.useEffect(() => {
-    if (otpTimer > 0) {
-      const timer = setTimeout(() => setOtpTimer(otpTimer - 1), 1000)
-      return () => clearTimeout(timer)
-    }
-  }, [otpTimer])
-
-  const handleEmailSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
@@ -137,20 +122,19 @@ const Login = () => {
 
   return (
     <main className="relative w-full min-h-screen flex flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"></div>
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557683316-973673baf926?w=1920&q=80')] bg-cover bg-center opacity-5"></div>
-
-      <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-      <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-      <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+      {/* Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-950 to-gray-900"></div>
+      <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
+      
+      {/* Animated gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/10 via-transparent to-purple-900/10 animate-pulse" style={{animationDuration: '5s'}} />
 
       <div className="relative z-10 max-w-md w-full">
         {/* Login Card */}
-        <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-8 space-y-6">
+        <div className="bg-black/40 backdrop-blur-xl rounded-3xl border border-purple-500/20 p-8 space-y-6">
           {/* Header */}
           <div className="text-center space-y-2">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-white">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
               </svg>
@@ -164,7 +148,7 @@ const Login = () => {
           </div>
 
           {/* Login Method Tabs */}
-          <div className="flex gap-2 p-1 bg-slate-900/50 rounded-xl border border-slate-700/50">
+          <div className="flex gap-2 p-1 bg-gray-900/30 rounded-xl border border-purple-500/20">
             <button
               onClick={() => {
                 setLoginMethod('email')
@@ -174,8 +158,8 @@ const Login = () => {
               }}
               className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 loginMethod === 'email'
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-slate-800/50'
+                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
+                  : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50'
               }`}
             >
               <span className="flex items-center justify-center gap-2">
@@ -193,8 +177,8 @@ const Login = () => {
               }}
               className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 loginMethod === 'phone'
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-slate-800/50'
+                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
+                  : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50'
               }`}
             >
               <span className="flex items-center justify-center gap-2">
@@ -245,7 +229,7 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     required
-                    className="w-full px-4 py-3 text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 shadow-sm rounded-xl transition-all duration-200 placeholder:text-gray-500"
+                    className="w-full px-4 py-3 text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 rounded-xl transition-all duration-200 placeholder:text-gray-500"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-500">
@@ -270,7 +254,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     required
-                    className="w-full px-4 py-3 pr-12 text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 shadow-sm rounded-xl transition-all duration-200 placeholder:text-gray-500"
+                    className="w-full px-4 py-3 pr-12 text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 rounded-xl transition-all duration-200 placeholder:text-gray-500"
                   />
                   <button
                     type="button"
@@ -315,7 +299,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full px-4 py-3 text-white font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 rounded-xl duration-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2"
+                className="w-full px-4 py-3 text-white font-semibold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 active:scale-95 rounded-xl duration-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-purple-500/30 flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
@@ -358,14 +342,14 @@ const Login = () => {
                     placeholder=" "
                     required
                     disabled={otpSent}
-                    className="flex-1 px-4 py-3 text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 shadow-sm rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-gray-500"
+                    className="flex-1 px-4 py-3 text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-gray-500"
                   />
                   {!otpSent ? (
                     <button
                       type="button"
                       onClick={handleSendOTP}
                       disabled={isLoading}
-                      className="px-5 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl transition-all disabled:opacity-50 shadow-lg hover:shadow-purple-500/50 whitespace-nowrap"
+                      className="px-5 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 rounded-xl transition-all disabled:opacity-50 whitespace-nowrap"
                     >
                       Send OTP
                     </button>
@@ -376,7 +360,7 @@ const Login = () => {
                         setOtpSent(false)
                         setOtp('')
                       }}
-                      className="px-5 py-3 text-sm font-semibold text-white bg-slate-600 hover:bg-slate-500 rounded-xl transition-all shadow-lg"
+                      className="px-5 py-3 text-sm font-semibold text-white bg-slate-600 hover:bg-slate-500 rounded-xl transition-all"
                     >
                       Change
                     </button>
@@ -401,7 +385,7 @@ const Login = () => {
                       placeholder="000000"
                       required
                       maxLength={6}
-                      className="w-full px-4 py-3 text-2xl font-semibold text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 shadow-sm rounded-xl transition-all duration-200 text-center tracking-[0.5em] placeholder:text-gray-600"
+                      className="w-full px-4 py-3 text-2xl font-semibold text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 rounded-xl transition-all duration-200 text-center tracking-[0.5em] placeholder:text-gray-600"
                     />
                     
                     {/* Development Mode OTP Display */}
@@ -453,7 +437,7 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={isLoading || otp.length !== 6}
-                    className="w-full px-4 py-3 text-white font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 rounded-xl duration-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-purple-500/50 flex items-center justify-center gap-2"
+                    className="w-full px-4 py-3 text-white font-semibold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 active:scale-95 rounded-xl duration-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                   >
                     {isLoading ? (
                       <>
@@ -547,18 +531,6 @@ const Login = () => {
 
       {/* Custom Animations */}
       <style jsx>{`
-        @keyframes blob {
-          0%, 100% {
-            transform: translate(0, 0) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-        }
-        
         @keyframes slideDown {
           from {
             opacity: 0;
@@ -568,18 +540,6 @@ const Login = () => {
             opacity: 1;
             transform: translateY(0);
           }
-        }
-
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-
-        .animation-delay-4000 {
-          animation-delay: 4s;
         }
 
         .animate-slideDown {
