@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { IUser } from '@/types/models'
 
 export default function AdminUsers() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [users, setUsers] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [users, setUsers] = useState<IUser[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -33,7 +34,7 @@ export default function AdminUsers() {
     }
   }
 
-  const handleDeleteUser = async (userId, userName, userEmail) => {
+  const handleDeleteUser = async (userId: string, userName: string, userEmail: string) => {
     const confirmed = window.confirm(
       `Are you sure you want to delete user "${userName}" (${userEmail})?\n\nThis action cannot be undone.`
     )
@@ -141,7 +142,7 @@ export default function AdminUsers() {
                   </thead>
                   <tbody className="divide-y divide-gray-700">
                     {users.map((user, index) => (
-                      <tr key={user._id} className="hover:bg-gray-700">
+                      <tr key={user._id.toString()} className="hover:bg-gray-700">
                         <td className="px-6 py-4 text-gray-400">#{index + 1}</td>
                         <td className="px-6 py-4">{user.name || '—'}</td>
                         <td className="px-6 py-4 font-mono text-blue-400">{user.email}</td>
@@ -158,7 +159,7 @@ export default function AdminUsers() {
                         <td className="px-6 py-4">
                           {session?.user?.email !== user.email ? (
                             <button
-                              onClick={() => handleDeleteUser(user._id, user.name, user.email)}
+                              onClick={() => handleDeleteUser(user._id.toString(), user.name, user.email)}
                               className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-sm font-semibold transition-colors"
                             >
                               Delete
