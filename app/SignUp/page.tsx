@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
+import { motion } from 'framer-motion'
 
 const Signup = () => {
   const [name, setName] = useState('')
@@ -83,14 +84,22 @@ const Signup = () => {
 
   return (
     <main className="relative w-full h-screen flex flex-col items-center justify-center px-4">
-      {/* Background Image */}
-      <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{backgroundImage: "url('https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=1920&q=80')"}}></div>
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900/50 to-purple-900/50"></div>
+      {/* Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-pink-900 to-black"></div>
+      <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
+      
+      {/* Animated gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-pink-900/10 via-transparent to-purple-900/10 animate-pulse" style={{animationDuration: '5s'}} />
 
-      <div className="relative z-10 max-w-sm w-full text-gray-400 space-y-8">
+      <motion.div 
+        className="relative z-10 max-w-sm w-full text-gray-400 space-y-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="text-center">
           <div className="mt-5 space-y-2">
-            <h3 className="text-gray-100 text-2xl font-bold sm:text-3xl bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
+            <h3 className="text-gray-100 text-2xl font-bold sm:text-3xl bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               Create your account
             </h3>
             <p className="text-gray-300">
@@ -116,7 +125,7 @@ const Signup = () => {
                 value={name}
                 required
                 onChange={(e) => setName(e.target.value)}
-                className="w-full mt-2 px-3 py-2 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
+                className="w-full mt-2 px-3 py-2 text-white bg-black/40 outline-none border-2 border-pink-500/30 focus:border-pink-500 rounded-xl transition-all"
               />
             </div>
             <div>
@@ -126,7 +135,7 @@ const Signup = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full mt-2 px-3 py-2 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
+                className="w-full mt-2 px-3 py-2 text-white bg-black/40 outline-none border-2 border-pink-500/30 focus:border-pink-500 rounded-xl transition-all"
               />
             </div>
             <div>
@@ -136,7 +145,7 @@ const Signup = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder=" "
-                className="w-full mt-2 px-3 py-2 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
+                className="w-full mt-2 px-3 py-2 text-white bg-black/40 outline-none border-2 border-pink-500/30 focus:border-pink-500 rounded-xl transition-all"
               />
             </div>
             <div>
@@ -148,7 +157,7 @@ const Signup = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="w-full mt-2 px-3 py-2 pr-10 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
+                  className="w-full mt-2 px-3 py-2 pr-10 text-white bg-black/40 outline-none border-2 border-pink-500/30 focus:border-pink-500 rounded-xl transition-all"
                 />
                 <button
                   type="button"
@@ -177,7 +186,7 @@ const Signup = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="w-full mt-2 px-3 py-2 pr-10 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
+                  className="w-full mt-2 px-3 py-2 pr-10 text-white bg-black/40 outline-none border-2 border-pink-500/30 focus:border-pink-500 rounded-xl transition-all"
                 />
                 <button
                   type="button"
@@ -200,7 +209,7 @@ const Signup = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-4 px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full mt-4 px-4 py-2 text-white font-medium bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 active:from-pink-700 active:to-purple-700 rounded-xl duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Creating account...' : 'Sign up'}
             </button>
@@ -255,7 +264,7 @@ const Signup = () => {
             </Link>
           </p>
         </div>
-      </div>
+      </motion.div>
     </main>
   )
 }

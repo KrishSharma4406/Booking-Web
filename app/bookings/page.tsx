@@ -1,20 +1,47 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { calculateBookingPrice, getAreaDisplayName, AREA_PRICING } from '@/lib/pricing'
 import PaymentForm from '@/components/PaymentForm'
+import { motion } from 'framer-motion'
+
+interface Table {
+  _id: string
+  tableNumber: number
+  tableName: string
+  capacity: number
+  location: string
+  features?: string[]
+}
+
+interface Booking {
+  _id: string
+  guestName: string
+  guestEmail: string
+  guestPhone: string
+  numberOfGuests: number
+  bookingDate: string
+  bookingTime: string
+  tableNumber?: number
+  tableArea: string
+  specialRequests?: string
+  status: string
+  paymentStatus?: string
+  paymentAmount?: number
+  createdAt: string
+}
 
 export default function BookingsPage() {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const router = useRouter()
-  const [bookings, setBookings] = useState([])
+  const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [userRole, setUserRole] = useState('user')
-  const [availableTables, setAvailableTables] = useState([])
+  const [availableTables, setAvailableTables] = useState<Table[]>([])
   const [loadingTables, setLoadingTables] = useState(false)
   const [formData, setFormData] = useState({
     guestName: '',
@@ -23,7 +50,7 @@ export default function BookingsPage() {
     numberOfGuests: 2,
     bookingDate: '',
     bookingTime: '',
-    tableNumber: '',
+    tableNumber: '' as string | number,
     tableArea: 'indoor',
     specialRequests: ''
   })
@@ -49,8 +76,8 @@ export default function BookingsPage() {
         const data = await res.json()
         setUserRole(data.role)
       }
-    } catch (error) {
-      console.error('Error fetching user role:', error)
+    } catch (err) {
+      console.error('Error fetching user role:', err)
     }
   }
 
@@ -70,7 +97,7 @@ export default function BookingsPage() {
     }
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     // Calculate price
@@ -105,7 +132,7 @@ export default function BookingsPage() {
     }
   }
 
-  const cancelBooking = async (id) => {
+  const cancelBooking = async (id: string) => {
     if (!confirm('Are you sure you want to cancel this booking?')) return
 
     try {
@@ -126,7 +153,7 @@ export default function BookingsPage() {
     }
   }
 
-  const fetchAvailableTables = async () => {
+  const fetchAvailableTables = useCallback(async () => {
     if (!formData.bookingDate || !formData.bookingTime || !formData.numberOfGuests) {
       setAvailableTables([])
       return
@@ -153,22 +180,22 @@ export default function BookingsPage() {
         toast.error('Failed to fetch available tables')
         setAvailableTables([])
       }
-    } catch (error) {
-      console.error('Error fetching tables:', error)
+    } catch (err) {
+      console.error('Error fetching tables:', err)
       setAvailableTables([])
     } finally {
       setLoadingTables(false)
     }
-  }
+  }, [formData.bookingDate, formData.bookingTime, formData.numberOfGuests])
 
   useEffect(() => {
     if (formData.bookingDate && formData.bookingTime && formData.numberOfGuests) {
       fetchAvailableTables()
     }
-  }, [formData.bookingDate, formData.bookingTime, formData.numberOfGuests])
+  }, [formData.bookingDate, formData.bookingTime, formData.numberOfGuests, fetchAvailableTables])
 
-  const getStatusColor = (status) => {
-    const colors = {
+  const getStatusColor = (status: string) => {
+    const colors: Record<string, string> = {
       pending: 'bg-yellow-500',
       confirmed: 'bg-green-500',
       cancelled: 'bg-red-500',
@@ -179,14 +206,14 @@ export default function BookingsPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen bg-gradient-to-br from-emerald-950 via-black to-teal-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
       </div>
     )
   }
 
   return (
-    <div className="relative min-h-screen bg-gray-900 text-white overflow-hidden">
+    <div className="relative min-h-screen bg-gradient-to-br from-emerald-950 via-black to-teal-950 text-white overflow-hidden pt-16 md:pt-20">
       <ToastContainer position="top-right" theme="dark" />
 
       <div className="relative h-64 md:h-80 mb-8">
@@ -195,8 +222,22 @@ export default function BookingsPage() {
         </div>
         <div className="relative z-10 h-full flex items-end pb-8 px-4 md:px-8">
           <div className="max-w-7xl mx-auto w-full">
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r text-blue-400 bg-clip-text">All Bookings</h1>
-            <p className="text-gray-300 mt-2 text-lg">Manage your restaurant reservations</p>
+            <motion.h1 
+              className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 bg-clip-text text-transparent"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              All Bookings
+            </motion.h1>
+            <motion.p 
+              className="text-gray-300 mt-2 text-lg"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              Manage your restaurant reservations
+            </motion.p>
           </div>
         </div>
       </div>
@@ -266,8 +307,8 @@ export default function BookingsPage() {
               <div className="md:col-span-2">
                 <label className="block mb-3 font-medium text-lg">Select Dining Area *</label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {Object.entries(AREA_PRICING).map(([area, price]) => {
-                    const areaImages = {
+                  {Object.entries(AREA_PRICING).map(([area, price], index) => {
+                    const areaImages: Record<string, string> = {
                       'indoor': 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80',
                       'outdoor': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=80',
                       'private-room': 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&q=80',
@@ -276,7 +317,7 @@ export default function BookingsPage() {
                       'patio': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80'
                     }
                     return (
-                      <div
+                      <motion.div
                         key={area}
                         onClick={() => setFormData({...formData, tableArea: area})}
                         className={`cursor-pointer rounded-lg border-2 overflow-hidden ${
@@ -284,6 +325,10 @@ export default function BookingsPage() {
                             ? 'border-purple-500'
                             : 'border-gray-600 hover:border-gray-500'
                         }`}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                        whileHover={{ scale: 1.05 }}
                       >
                         <div className="relative h-32">
                           <img src={areaImages[area]} alt={getAreaDisplayName(area)} className="w-full h-full object-cover" />
@@ -292,7 +337,7 @@ export default function BookingsPage() {
                           <div className="font-semibold text-sm">{getAreaDisplayName(area)}</div>
                           <div className="text-xs text-purple-400 mt-1">₹{price}/person</div>
                         </div>
-                      </div>
+                      </motion.div>
                     )
                   })}
                 </div>
@@ -366,7 +411,7 @@ export default function BookingsPage() {
                           </div>
                           {table.features && table.features.length > 0 && (
                             <div className="mt-1 flex flex-wrap gap-1 justify-center">
-                              {table.features.slice(0, 2).map(f => (
+                              {table.features.slice(0, 2).map((f: string) => (
                                 <span key={f} className="text-xs bg-gray-600 px-1 rounded">
                                   {f === 'window-view' ? '' :
                                    f === 'romantic' ? '' :
@@ -396,7 +441,7 @@ export default function BookingsPage() {
                 <textarea
                   value={formData.specialRequests}
                   onChange={(e) => setFormData({...formData, specialRequests: e.target.value})}
-                  rows="3"
+                  rows={3}
                   className="w-full px-4 py-2 bg-gray-700 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
                   placeholder="Any dietary restrictions or special occasions?"
                 />
@@ -408,7 +453,7 @@ export default function BookingsPage() {
                     <div>
                       <p className="text-lg font-semibold">Total Price</p>
                       <p className="text-sm text-gray-400">
-                        {formData.numberOfGuests} guests * ₹{AREA_PRICING[formData.tableArea]}/person ({getAreaDisplayName(formData.tableArea)})
+                        {formData.numberOfGuests} guests * ₹{(AREA_PRICING as Record<string, number>)[formData.tableArea]}/person ({getAreaDisplayName(formData.tableArea)})
                       </p>
                     </div>
                     <div className="text-3xl font-bold text-green-400">
@@ -446,7 +491,7 @@ export default function BookingsPage() {
                   guestName: '',
                   guestEmail: '',
                   guestPhone: '',
-                  numberOfGuests: '',
+                  numberOfGuests: 2,
                   bookingDate: '',
                   bookingTime: '',
                   tableNumber: '',

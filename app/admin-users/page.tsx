@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { IUser } from '@/types/models'
+import { motion } from 'framer-motion'
 
 export default function AdminUsers() {
   const { data: session, status } = useSession()
@@ -66,25 +67,30 @@ export default function AdminUsers() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen bg-gradient-to-br from-orange-950 via-black to-red-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="relative min-h-screen bg-gradient-to-br from-orange-950 via-black to-red-950 text-white p-4 md:p-8 pt-20 md:pt-24">
       <div className="relative z-10">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">All Users</h1>
+        <motion.div 
+          className="flex justify-between items-center mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">All Users</h1>
           <Link
             href="/admin-dashboard"
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
           >
             ← Back to Admin
           </Link>
-        </div>
+        </motion.div>
 
         <div className="bg-gray-800 rounded-lg p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">User Storage</h2>

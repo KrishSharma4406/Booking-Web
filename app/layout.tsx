@@ -1,6 +1,5 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import SessionWrapper from "@/components/SessionProvider";
 import { SmoothScroll } from "@/components/SmoothScroll";
 
@@ -14,7 +13,7 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
       <body
@@ -26,7 +25,6 @@ export default function RootLayout({ children }) {
           <div className="min-h-screen relative">
             {children}
           </div>
-          <Footer/>
         </SessionWrapper>
       </body>
     </html>

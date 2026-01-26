@@ -113,7 +113,7 @@ function ResetPasswordForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="w-full mt-2 px-3 py-2 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
+                  className="w-full mt-2 px-3 py-2 text-white bg-black/40 outline-none border-2 border-pink-500/30 focus:border-pink-500 rounded-xl transition-all"
                 />
               </div>
               <div>
@@ -124,13 +124,13 @@ function ResetPasswordForm() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="w-full mt-2 px-3 py-2 text-white bg-slate-900 outline-none border-2 border-blue-800 focus:border-indigo-600 shadow-sm rounded-lg"
+                  className="w-full mt-2 px-3 py-2 text-white bg-black/40 outline-none border-2 border-pink-500/30 focus:border-pink-500 rounded-xl transition-all"
                 />
               </div>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full mt-4 px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full mt-4 px-4 py-2 text-white font-medium bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 rounded-xl duration-150 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {isLoading ? 'Resetting...' : 'Reset Password'}
               </button>

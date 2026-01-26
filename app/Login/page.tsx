@@ -1,10 +1,10 @@
 'use client'
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { Mail, Lock, Eye, EyeOff, Loader } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -12,9 +12,17 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [loginMethod, setLoginMethod] = useState('email')
+  const [phone, setPhone] = useState('')
+  const [otp, setOtp] = useState('')
+  const [otpSent, setOtpSent] = useState(false)
+  const [otpTimer, setOtpTimer] = useState(0)
+  const [success, setSuccess] = useState('')
+  const [devOTP, setDevOTP] = useState('')
+  const [rememberMe, setRememberMe] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (e) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
@@ -86,7 +94,7 @@ const Login = () => {
     }
   }
 
-  const handlePhoneSubmit = async (e) => {
+  const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
@@ -111,7 +119,7 @@ const Login = () => {
     }
   }
 
-  const handleSocialLogin = async (provider) => {
+  const handleSocialLogin = async (provider: string) => {
     try {
       await signIn(provider, { callbackUrl: '/dashboard' })
     } catch (error) {
@@ -123,22 +131,32 @@ const Login = () => {
   return (
     <main className="relative w-full min-h-screen flex flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8 overflow-hidden">
       {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-950 to-gray-900"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-pink-900 to-black"></div>
       <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
       
       {/* Animated gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/10 via-transparent to-purple-900/10 animate-pulse" style={{animationDuration: '5s'}} />
+      <div className="absolute inset-0 bg-gradient-to-tr from-pink-900/10 via-transparent to-purple-900/10 animate-pulse" style={{animationDuration: '5s'}} />
 
       <div className="relative z-10 max-w-md w-full">
         {/* Login Card */}
-        <div className="bg-black/40 backdrop-blur-xl rounded-3xl border border-purple-500/20 p-8 space-y-6">
+        <motion.div 
+          className="bg-black/40 backdrop-blur-xl rounded-3xl border border-pink-500/20 p-8 space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           {/* Header */}
           <div className="text-center space-y-2">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center mb-4">
+            <motion.div 
+              className="mx-auto w-16 h-16 bg-gradient-to-br from-pink-600 to-purple-600 rounded-xl flex items-center justify-center mb-4"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2, type: "spring" }}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-white">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
               </svg>
-            </div>
+            </motion.div>
             <h3 className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-indigo-500 bg-clip-text text-transparent">
               Welcome Back
             </h3>
@@ -505,7 +523,6 @@ const Login = () => {
             <span className="text-sm text-gray-300 group-hover:text-white transition-colors">Github</span>
           </button>
         </div>
-        </div>
 
         {/* Sign Up Link */}
         <div className="text-center pt-6">
@@ -527,6 +544,7 @@ const Login = () => {
           </svg>
           <span>Secured with end-to-end encryption</span>
         </div>
+      </motion.div>
       </div>
 
       {/* Custom Animations */}

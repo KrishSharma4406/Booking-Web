@@ -2,6 +2,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 
 export default function RoleBasedRedirect() {
   const { data: session, status } = useSession()
@@ -43,12 +44,17 @@ export default function RoleBasedRedirect() {
 
   if (checking || status === 'loading') {
     return (
-      <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center text-white">
-        <div className="relative z-10 flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-4"></div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-950 via-black to-cyan-950 flex flex-col items-center justify-center text-white pt-16 md:pt-20">
+        <motion.div 
+          className="relative z-10 flex flex-col items-center"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500 mb-4"></div>
           <p className="text-xl">Checking your account...</p>
           <p className="text-gray-400 mt-2">Please wait while we redirect you</p>
-        </div>
+        </motion.div>
       </div>
     )
   }

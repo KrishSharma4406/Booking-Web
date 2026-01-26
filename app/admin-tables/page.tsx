@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { motion } from 'framer-motion'
 
 export default function AdminTablesPage() {
   const { data: session, status } = useSession()
@@ -141,34 +142,41 @@ export default function AdminTablesPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="relative z-10 animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen bg-gradient-to-br from-orange-950 via-black to-red-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4 md:p-8">
+    <div className="relative min-h-screen bg-gradient-to-br from-orange-950 via-black to-red-950 text-white p-4 md:p-8 pt-20 md:pt-24">
       <div className="relative z-10">
         <ToastContainer position="top-right" theme="dark" />
       
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <motion.div 
+          className="flex justify-between items-center mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <div>
             <h1 className="text-4xl font-bold mb-2">Table Management</h1>
             <p className="text-gray-400">Manage restaurant tables and seating</p>
           </div>
-          <button
+          <motion.button
             onClick={() => {
               setShowForm(true)
               setEditingTable(null)
               resetForm()
             }}
             className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             + Add New Table
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         {/* Table Form Modal */}
         {showForm && (

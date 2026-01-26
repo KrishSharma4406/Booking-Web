@@ -13,7 +13,7 @@ export default function PrivacyPolicy() {
   ]
 
   return (
-    <div className="relative min-h-screen bg-gray-900 text-white">
+    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-black to-gray-900 text-white pt-16 md:pt-20">
       
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-8 md:py-12">
         {/* Back Button - more casual placement */}

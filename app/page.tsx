@@ -4,10 +4,11 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Calendar, Shield, Users, Clock, CheckCircle } from "lucide-react";
+import { ArrowRight, Shield, Users, Clock, CheckCircle } from "lucide-react";
+import Footer from "@/components/Footer";
 
 export default function Home() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,19 +33,6 @@ export default function Home() {
       checkUserRole();
     }
   }, [status]);
-
-  // Auto-redirect based on role
-  const handleGetStarted = () => {
-    if (status === 'authenticated' && userRole) {
-      if (userRole === 'admin') {
-        router.push('/admin-dashboard');
-      } else {
-        router.push('/bookings');
-      }
-    } else {
-      router.push('/Login');
-    }
-  };
 
   return (
     <>
@@ -86,7 +74,7 @@ export default function Home() {
           >
             <h1 className="font-bold text-5xl md:text-7xl lg:text-8xl leading-tight tracking-tight">
               <span className="block bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">Your Table,</span>
-              <span className="block bg-gradient-to-r text-blue-400 bg-clip-text">Reserved Instantly</span>
+              <span className="block bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Reserved Instantly</span>
             </h1>
 
             <motion.div 
@@ -212,15 +200,15 @@ export default function Home() {
           >
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-white">500+</div>
-              <div className="text-sm md:text-base text-gray-400 mt-2 uppercase tracking-widest text-xs">Happy Diners</div>
+              <div className="text-xs md:text-base text-gray-400 mt-2 uppercase tracking-widest">Happy Diners</div>
             </div>
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-white">24/7</div>
-              <div className="text-sm md:text-base text-gray-400 mt-2 uppercase tracking-widest text-xs">Live Booking</div>
+              <div className="text-xs md:text-base text-gray-400 mt-2 uppercase tracking-widest">Live Booking</div>
             </div>
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-white">95%</div>
-              <div className="text-sm md:text-base text-gray-400 mt-2 uppercase tracking-widest text-xs">Satisfaction</div>
+              <div className="text-xs md:text-base text-gray-400 mt-2 uppercase tracking-widest">Satisfaction</div>
             </div>
           </motion.div>
         </div>
@@ -336,6 +324,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+      
+      {/* Footer - Only on Landing Page */}
+      <Footer />
     </>
   )
 }

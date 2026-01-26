@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
@@ -74,47 +75,51 @@ export default function AdminDashboard() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen bg-gradient-to-br from-orange-950 via-black to-red-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
       </div>
     )
   }
 
   return (
-    <div className="relative min-h-screen bg-gray-900 text-white p-4 md:p-8">
+    <div className="relative min-h-screen bg-gradient-to-br from-orange-950 via-black to-red-950 text-white p-4 md:p-8 pt-20 md:pt-24">
       <ToastContainer position="top-right" theme="dark" />
       
       <div className="relative max-w-7xl mx-auto z-10">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Admin Dashboard</h1>
-          <div className="flex gap-2 flex-wrap">
-            <button
+        <motion.div 
+          className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-orange-200 to-white bg-clip-text text-transparent">Admin Dashboard</h1>
+          <div className="flex gap-2 flex-wrap">\n            <button
               onClick={() => setActiveTab('users')}
-              className={`px-6 py-2 rounded-lg font-semibold ${
+              className={`px-6 py-2 rounded-xl font-semibold transition-all ${
                 activeTab === 'users'
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-500'
-                  : 'bg-gray-700 hover:bg-gray-600'
+                  ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white'
+                  : 'bg-white/5 border border-orange-500/30 hover:bg-white/10 text-gray-300'
               }`}
             >
               Users ({users.length})
             </button>
             <button
               onClick={() => setActiveTab('bookings')}
-              className={`px-6 py-2 rounded-lg font-semibold ${
+              className={`px-6 py-2 rounded-xl font-semibold transition-all ${
                 activeTab === 'bookings'
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-500'
-                  : 'bg-gray-700 hover:bg-gray-600'
+                  ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white'
+                  : 'bg-white/5 border border-orange-500/30 hover:bg-white/10 text-gray-300'
               }`}
             >
               Bookings ({bookings.length})
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {activeTab === 'users' && (
           <div className="space-y-6">
-            <div className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 border border-gray-700/50">
-              <h2 className="text-2xl font-bold mb-4 text-blue-400">
+            <div className="glass-card rounded-xl p-6 border border-orange-500/20">
+              <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
                 All Users ({users.length})
               </h2>
               <div className="overflow-x-auto">

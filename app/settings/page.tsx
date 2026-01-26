@@ -1,8 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { ToastContainer, toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'import { motion } from 'framer-motion'import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { motion } from 'framer-motion'
 
@@ -181,14 +180,14 @@ export default function Settings() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-black to-violet-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
       </div>
     )
   }
 
   return (
-    <div className="relative min-h-screen bg-gray-900 text-white p-4 md:p-8">
+    <div className="relative min-h-screen bg-gradient-to-br from-indigo-950 via-black to-violet-950 text-white p-4 md:p-8 pt-20 md:pt-24">
 
       <ToastContainer position="top-right" theme="dark" />
 
@@ -203,7 +202,7 @@ export default function Settings() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent"
+            className="text-4xl font-bold mb-2 bg-gradient-to-r from-indigo-400 via-violet-400 to-indigo-400 bg-clip-text text-transparent"
           >
             Settings
           </motion.h1>
@@ -226,10 +225,10 @@ export default function Settings() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 * index }}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              className={`px-4 py-2 rounded-xl font-semibold transition-all ${
                 activeTab === tab.id
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-500 text-white shadow-lg'
-                  : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white'
+                  : 'bg-white/5 border border-indigo-500/30 text-gray-400 hover:bg-white/10'
               }`}
             >
               <span className="hidden sm:inline">{tab.name}</span>
@@ -244,7 +243,7 @@ export default function Settings() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 mb-8 border border-gray-700/50">
+            <div className="glass-card rounded-xl p-6 mb-8 border border-indigo-500/20">
               <h2 className="text-2xl font-bold mb-6">Profile Information</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
