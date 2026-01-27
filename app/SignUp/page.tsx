@@ -18,7 +18,7 @@ const Signup = () => {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const handleSocialSignup = async (provider) => {
+  const handleSocialSignup = async (provider: string) => {
     try {
       await signIn(provider, { callbackUrl: '/dashboard' })
     } catch (error) {
@@ -27,7 +27,7 @@ const Signup = () => {
     }
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')

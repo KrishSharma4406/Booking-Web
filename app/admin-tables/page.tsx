@@ -3,17 +3,39 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { ToastContainer, toast } from 'react-toastify'
+// @ts-expect-error - CSS import
 import 'react-toastify/dist/ReactToastify.css'
 import { motion } from 'framer-motion'
 
+interface Table {
+  _id: string
+  tableNumber: number
+  tableName: string
+  capacity: number
+  location: string
+  status: string
+  features: string[]
+  isActive: boolean
+}
+
+interface FormData {
+  tableNumber: string | number
+  tableName: string
+  capacity: number
+  location: string
+  status: string
+  features: string[]
+  isActive: boolean
+}
+
 export default function AdminTablesPage() {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const router = useRouter()
-  const [tables, setTables] = useState([])
+  const [tables, setTables] = useState<Table[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [editingTable, setEditingTable] = useState(null)
-  const [formData, setFormData] = useState({
+  const [editingTable, setEditingTable] = useState<Table | null>(null)
+  const [formData, setFormData] = useState<FormData>({
     tableNumber: '',
     tableName: '',
     capacity: 2,
@@ -48,14 +70,14 @@ export default function AdminTablesPage() {
       } else {
         toast.error(data.error || 'Failed to fetch tables')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error loading tables')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     try {
@@ -79,12 +101,12 @@ export default function AdminTablesPage() {
       } else {
         toast.error(data.error || `Failed to ${editingTable ? 'update' : 'create'} table`)
       }
-    } catch (error) {
+    } catch {
       toast.error(`Error ${editingTable ? 'updating' : 'creating'} table`)
     }
   }
 
-  const handleEdit = (table) => {
+  const handleEdit = (table: Table) => {
     setEditingTable(table)
     setFormData({
       tableNumber: table.tableNumber,
@@ -98,7 +120,7 @@ export default function AdminTablesPage() {
     setShowForm(true)
   }
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this table?')) return
 
     try {
@@ -114,7 +136,7 @@ export default function AdminTablesPage() {
       } else {
         toast.error(data.error || 'Failed to delete table')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error deleting table')
     }
   }
@@ -131,7 +153,7 @@ export default function AdminTablesPage() {
     })
   }
 
-  const handleFeatureToggle = (feature) => {
+  const handleFeatureToggle = (feature: string) => {
     setFormData(prev => ({
       ...prev,
       features: prev.features.includes(feature)
@@ -185,7 +207,7 @@ export default function AdminTablesPage() {
               <h2 className="text-2xl font-bold mb-6">
                 {editingTable ? 'Edit Table' : 'Add New Table'}
               </h2>
-              
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
@@ -194,7 +216,7 @@ export default function AdminTablesPage() {
                       type="number"
                       required
                       value={formData.tableNumber}
-                      onChange={(e) => setFormData({...formData, tableNumber: parseInt(e.target.value)})}
+                      onChange={(e) => setFormData({...formData, tableNumber: e.target.value})}
                       className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -233,7 +255,7 @@ export default function AdminTablesPage() {
                     >
                       {locations.map(loc => (
                         <option key={loc} value={loc}>
-                          {loc.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                          {loc.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                         </option>
                       ))}
                     </select>
@@ -280,7 +302,7 @@ export default function AdminTablesPage() {
                           className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                         />
                         <span className="ml-2 text-sm">
-                          {feature.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                          {feature.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                         </span>
                       </label>
                     ))}
@@ -337,15 +359,15 @@ export default function AdminTablesPage() {
                   <span className="text-gray-400">Capacity:</span> {table.capacity} guests
                 </p>
                 <p className="text-sm">
-                  <span className="text-gray-400">Location:</span> {table.location.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                  <span className="text-gray-400">Location:</span> {table.location.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                 </p>
                 {table.features && table.features.length > 0 && (
                   <div className="text-sm">
                     <span className="text-gray-400">Features:</span>
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {table.features.map(feature => (
+                      {table.features.map((feature: string) => (
                         <span key={feature} className="bg-gray-700 px-2 py-1 rounded text-xs">
-                          {feature.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                          {feature.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                         </span>
                       ))}
                     </div>

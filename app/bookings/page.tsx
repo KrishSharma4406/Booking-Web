@@ -2,7 +2,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { ToastContainer, toast } from 'react-toastify'
+// @ts-expect-error - CSS import
 import 'react-toastify/dist/ReactToastify.css'
 import { calculateBookingPrice, getAreaDisplayName, AREA_PRICING } from '@/lib/pricing'
 import PaymentForm from '@/components/PaymentForm'
@@ -90,7 +92,7 @@ export default function BookingsPage() {
       } else {
         toast.error(data.error || 'Failed to fetch bookings')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error loading bookings')
     } finally {
       setLoading(false)
@@ -127,7 +129,7 @@ export default function BookingsPage() {
       } else {
         toast.error(data.error || 'Failed to initialize payment')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error initializing payment')
     }
   }
@@ -148,7 +150,7 @@ export default function BookingsPage() {
       } else {
         toast.error(data.error || 'Failed to cancel booking')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error cancelling booking')
     }
   }
@@ -331,7 +333,7 @@ export default function BookingsPage() {
                         whileHover={{ scale: 1.05 }}
                       >
                         <div className="relative h-32">
-                          <img src={areaImages[area]} alt={getAreaDisplayName(area)} className="w-full h-full object-cover" />
+                          <Image src={areaImages[area]} alt={getAreaDisplayName(area)} className="w-full h-full object-cover" fill sizes="400px" />
                         </div>
                         <div className="p-3 bg-gray-800/80">
                           <div className="font-semibold text-sm">{getAreaDisplayName(area)}</div>
