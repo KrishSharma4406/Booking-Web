@@ -3,6 +3,8 @@ import User from '@/models/User'
 import { generateOTP, sendOTP, validatePhoneNumber } from '@/lib/sms'
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request) {
   try {
     const { phone } = await request.json()

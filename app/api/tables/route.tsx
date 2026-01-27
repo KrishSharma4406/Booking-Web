@@ -4,6 +4,8 @@ import { authOptions } from '../auth/[...nextauth]/route'
 import connectDB from '@/lib/mongodb'
 import Table from '@/models/Table'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req) {
   try {
     await connectDB()

@@ -4,6 +4,8 @@ import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
 import { sendPasswordResetEmail } from '@/lib/email'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(req) {
   try {
     const { email } = await req.json()

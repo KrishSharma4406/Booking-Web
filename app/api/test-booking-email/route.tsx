@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { sendBookingConfirmation } from '@/lib/email'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req) {
   try {
     console.log('Testing booking confirmation email...')

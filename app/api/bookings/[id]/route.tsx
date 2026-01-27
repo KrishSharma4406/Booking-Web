@@ -4,6 +4,8 @@ import connectDB from '@/lib/mongodb'
 import Booking from '@/models/Booking'
 import User from '@/models/User'
 
+export const dynamic = 'force-dynamic'
+
 export async function PATCH(req, { params }) {
   try {
     const session = await getServerSession()

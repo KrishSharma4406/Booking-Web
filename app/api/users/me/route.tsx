@@ -4,6 +4,8 @@ import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
 import Booking from '@/models/Booking'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const session = await getServerSession()

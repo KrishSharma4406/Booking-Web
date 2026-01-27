@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import Razorpay from 'razorpay'
 
+export const dynamic = 'force-dynamic'
+
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_dummy_key',
   key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret'

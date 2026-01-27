@@ -4,6 +4,8 @@ import { authOptions } from '../../auth/[...nextauth]/route'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
 
+export const dynamic = 'force-dynamic'
+
 // POST - Make first user admin or self-promote if no admins exist
 export async function POST(req) {
   try {

@@ -8,6 +8,8 @@ import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { sendBookingConfirmation } from '@/lib/email'
 
+export const dynamic = 'force-dynamic'
+
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_dummy_key',
   key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret'
