@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Calendar, Mail, MapPin } from 'lucide-react'
 
 const Footer = () => {
@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-black font-bold text-lg">B</span>
+                <Image src="/newlogo.png" alt="Logo" width={24} height={24} />
               </div>
               <span className="text-lg font-semibold text-white">Booking Web</span>
             </div>

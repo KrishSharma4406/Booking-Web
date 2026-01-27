@@ -3,18 +3,42 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { ToastContainer, toast } from 'react-toastify'
+// @ts-expect-error - CSS import
 import 'react-toastify/dist/ReactToastify.css'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 
+interface User {
+  _id: string
+  name: string
+  email: string
+  role: string
+  createdAt: string
+}
+
+interface Booking {
+  _id: string
+  guestName: string
+  guestEmail: string
+  guestPhone: string
+  numberOfGuests: number
+  bookingDate: string
+  bookingTime: string
+  tableNumber?: number
+  specialRequests?: string
+  status: string
+  user?: {
+    name: string
+  }
+}
+
 export default function AdminDashboard() {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const router = useRouter()
-  const [users, setUsers] = useState([])
-  const [bookings, setBookings] = useState([])
+  const [users, setUsers] = useState<User[]>([])
+  const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('users')
-  const [tableNumber, setTableNumber] = useState({})
+  const [tableNumber, setTableNumber] = useState<Record<string, number>>({})
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -41,14 +65,14 @@ export default function AdminDashboard() {
         const bookingsData = await bookingsRes.json()
         setBookings(bookingsData.bookings || [])
       }
-    } catch (error) {
+    } catch {
       toast.error('Error loading data')
     } finally {
       setLoading(false)
     }
   }
 
-  const updateBookingStatus = async (bookingId, status, table) => {
+  const updateBookingStatus = async (bookingId: string, status: string, table?: number) => {
     try {
       const res = await fetch(`/api/bookings/${bookingId}`, {
         method: 'PATCH',
@@ -65,7 +89,7 @@ export default function AdminDashboard() {
       } else {
         toast.error(data.error)
       }
-    } catch (error) {
+    } catch {
       toast.error('Error updating booking')
     }
   }
@@ -93,7 +117,8 @@ export default function AdminDashboard() {
           transition={{ duration: 0.5 }}
         >
           <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-orange-200 to-white bg-clip-text text-transparent">Admin Dashboard</h1>
-          <div className="flex gap-2 flex-wrap">\n            <button
+          <div className="flex gap-2 flex-wrap">
+            <button
               onClick={() => setActiveTab('users')}
               className={`px-6 py-2 rounded-xl font-semibold transition-all ${
                 activeTab === 'users'
@@ -118,7 +143,7 @@ export default function AdminDashboard() {
 
         {activeTab === 'users' && (
           <div className="space-y-6">
-            <div className="glass-card rounded-xl p-6 border border-orange-500/20">
+            <div className=" rounded-xl p-6 border border-orange-500/20">
               <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
                 All Users ({users.length})
               </h2>
@@ -200,14 +225,14 @@ export default function AdminDashboard() {
                               onClick={() => updateBookingStatus(booking._id, 'confirmed', tableNumber[booking._id])}
                               className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded font-semibold"
                             >
-                              ✓ Confirm
+                              Confirm
                             </button>
                           </div>
                           <button
                             onClick={() => updateBookingStatus(booking._id, 'cancelled')}
                             className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded font-semibold"
                           >
-                            ✗ Cancel
+                            Cancel
                           </button>
                         </div>
                       </div>
@@ -220,7 +245,7 @@ export default function AdminDashboard() {
             {/* Confirmed Bookings */}
             <div className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 border border-gray-700/50">
               <h2 className="text-2xl font-bold mb-4 text-green-400">
-                ✓ Confirmed Bookings ({confirmedBookings.length})
+                Confirmed Bookings ({confirmedBookings.length})
               </h2>
               <div className="space-y-3">
                 {confirmedBookings.map(booking => (

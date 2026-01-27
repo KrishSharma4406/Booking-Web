@@ -1,14 +1,36 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'import { motion } from 'framer-motion'import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
+import { ToastContainer, toast } from 'react-toastify'
+// @ts-expect-error - CSS import
+import 'react-toastify/dist/ReactToastify.css'
+
+interface UserData {
+  name: string
+  email: string
+  phone?: string
+  role: string
+  createdAt: string
+}
+
+interface Preferences {
+  emailNotifications: boolean
+  smsNotifications: boolean
+  marketingEmails: boolean
+  bookingReminders: boolean
+  newsletter: boolean
+  animationDensity: number
+  language: string
+  timezone: string
+  [key: string]: boolean | number | string
+}
 
 export default function Settings() {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const router = useRouter()
-  const [userData, setUserData] = useState(null)
+  const [userData, setUserData] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -19,7 +41,7 @@ export default function Settings() {
     email: '',
     phone: ''
   })
-  const [preferences, setPreferences] = useState({
+  const [preferences, setPreferences] = useState<Preferences>({
     emailNotifications: true,
     smsNotifications: false,
     marketingEmails: false,
@@ -74,7 +96,7 @@ export default function Settings() {
     }
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
 
@@ -126,7 +148,7 @@ export default function Settings() {
     }
   }
 
-  const handlePreferenceChange = (key, value) => {
+  const handlePreferenceChange = (key: string, value: boolean | number | string) => {
     const newPrefs = { ...preferences, [key]: value }
     setPreferences(newPrefs)
     localStorage.setItem('userPreferences', JSON.stringify(newPrefs))
@@ -134,11 +156,11 @@ export default function Settings() {
   }
 
   // Helper function to format date according to selected timezone
-  const formatDateWithTimezone = (dateString, includeTime = false) => {
+  const formatDateWithTimezone = (dateString: string | undefined, includeTime = false) => {
     if (!dateString) return 'N/A'
     
     const date = new Date(dateString)
-    const options = {
+    const options: Intl.DateTimeFormatOptions = {
       timeZone: preferences.timezone,
       year: 'numeric',
       month: 'long',
@@ -156,7 +178,7 @@ export default function Settings() {
 
   // Get current time in selected timezone
   const getCurrentTimeInTimezone = () => {
-    const options = {
+    const options: Intl.DateTimeFormatOptions = {
       timeZone: preferences.timezone,
       weekday: 'long',
       year: 'numeric',
@@ -342,7 +364,7 @@ export default function Settings() {
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={preferences[pref.key]}
+                      checked={!!preferences[pref.key]}
                       onChange={(e) => handlePreferenceChange(pref.key, e.target.checked)}
                       className="sr-only peer"
                     />

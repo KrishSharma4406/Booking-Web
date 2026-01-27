@@ -79,8 +79,11 @@ const Navbar = () => {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex justify-between items-center h-16 md:h-20'>
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 text-white hover:opacity-90 transition-opacity z-50">
-              <span className="text-lg font-semibold">Booking Web</span>
+            <Link href="/" className="flex items-center gap-3 text-white hover:opacity-90 transition-opacity z-50">
+              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden">
+                <Image src="/newlogo.png" alt="Booking Web Logo" width={32} height={32} className="object-contain" />
+              </div>
+              <span className="text-xl font-bold tracking-tight">Booking Web</span>
             </Link>
 
             {/* Desktop Navigation */}
