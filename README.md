@@ -1,239 +1,368 @@
-# Booking Web - Restaurant Booking System 🍽️
+<div align="center">
 
-A modern, full-featured restaurant table booking system built with Next.js, MongoDB, and NextAuth.
+# 🍽️ Booking Web
 
-## Features ✨
+### Modern Restaurant Table Booking System
 
-- **User Authentication**: Secure signup/login with NextAuth (Email & OAuth)
-- **Admin Approval System**: User approval workflow
-- **Table Management**: Create and manage restaurant tables with features
-- **Smart Booking**: Real-time table availability checking
-- **Admin Dashboard**: Comprehensive admin panel for users, bookings, and tables
-- **User Dashboard**: View and manage personal bookings
-- **Email Notifications**: SendGrid integration for password reset emails
-- **Role-based Access**: Admin and user role management
-- **MongoDB Storage**: Persistent data storage with MongoDB (local or Atlas)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6-green?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38bdf8?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-## Tech Stack 🛠️
+A full-stack restaurant booking platform with real-time table management, secure authentication, and an intuitive admin dashboard. Built with modern web technologies for performance, scalability, and exceptional user experience.
 
-- **Frontend**: Next.js 14 (App Router), React, TailwindCSS
-- **Backend**: Next.js API Routes
-- **Database**: MongoDB with Mongoose ODM
-- **Authentication**: NextAuth.js (Credentials + OAuth)
-- **Email Service**: SendGrid
-- **Notifications**: React Toastify
-- **Styling**: Tailwind CSS with custom gradients
+[Live Demo](#) • [Documentation](#) • [Report Bug](#) • [Request Feature](#)
 
-## Getting Started 🚀
+</div>
+
+---
+
+## ✨ Features
+
+### 🔐 **Authentication & Security**
+- NextAuth.js integration with multiple providers (Credentials, Google, GitHub, Facebook)
+- Secure password hashing with bcrypt
+- Email verification and password reset via SendGrid
+- JWT-based session management
+- Role-based access control (Admin/User)
+- User approval workflow
+
+### 📊 **Admin Dashboard**
+- Comprehensive analytics and statistics
+- User management (approve, reject, delete)
+- Table CRUD operations with real-time updates
+- Booking management and confirmation system
+- Dynamic role assignment
+
+### 🪑 **Smart Table Management**
+- Create tables with customizable properties:
+  - Capacity (1-20 guests)
+  - Location types (Indoor, Outdoor, Private Room, Bar Area, Terrace)
+  - Features (Window View, Romantic, VIP, Wheelchair Accessible, etc.)
+  - Status tracking (Available, Occupied, Reserved, Maintenance)
+- Real-time availability checking
+- Automatic or manual table assignment
+
+### 📅 **Booking System**
+- Intelligent date and time selection
+- Guest count-based filtering
+- Instant availability verification
+- Booking status workflow (Pending → Confirmed → Completed/Cancelled)
+- User booking history and management
+- Email notifications for bookings
+
+### 🎨 **Modern UI/UX**
+- Responsive design for all devices
+- Framer Motion animations for smooth interactions
+- Glass morphism effects and gradient backgrounds
+- Dark mode optimized interface
+- Toast notifications for user feedback
+- Loading states and error handling
+
+---
+
+## Tech Stack
+
+| Category | Technologies |
+|----------|-------------|
+| **Frontend** | Next.js 14 (App Router), TypeScript, React 18, Tailwind CSS, Framer Motion |
+| **Backend** | Next.js API Routes, MongoDB, Mongoose ODM |
+| **Authentication** | NextAuth.js, bcrypt, JWT |
+| **Email Service** | SendGrid API |
+| **UI Components** | React Toastify, Custom Components |
+| **Development** | ESLint, PostCSS, TypeScript |
+
+---
+
+## Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ installed
-- MongoDB (local installation or MongoDB Atlas account)
-- SendGrid account (for email features)
+Before you begin, ensure you have the following installed:
+- **Node.js** 18.x or higher
+- **npm** or **yarn** package manager
+- **MongoDB** (local installation or MongoDB Atlas account)
+- **SendGrid** account (for email features)
 
 ### Installation
 
-1. Clone the repository:
-```bash
-git clone <your-repo-url>
-cd mega
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/booking-web.git
+   cd booking-web
+   ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-3. Configure environment variables:
-   - Copy `.env.example` to `.env.local`
-   - Update the values with your credentials:
+3. **Set up environment variables**
 
-```env
-# MongoDB (choose one)
-MONGODB_URI=mongodb://localhost:27017/bookingweb  # Local
-# OR
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/  # Atlas
+   Create a `.env.local` file in the root directory:
+   ```env
+   # Database
+   MONGODB_URI=mongodb://localhost:27017/bookingweb
+   # For MongoDB Atlas:
+   # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/bookingweb
+   
+   # NextAuth Configuration
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your-secret-key-here-generate-with-openssl-rand-base64-32
+   
+   # SendGrid Email Service
+   SENDGRID_API_KEY=your-sendgrid-api-key
+   EMAIL_FROM=noreply@yourdomain.com
+   EMAIL_FROM_NAME=Booking Web
+   
+   # OAuth Providers (Optional)
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   GITHUB_ID=your-github-client-id
+   GITHUB_SECRET=your-github-client-secret
+   ```
 
-# NextAuth
-NEXTAUTH_URL=http://localhost:3001
-NEXTAUTH_SECRET=your-secret-here  # Generate: openssl rand -base64 32
+4. **Start MongoDB** (if using local installation)
+   ```bash
+   # Windows
+   net start MongoDB
+   
+   # macOS
+   brew services start mongodb-community
+   
+   # Linux
+   sudo systemctl start mongod
+   ```
 
-# SendGrid Email
-SENDGRID_API_KEY=your-sendgrid-api-key
-EMAIL_FROM=your-verified-email@example.com
-EMAIL_FROM_NAME=ReserveTable
+5. **Run the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-# OAuth (Optional)
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-```
+6. **Open your browser**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-4. Start MongoDB (if using local):
-```bash
-net start MongoDB  # Windows
-# or
-brew services start mongodb-community  # Mac
-```
+### 🎯 Initial Setup
 
-5. Run the development server:
-```bash
-npm run dev
-```
+1. **Create an account** - Navigate to `/SignUp` and register
+2. **Become admin** - Visit `/make-admin` (only works when no admin exists)
+3. **Add tables** - Go to `/admin-tables` to create tables
+4. **Start booking** - Users can now book tables at `/bookings`
 
-6. Open [http://localhost:3001](http://localhost:3001) in your browser
-
-### First Time Setup
-
-1. **Create an account** at `/SignUp`
-2. **Become admin** by visiting `/make-admin` (works only if no admin exists)
-3. **Add tables** at `/admin-tables`
-4. **Start booking** at `/bookings`
+---
 
 ## Project Structure
 
 ```
-├── app/
-│   ├── api/                    # API routes
-│   │   ├── auth/              # Authentication endpoints
-│   │   ├── bookings/          # Booking management
-│   │   ├── tables/            # Table management
-│   │   ├── users/             # User management
-│   │   └── admin/             # Admin operations
-│   ├── admin-dashboard/       # Admin dashboard page
-│   ├── admin-users/           # User management page
-│   ├── admin-tables/          # Table management page
-│   ├── bookings/              # User bookings page
-│   ├── dashboard/             # User dashboard
-│   ├── Login/                 # Login page
-│   ├── SignUp/                # Registration page
-│   ├── Forgotpwd/            # Password reset request
-│   ├── reset-password/        # Password reset form
-│   └── make-admin/           # First admin setup
-├── components/                # Reusable components
-│   ├── Navbar.js
-│   ├── Footer.js
-│   └── SessionProvider.js
-├── lib/                       # Utility functions
-│   ├── mongodb.js            # MongoDB connection
-│   ├── email.js              # SendGrid email service
-│   ├── users.js              # User utilities
-│   └── socket.js             # Socket.IO setup
-├── models/                    # Mongoose models
-│   ├── User.js
-│   ├── Booking.js
-│   └── Table.js
-└── public/                    # Static assets
+booking-web/
+├── app/                          # Next.js App Router
+│   ├── api/                      # API Routes
+│   │   ├── auth/                 # Authentication endpoints
+│   │   │   ├── [...nextauth]/    # NextAuth handler
+│   │   │   ├── signup/           # User registration
+│   │   │   ├── forgot-password/  # Password reset request
+│   │   │   ├── reset-password/   # Password reset
+│   │   │   ├── send-otp/         # OTP generation
+│   │   │   └── verify-otp/       # OTP verification
+│   │   ├── bookings/             # Booking management
+│   │   ├── tables/               # Table management
+│   │   ├── users/                # User management
+│   │   ├── payment/              # Payment processing
+│   │   └── admin/                # Admin operations
+│   ├── admin-dashboard/          # Admin dashboard page
+│   ├── admin-users/              # User management UI
+│   ├── admin-tables/             # Table management UI
+│   ├── bookings/                 # User bookings page
+│   ├── dashboard/                # User dashboard
+│   ├── settings/                 # User settings
+│   ├── Login/                    # Login page
+│   ├── SignUp/                   # Registration page
+│   ├── Forgotpwd/                # Forgot password page
+│   ├── reset-password/           # Reset password page
+│   ├── make-admin/               # Admin creation page
+│   ├── portal/                   # Role-based redirect
+│   ├── about/                    # About page
+│   ├── privacy-policy/           # Privacy policy
+│   ├── layout.tsx                # Root layout
+│   ├── page.tsx                  # Home page
+│   └── globals.css               # Global styles
+├── components/                   # Reusable components
+│   ├── Navbar.tsx                # Navigation bar
+│   ├── Footer.tsx                # Footer component
+│   ├── SessionProvider.tsx       # Auth session provider
+│   ├── PaymentForm.tsx           # Payment form
+│   └── SmoothScroll.tsx          # Smooth scroll wrapper
+├── lib/                          # Utility functions
+│   ├── mongodb.ts                # MongoDB connection
+│   ├── email.ts                  # SendGrid email service
+│   ├── users.ts                  # User utilities
+│   ├── pricing.ts                # Pricing calculations
+│   ├── sms.ts                    # SMS service
+│   ├── socket.ts                 # Socket.IO setup
+│   └── useTimezone.ts            # Timezone utilities
+├── models/                       # Mongoose schemas
+│   ├── User.ts                   # User model
+│   ├── Booking.ts                # Booking model
+│   └── Table.ts                  # Table model
+├── types/                        # TypeScript definitions
+│   ├── models.ts                 # Model types
+│   └── next-auth.d.ts            # NextAuth types
+├── public/                       # Static assets
+│   └── newlogo.png               # Application logo
+├── .env.local                    # Environment variables (create this)
+├── next.config.mjs               # Next.js configuration
+├── tailwind.config.js            # Tailwind CSS configuration
+├── tsconfig.json                 # TypeScript configuration
+└── package.json                  # Dependencies
 ```
-
-## Key Features Explained
-
-### Table Management
-- Admins can create tables with properties:
-  - Table number and name
-  - Capacity (1-20 guests)
-  - Location (indoor, outdoor, private-room, etc.)
-  - Features (window-view, romantic, VIP, etc.)
-  - Status tracking (available, occupied, reserved, maintenance)
-
-### Smart Booking System
-- Users select date, time, and number of guests
-- System automatically shows available tables
-- Option to select specific table or auto-assign
-- Real-time availability checking
-- Booking status tracking (pending, confirmed, cancelled, completed)
-
-### Admin Features
-- User approval/rejection workflow
-- Booking management and confirmation
-- Table CRUD operations
-- Dashboard with statistics
-- User role management
-
-## API Routes
-
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/api/auth/signup` | POST | User registration |
-| `/api/auth/forgot-password` | POST | Request password reset |
-| `/api/auth/reset-password` | POST | Reset password |
-| `/api/bookings` | GET, POST | List/create bookings |
-| `/api/bookings/[id]` | PATCH, DELETE | Update/cancel booking |
-| `/api/tables` | GET, POST | List/create tables |
-| `/api/tables/[id]` | PUT, DELETE | Update/delete table |
-| `/api/users` | GET | List users (admin) |
-| `/api/users/approve` | POST | Approve user (admin) |
-| `/api/admin/make-admin` | POST | Create first admin |
-
-## Environment Variables
-
-See `.env.example` for all required environment variables.
-
-## Security Notes ⚠️
-
-- **Never commit `.env.local`** - Contains sensitive credentials
-- All passwords are hashed using bcrypt
-- API routes have authentication middleware
-- Admin routes require admin role verification
-- Email tokens expire after 1 hour
-
-## Deployment
-
-### Vercel (Recommended)
-1. Push to GitHub
-2. Import project in Vercel
-3. Add environment variables
-4. Deploy
-
-### Other Platforms
-- Configure environment variables
-- Ensure MongoDB connection string is accessible
-- Set up SendGrid for email functionality
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a pull request
-
-## License
-
-MIT License - feel free to use this project for learning or commercial purposes.
-
-## Support
-
-For issues or questions, please open an issue on GitHub.
 
 ---
 
-Built with ❤️ using Next.js and MongoDB
-- Set up OAuth providers with real credentials
-- Use strong, unique `NEXTAUTH_SECRET` in production
+## API Reference
 
-## Environment Variables
+### Authentication
 
-Required variables in `.env.local`:
+| Endpoint | Method | Description | Auth Required |
+|----------|--------|-------------|---------------|
+| `/api/auth/signup` | POST | Register new user | No |
+| `/api/auth/[...nextauth]` | POST | Sign in | No |
+| `/api/auth/forgot-password` | POST | Request password reset | No |
+| `/api/auth/reset-password` | POST | Reset password with token | No |
+| `/api/auth/send-otp` | POST | Send OTP for verification | No |
+| `/api/auth/verify-otp` | POST | Verify OTP code | No |
 
-```env
-NEXTAUTH_SECRET=your-secret-key-here
-NEXTAUTH_URL=http://localhost:3001
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-gmail-app-password
-```
+### Bookings
 
-Optional OAuth providers:
-```env
-GITHUB_ID=your-github-id
-GITHUB_SECRET=your-github-secret
-GOOGLE_ID=your-google-id
-GOOGLE_SECRET=your-google-secret
-FACEBOOK_ID=your-facebook-id
-FACEBOOK_SECRET=your-facebook-secret
-```
+| Endpoint | Method | Description | Auth Required |
+|----------|--------|-------------|---------------|
+| `/api/bookings` | GET | List user bookings | Yes |
+| `/api/bookings` | POST | Create new booking | Yes |
+| `/api/bookings/[id]` | PATCH | Update booking | Yes |
+| `/api/bookings/[id]` | DELETE | Cancel booking | Yes |
 
-## License
+### Tables
 
-MIT
+| Endpoint | Method | Description | Auth Required |
+|----------|--------|-------------|---------------|
+| `/api/tables` | GET | List all tables | No |
+| `/api/tables` | POST | Create table | Admin |
+| `/api/tables/[id]` | PUT | Update table | Admin |
+| `/api/tables/[id]` | DELETE | Delete table | Admin |
+
+### Users
+
+| Endpoint | Method | Description | Auth Required |
+|----------|--------|-------------|---------------|
+| `/api/users` | GET | List all users | Admin |
+| `/api/users/me` | GET | Get current user | Yes |
+| `/api/users/approve` | POST | Approve/reject user | Admin |
+
+### Admin
+
+| Endpoint | Method | Description | Auth Required |
+|----------|--------|-------------|---------------|
+| `/api/admin/make-admin` | POST | Create first admin | No* |
+
+*Only works when no admin exists
+
+---
+
+## Key Features Explained
+
+### Table Management System
+Admins have full control over table configurations:
+
+- **Capacity Management**: Support for 1-20 guests per table
+- **Location Categories**: 
+  - Indoor seating
+  - Outdoor patio
+  - Private dining rooms
+  - Bar area
+  - Terrace
+- **Special Features**:
+  - Window views
+  - Romantic ambiance
+  - VIP sections
+  - Wheelchair accessibility
+  - Quiet zones
+- **Status Tracking**: Available, Occupied, Reserved, Under Maintenance
+
+### Intelligent Booking Flow
+
+1. **Selection**: User selects date, time, and guest count
+2. **Availability**: System filters tables by capacity and availability
+3. **Choice**: User can select specific table or let system auto-assign
+4. **Confirmation**: Booking enters pending status
+5. **Admin Review**: Admin confirms or adjusts booking
+6. **Notification**: User receives email confirmation
+7. **Completion**: Booking marked as completed after service
+
+### Admin Dashboard Analytics
+
+- Total users, bookings, and tables
+- Real-time booking status overview
+- Recent activity feed
+- Quick action buttons
+- User approval queue
+- Revenue tracking (if payment integration enabled)
+
+---
+
+## Security Features
+
+- **Password Security**: bcrypt hashing with salt rounds
+- **Session Management**: Secure JWT tokens with HttpOnly cookies
+- **CSRF Protection**: Built-in NextAuth CSRF protection
+- **Input Validation**: Server-side validation on all endpoints
+- **Rate Limiting**: Prevents brute force attacks (recommended to implement)
+- **Role Verification**: Middleware checks for admin routes
+- **Email Verification**: Token-based email confirmation
+- **Secure Headers**: Recommended security headers in production
+
+---
+
+## Configuration
+
+### Customization Options
+
+**Branding**
+- Update logo in `/public/newlogo.png`
+- Modify colors in `tailwind.config.js`
+- Edit site name in `layout.tsx`
+
+**Email Templates**
+- Customize email content in `lib/email.ts`
+- Update SendGrid templates
+
+**Booking Rules**
+- Adjust time slots in booking page
+- Modify capacity limits in table creation
+- Set booking advance notice period
+
+---
+
+## Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. **Commit your changes**
+   ```bash
+   git commit -m 'Add amazing feature'
+   ```
+4. **Push to the branch**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+5. **Open a Pull Request**
+
