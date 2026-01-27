@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 
 export default function MakeAdminPage() {
   const { data: session, status } = useSession()
@@ -41,7 +42,12 @@ export default function MakeAdminPage() {
   if (status === 'loading') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-950 via-black to-red-950 flex items-center justify-center">
-        <div className="relative z-10 animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+        <motion.div 
+          className="relative z-10 animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+        ></motion.div>
       </div>
     )
   }
@@ -53,23 +59,38 @@ export default function MakeAdminPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-950 via-black to-red-950 text-white flex items-center justify-center p-4 pt-24 md:pt-28">
-      <div className="relative z-10 bg-gray-800 rounded-lg p-8 max-w-md w-full border border-gray-700">
-        <div className="text-center mb-6">
+      <motion.div 
+        className="relative z-10 bg-gray-800 rounded-lg p-8 max-w-md w-full border border-gray-700"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <motion.div 
+          className="text-center mb-6"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <div className="text-6xl mb-4">👑</div>
           <h1 className="text-3xl font-bold mb-2">Become Admin</h1>
           <p className="text-gray-400">
             This will make your account an admin account
           </p>
-        </div>
+        </motion.div>
 
-        <div className="bg-gray-700 rounded-lg p-4 mb-6">
+        <motion.div 
+          className="bg-gray-700 rounded-lg p-4 mb-6"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
           <p className="text-sm text-gray-300">
             <strong>Current User:</strong> {session?.user?.name}
           </p>
           <p className="text-sm text-gray-300">
             <strong>Email:</strong> {session?.user?.email}
           </p>
-        </div>
+        </motion.div>
 
         {message && (
           <div className="bg-green-900 border border-green-600 rounded-lg p-4 mb-4">
@@ -83,18 +104,28 @@ export default function MakeAdminPage() {
           </div>
         )}
 
-        <button
+        <motion.button
           onClick={handleMakeAdmin}
           disabled={loading}
           className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 disabled:from-gray-600 disabled:to-gray-700 px-6 py-3 rounded-lg font-semibold transition-all"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
         >
           {loading ? 'Processing...' : 'Make Me Admin'}
-        </button>
+        </motion.button>
 
-        <p className="text-xs text-gray-500 text-center mt-4">
+        <motion.p 
+          className="text-xs text-gray-500 text-center mt-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
+        >
           Note: This only works if no admin exists yet
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
     </div>
   )
 }

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 
 function ResetPasswordForm() {
   const [password, setPassword] = useState('')
@@ -23,7 +24,7 @@ function ResetPasswordForm() {
     }
   }, [searchParams])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
@@ -72,12 +73,17 @@ function ResetPasswordForm() {
     return (
       <>
         <main className="w-full h-screen flex flex-col items-center justify-center px-4 relative z-10">
-        <div className="max-w-sm w-full text-center space-y-4">
+        <motion.div 
+          className="max-w-sm w-full text-center space-y-4"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <h3 className="text-white text-2xl font-bold">Password Reset Successful!</h3>
           <p className="text-gray-400">
             Your password has been reset successfully. Redirecting to login...
           </p>
-        </div>
+        </motion.div>
       </main>
     </>
     )
@@ -85,16 +91,26 @@ function ResetPasswordForm() {
 
   return (
     <>
-      <main className="w-full h-screen flex flex-col items-center justify-center px-4 relative z-10">
+      <motion.main 
+        className="w-full h-screen flex flex-col items-center justify-center px-4 relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
       <div className="max-w-sm w-full text-gray-400 space-y-8">
-        <div className="text-center">
+        <motion.div 
+          className="text-center"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
           <div className="mt-5 space-y-2">
             <h3 className="text-gray-300 text-2xl font-bold sm:text-3xl">
               Reset Your Password
             </h3>
             <p>Enter your new password below</p>
           </div>
-        </div>
+        </motion.div>
 
         {error && (
           <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
@@ -157,7 +173,7 @@ function ResetPasswordForm() {
           </Link>
         </div>
       </div>
-    </main>
+    </motion.main>
     </>
   )
 }

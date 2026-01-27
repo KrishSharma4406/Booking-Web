@@ -148,7 +148,13 @@ export default function AdminUsers() {
                   </thead>
                   <tbody className="divide-y divide-gray-700">
                     {users.map((user, index) => (
-                      <tr key={user._id.toString()} className="hover:bg-gray-700">
+                      <motion.tr
+                        key={user._id.toString()}
+                        className="hover:bg-gray-700 transition-colors"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                      >
                         <td className="px-6 py-4 text-gray-400">#{index + 1}</td>
                         <td className="px-6 py-4">{user.name || '—'}</td>
                         <td className="px-6 py-4 font-mono text-blue-400">{user.email}</td>
@@ -174,7 +180,7 @@ export default function AdminUsers() {
                             <span className="text-gray-500 text-sm">You</span>
                           )}
                         </td>
-                      </tr>
+                      </motion.tr>
                     ))}
                   </tbody>
                 </table>

@@ -86,22 +86,6 @@ const Navbar = () => {
               <span className="text-xl font-bold tracking-tight">Booking Web</span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              {session && (
-                <>
-                  <Link href="/bookings" className="text-sm text-white/80 hover:text-white transition-colors duration-300 font-normal">
-                    Bookings
-                  </Link>
-                  {userRole === 'admin' && (
-                    <Link href="/admin-dashboard" className="text-sm text-white/80 hover:text-white transition-colors duration-300 font-normal">
-                      Admin
-                    </Link>
-                  )}
-                </>
-              )}
-            </div>
-
             {/* Right Side - Desktop */}
             <div className="hidden md:flex items-center gap-4">
               {session ? (
