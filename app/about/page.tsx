@@ -56,8 +56,6 @@ const About = () => {
             that help diners and restaurants connect effortlessly.
           </motion.p>
         </motion.div>
-          </motion.p>
-        </motion.div>
 
         {/* Story Section */}
         <motion.div
