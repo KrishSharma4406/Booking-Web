@@ -160,7 +160,7 @@ export const authOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       // For OAuth providers, sync with database
-      if (account?.provider !== 'credentials') {
+      if (account?.provider !== 'credentials' && account?.provider !== 'phone') {
         try {
           const existingUser = await findUserByEmail(user.email)
 
@@ -175,7 +175,9 @@ export const authOptions = {
           }
         } catch (error) {
           console.error('Error in signIn callback:', error)
-          return false
+          // Allow sign-in to proceed even if database sync fails
+          // User will still get authenticated session
+          return true
         }
       }
       return true

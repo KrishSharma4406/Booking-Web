@@ -121,7 +121,7 @@ const Login = () => {
 
   const handleSocialLogin = async (provider: string) => {
     try {
-      await signIn(provider, { callbackUrl: '/dashboard' })
+      await signIn(provider, { callbackUrl: '/bookings' })
     } catch (error) {
       console.error(`${provider} login error:`, error)
       setError(`Failed to login with ${provider}. Please try again.`)
@@ -129,18 +129,14 @@ const Login = () => {
   }
 
   return (
-    <main className="relative w-full min-h-screen flex flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-pink-900 to-black"></div>
-      <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
-      
-      {/* Animated gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-pink-900/10 via-transparent to-purple-900/10 animate-pulse" style={{animationDuration: '5s'}} />
+    <main className="relative w-full min-h-screen flex flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8 overflow-hidden bg-background">
+      {/* Grid Overlay */}
+      <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(128,128,128,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
 
       <div className="relative z-10 max-w-md w-full">
         {/* Login Card */}
         <motion.div 
-          className="bg-black/40 backdrop-blur-xl rounded-3xl border border-pink-500/20 p-8 space-y-6"
+          className="glass-card p-8 space-y-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -148,25 +144,25 @@ const Login = () => {
           {/* Header */}
           <div className="text-center space-y-2">
             <motion.div 
-              className="mx-auto w-16 h-16 bg-gradient-to-br from-pink-600 to-purple-600 rounded-xl flex items-center justify-center mb-4"
+              className="mx-auto w-16 h-16 bg-card border border-border rounded-xl flex items-center justify-center mb-4"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2, type: "spring" }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-foreground">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
               </svg>
             </motion.div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-indigo-500 bg-clip-text text-transparent">
+            <h3 className="text-3xl font-bold text-foreground">
               Welcome Back
             </h3>
-            <p className="text-gray-400 text-sm">
+            <p className="text-muted text-sm">
               Sign in to continue your journey
             </p>
           </div>
 
           {/* Login Method Tabs */}
-          <div className="flex gap-2 p-1 bg-gray-900/30 rounded-xl border border-purple-500/20">
+          <div className="flex gap-2 p-1 bg-card rounded-xl border border-border">
             <button
               onClick={() => {
                 setLoginMethod('email')
@@ -176,8 +172,8 @@ const Login = () => {
               }}
               className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 loginMethod === 'email'
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50'
+                  ? 'bg-foreground text-background shadow-lg'
+                  : 'text-muted hover:text-foreground hover:bg-card'
               }`}
             >
               <span className="flex items-center justify-center gap-2">
@@ -195,8 +191,8 @@ const Login = () => {
               }}
               className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 loginMethod === 'phone'
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50'
+                  ? 'bg-foreground text-background shadow-lg'
+                  : 'text-muted hover:text-foreground hover:bg-card'
               }`}
             >
               <span className="flex items-center justify-center gap-2">
@@ -234,7 +230,7 @@ const Login = () => {
             <div className="space-y-5">
               {/* Email Input */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                   </svg>
@@ -247,10 +243,10 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     required
-                    className="w-full px-4 py-3 text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 rounded-xl transition-all duration-200 placeholder:text-gray-500"
+                    className="w-full px-4 py-3 text-foreground bg-card outline-none border-2 border-border focus:border-foreground rounded-xl transition-all duration-200 placeholder:text-muted"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-muted">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25" />
                     </svg>
                   </div>
@@ -259,7 +255,7 @@ const Login = () => {
 
               {/* Password Input */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                   </svg>
@@ -272,12 +268,12 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     required
-                    className="w-full px-4 py-3 pr-12 text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 rounded-xl transition-all duration-200 placeholder:text-gray-500"
+                    className="w-full px-4 py-3 pr-12 text-foreground bg-card outline-none border-2 border-border focus:border-foreground rounded-xl transition-all duration-200 placeholder:text-muted"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors focus:outline-none p-1 rounded-lg hover:bg-slate-800/50"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted hover:text-foreground transition-colors focus:outline-none p-1 rounded-lg hover:bg-card"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
@@ -301,13 +297,13 @@ const Login = () => {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-600 bg-slate-900/50 text-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-0 cursor-pointer"
+                    className="w-4 h-4 rounded border-border bg-card text-foreground focus:ring-2 focus:ring-foreground focus:ring-offset-0 cursor-pointer"
                   />
-                  <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">Remember me</span>
+                  <span className="text-sm text-muted group-hover:text-foreground transition-colors">Remember me</span>
                 </label>
                 <Link
                   href="/Forgotpwd"
-                  className="text-sm text-purple-400 hover:text-purple-300 transition-colors font-medium"
+                  className="text-sm text-foreground hover:text-muted transition-colors font-medium"
                 >
                   Forgot password?
                 </Link>
@@ -317,11 +313,11 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full px-4 py-3 text-white font-semibold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 active:scale-95 rounded-xl duration-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-purple-500/30 flex items-center justify-center gap-2"
+                className="w-full px-4 py-3 text-background font-semibold bg-foreground hover:opacity-90 active:scale-95 rounded-xl duration-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
-                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -346,7 +342,7 @@ const Login = () => {
             <div className="space-y-5">
               {/* Phone Input */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
                   </svg>
@@ -360,14 +356,14 @@ const Login = () => {
                     placeholder=" "
                     required
                     disabled={otpSent}
-                    className="flex-1 px-4 py-3 text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-gray-500"
+                    className="flex-1 px-4 py-3 text-foreground bg-card outline-none border-2 border-border focus:border-foreground rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-muted"
                   />
                   {!otpSent ? (
                     <button
                       type="button"
                       onClick={handleSendOTP}
                       disabled={isLoading}
-                      className="px-5 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 rounded-xl transition-all disabled:opacity-50 whitespace-nowrap"
+                      className="px-5 py-3 text-sm font-semibold text-background bg-foreground hover:opacity-90 rounded-xl transition-all disabled:opacity-50 whitespace-nowrap"
                     >
                       Send OTP
                     </button>
@@ -378,7 +374,7 @@ const Login = () => {
                         setOtpSent(false)
                         setOtp('')
                       }}
-                      className="px-5 py-3 text-sm font-semibold text-white bg-slate-600 hover:bg-slate-500 rounded-xl transition-all"
+                      className="px-5 py-3 text-sm font-semibold text-foreground bg-card hover:bg-card/80 rounded-xl transition-all"
                     >
                       Change
                     </button>
@@ -390,7 +386,7 @@ const Login = () => {
                 <>
                   {/* OTP Input */}
                   <div className="space-y-2 animate-slideDown">
-                    <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                    <label className="text-sm font-medium text-foreground flex items-center gap-2">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
                       </svg>
@@ -403,7 +399,7 @@ const Login = () => {
                       placeholder="000000"
                       required
                       maxLength={6}
-                      className="w-full px-4 py-3 text-2xl font-semibold text-white bg-slate-900/50 outline-none border-2 border-slate-700/50 focus:border-purple-500 rounded-xl transition-all duration-200 text-center tracking-[0.5em] placeholder:text-gray-600"
+                      className="w-full px-4 py-3 text-2xl font-semibold text-foreground bg-card outline-none border-2 border-border focus:border-foreground rounded-xl transition-all duration-200 text-center tracking-[0.5em] placeholder:text-muted"
                     />
                     
                     {/* Development Mode OTP Display */}
@@ -455,7 +451,7 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={isLoading || otp.length !== 6}
-                    className="w-full px-4 py-3 text-white font-semibold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 active:scale-95 rounded-xl duration-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                    className="w-full px-4 py-3 text-background font-semibold bg-foreground hover:opacity-90 active:scale-95 rounded-xl duration-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                   >
                     {isLoading ? (
                       <>
@@ -483,10 +479,10 @@ const Login = () => {
         {/* Divider */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-700/50"></div>
+            <div className="w-full border-t border-border"></div>
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="px-2 bg-slate-800/50 text-gray-400">Or continue with</span>
+            <span className="px-2 bg-card text-muted">Or continue with</span>
           </div>
         </div>
 
@@ -495,7 +491,7 @@ const Login = () => {
           <button
             type="button"
             onClick={() => handleSocialLogin('google')}
-            className="flex items-center justify-center gap-3 py-3 border border-slate-700/50 rounded-xl hover:bg-slate-700/30 duration-200 active:scale-95 transition-all group"
+            className="flex items-center justify-center gap-3 py-3 border border-border rounded-xl hover:bg-card duration-200 active:scale-95 transition-all group"
           >
             <Image
               src="http://pluspng.com/img-png/google-logo-png-open-2000.png"
@@ -505,12 +501,12 @@ const Login = () => {
               className="w-5 h-5"
               unoptimized
             />
-            <span className="text-sm text-gray-300 group-hover:text-white transition-colors">Google</span>
+            <span className="text-sm text-muted group-hover:text-foreground transition-colors">Google</span>
           </button>
           <button
             type="button"
             onClick={() => handleSocialLogin('github')}
-            className="flex items-center justify-center gap-3 py-3 border border-slate-700/50 rounded-xl hover:bg-slate-700/30 duration-200 active:scale-95 transition-all group"
+            className="flex items-center justify-center gap-3 py-3 border border-border rounded-xl hover:bg-card duration-200 active:scale-95 transition-all group"
           >
             <Image
               src="https://raw.githubusercontent.com/sidiDev/remote-assets/0d3b55a09c6bb8155ca19f43283dc6d88ff88bf5/github-icon.svg"
@@ -520,17 +516,17 @@ const Login = () => {
               className="w-5 h-5"
               unoptimized
             />
-            <span className="text-sm text-gray-300 group-hover:text-white transition-colors">Github</span>
+            <span className="text-sm text-muted group-hover:text-foreground transition-colors">Github</span>
           </button>
         </div>
 
         {/* Sign Up Link */}
         <div className="text-center pt-6">
-          <p className="text-gray-400 text-sm">
+          <p className="text-muted text-sm">
             Don&apos;t have an account?{' '}
             <Link
               href="/SignUp"
-              className="text-purple-400 hover:text-purple-300 font-semibold transition-colors"
+              className="text-foreground hover:text-muted font-semibold transition-colors"
             >
               Sign up for free
             </Link>
@@ -538,7 +534,7 @@ const Login = () => {
         </div>
 
         {/* Security Badge */}
-        <div className="mt-8 flex items-center justify-center gap-2 text-xs text-gray-500">
+        <div className="mt-8 flex items-center justify-center gap-2 text-xs text-muted">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
           </svg>

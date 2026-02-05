@@ -35,11 +35,17 @@ export default function Settings() {
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [activeTab, setActiveTab] = useState('profile')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: ''
+  })
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
   })
   const [preferences, setPreferences] = useState<Preferences>({
     emailNotifications: true,
@@ -155,6 +161,77 @@ export default function Settings() {
     toast.success('Preference updated')
   }
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error('New passwords do not match')
+      return
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters')
+      return
+    }
+
+    setSaving(true)
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        })
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        toast.success('Password changed successfully!')
+        setShowPasswordModal(false)
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
+      } else {
+        toast.error(data.error || 'Failed to change password')
+      }
+    } catch (error) {
+      console.error('Error changing password:', error)
+      toast.error('Error changing password')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleEnable2FA = () => {
+    toast.info('Two-factor authentication will be available soon!')
+  }
+
+  const handleRequestData = async () => {
+    try {
+      toast.info('Preparing your data export...')
+      const res = await fetch('/api/users/me')
+      if (res.ok) {
+        const userData = await res.json()
+        const dataStr = JSON.stringify(userData, null, 2)
+        const dataBlob = new Blob([dataStr], { type: 'application/json' })
+        const url = URL.createObjectURL(dataBlob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `my-data-${new Date().toISOString().split('T')[0]}.json`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+        toast.success('Data downloaded successfully!')
+      } else {
+        toast.error('Failed to fetch data')
+      }
+    } catch (error) {
+      console.error('Error downloading data:', error)
+      toast.error('Error downloading data')
+    }
+  }
+
   // Helper function to format date according to selected timezone
   const formatDateWithTimezone = (dateString: string | undefined, includeTime = false) => {
     if (!dateString) return 'N/A'
@@ -202,14 +279,14 @@ export default function Settings() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-black to-violet-950 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-foreground"></div>
       </div>
     )
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-indigo-950 via-black to-violet-950 text-white p-4 md:p-8 pt-20 md:pt-24">
+    <div className="relative min-h-screen bg-background text-foreground p-4 md:p-8 pt-20 md:pt-24">
 
       <ToastContainer position="top-right" theme="dark" />
 
@@ -224,7 +301,7 @@ export default function Settings() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl font-bold mb-2 bg-gradient-to-r from-indigo-400 via-violet-400 to-indigo-400 bg-clip-text text-transparent"
+            className="text-4xl font-bold mb-2 text-foreground"
           >
             Settings
           </motion.h1>
@@ -232,7 +309,7 @@ export default function Settings() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-gray-400"
+            className="text-muted"
           >
             Manage your account settings and preferences
           </motion.p>
@@ -249,8 +326,8 @@ export default function Settings() {
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 rounded-xl font-semibold transition-all ${
                 activeTab === tab.id
-                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white'
-                  : 'bg-white/5 border border-indigo-500/30 text-gray-400 hover:bg-white/10'
+                  ? 'bg-foreground text-background'
+                  : 'bg-card border-2 border-border text-muted hover:border-foreground'
               }`}
             >
               <span className="hidden sm:inline">{tab.name}</span>
@@ -265,38 +342,38 @@ export default function Settings() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="glass-card rounded-xl p-6 mb-8 border border-indigo-500/20">
-              <h2 className="text-2xl font-bold mb-6">Profile Information</h2>
+            <div className="glass-card p-6 mb-8">
+              <h2 className="text-2xl font-bold mb-6 text-foreground">Profile Information</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Name</label>
+                  <label className="block text-sm font-medium mb-2 text-foreground">Name</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-card border-2 border-border rounded-xl px-4 py-2 focus:outline-none focus:border-foreground text-foreground transition-all"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <label className="block text-sm font-medium mb-2 text-foreground">Email</label>
                   <input
                     type="email"
                     value={formData.email}
-                    className="w-full bg-gray-600 border border-gray-600 rounded-lg px-4 py-2 cursor-not-allowed"
+                    className="w-full bg-card/50 border-2 border-border rounded-xl px-4 py-2 cursor-not-allowed text-muted"
                     disabled
                   />
-                  <p className="text-xs text-gray-400 mt-1">Email cannot be changed</p>
+                  <p className="text-xs text-muted mt-1">Email cannot be changed</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Phone (Optional)</label>
+                  <label className="block text-sm font-medium mb-2 text-foreground">Phone (Optional)</label>
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-card border-2 border-border rounded-xl px-4 py-2 focus:outline-none focus:border-foreground text-foreground transition-all"
                     placeholder="Enter your phone number"
                   />
                 </div>
@@ -305,7 +382,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="bg-gradient-to-br from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 disabled:from-gray-600 disabled:to-gray-600 text-white px-6 py-2 rounded-lg font-semibold transition-all"
+                    className="bg-foreground text-background hover:opacity-90 disabled:opacity-50 px-6 py-2 rounded-xl font-semibold transition-all"
                   >
                     {saving ? 'Saving...' : 'Save Changes'}
                   </button>
@@ -313,25 +390,25 @@ export default function Settings() {
               </form>
             </div>
 
-            <div className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 border border-gray-700/50">
-              <h2 className="text-2xl font-bold mb-4">Account Information</h2>
+            <div className="glass-card p-6">
+              <h2 className="text-2xl font-bold mb-4 text-foreground">Account Information</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <div className="text-gray-400 text-sm mb-1">Role</div>
+                  <div className="text-muted text-sm mb-1">Role</div>
                   <div>
                     <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      userData?.role === 'admin' ? 'bg-purple-600' : 'bg-blue-600'
+                      userData?.role === 'admin' ? 'bg-foreground text-background' : 'bg-foreground/20 text-foreground border border-border'
                     }`}>
                       {userData?.role || 'user'}
                     </span>
                   </div>
                 </div>
                 <div>
-                  <div className="text-gray-400 text-sm mb-1">Member Since</div>
-                  <div className="font-semibold">
+                  <div className="text-muted text-sm mb-1">Member Since</div>
+                  <div className="font-semibold text-foreground">
                     {formatDateWithTimezone(userData?.createdAt)}
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-muted mt-1">
                     {preferences.timezone}
                   </div>
                 </div>
@@ -345,9 +422,9 @@ export default function Settings() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 border border-gray-700/50"
+            className="glass-card p-6"
           >
-            <h2 className="text-2xl font-bold mb-6">Notification Preferences</h2>
+            <h2 className="text-2xl font-bold mb-6 text-foreground">Notification Preferences</h2>
             <div className="space-y-4">
               {[
                 { key: 'emailNotifications', label: 'Email Notifications', description: 'Receive email updates about your account' },
@@ -356,10 +433,10 @@ export default function Settings() {
                 { key: 'marketingEmails', label: 'Marketing Emails', description: 'Promotional offers and updates' },
                 { key: 'newsletter', label: 'Newsletter', description: 'Monthly newsletter with tips and news' }
               ].map((pref) => (
-                <div key={pref.key} className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
+                <div key={pref.key} className="flex items-center justify-between p-4 bg-card border border-border rounded-xl">
                   <div>
-                    <div className="font-semibold">{pref.label}</div>
-                    <div className="text-sm text-gray-400">{pref.description}</div>
+                    <div className="font-semibold text-foreground">{pref.label}</div>
+                    <div className="text-sm text-muted">{pref.description}</div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
@@ -368,7 +445,7 @@ export default function Settings() {
                       onChange={(e) => handlePreferenceChange(pref.key, e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-foreground/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-foreground"></div>
                   </label>
                 </div>
               ))}
@@ -381,12 +458,12 @@ export default function Settings() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 border border-gray-700/50"
+            className="glass-card p-6"
           >
-            <h2 className="text-2xl font-bold mb-6">Appearance Settings</h2>
+            <h2 className="text-2xl font-bold mb-6 text-foreground">Appearance Settings</h2>
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Animation Density</label>
+                <label className="block text-sm font-medium mb-2 text-foreground">Animation Density</label>
                 <input
                   type="range"
                   min="0"
@@ -394,9 +471,9 @@ export default function Settings() {
                   step="0.1"
                   value={preferences.animationDensity}
                   onChange={(e) => handlePreferenceChange('animationDensity', parseFloat(e.target.value))}
-                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  className="w-full h-2 bg-card border border-border rounded-xl appearance-none cursor-pointer accent-foreground"
                 />
-                <div className="flex justify-between text-xs text-gray-400 mt-1">
+                <div className="flex justify-between text-xs text-muted mt-1">
                   <span>Minimal</span>
                   <span>Normal</span>
                   <span>Maximum</span>
@@ -404,11 +481,11 @@ export default function Settings() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Language</label>
+                <label className="block text-sm font-medium mb-2 text-foreground">Language</label>
                 <select
                   value={preferences.language}
                   onChange={(e) => handlePreferenceChange('language', e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-card border-2 border-border rounded-xl px-4 py-2 focus:outline-none focus:border-foreground text-foreground transition-all"
                 >
                   <option value="en">English</option>
                   <option value="es">Español</option>
@@ -419,11 +496,11 @@ export default function Settings() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Timezone</label>
+                <label className="block text-sm font-medium mb-2 text-foreground">Timezone</label>
                 <select
                   value={preferences.timezone}
                   onChange={(e) => handlePreferenceChange('timezone', e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-card border-2 border-border rounded-xl px-4 py-2 focus:outline-none focus:border-foreground text-foreground transition-all"
                 >
                   <option value="UTC">UTC (Coordinated Universal Time)</option>
                   <option value="America/New_York">Eastern Time (ET)</option>
@@ -435,9 +512,9 @@ export default function Settings() {
                   <option value="Asia/Tokyo">Tokyo (JST)</option>
                   <option value="Asia/Kolkata">India (IST)</option>
                 </select>
-                <div className="mt-3 p-3 bg-gray-700/30 rounded-lg">
-                  <div className="text-xs text-gray-400 mb-1">Current time in selected timezone:</div>
-                  <div className="text-sm font-semibold text-blue-400">
+                <div className="mt-3 p-3 bg-card border border-border rounded-xl">
+                  <div className="text-xs text-muted mb-1">Current time in selected timezone:</div>
+                  <div className="text-sm font-semibold text-foreground">
                     {getCurrentTimeInTimezone()}
                   </div>
                 </div>
@@ -452,40 +529,49 @@ export default function Settings() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 border border-gray-700/50"
+            className="glass-card p-6"
           >
-            <h2 className="text-2xl font-bold mb-6">Privacy & Security</h2>
+            <h2 className="text-2xl font-bold mb-6 text-foreground">Privacy & Security</h2>
             <div className="space-y-6">
-              <div className="p-4 bg-gray-700/30 rounded-lg">
-                <h3 className="font-semibold mb-2">Password</h3>
-                <p className="text-sm text-gray-400 mb-3">Change your password regularly to keep your account secure</p>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+              <div className="p-4 bg-card border border-border rounded-xl">
+                <h3 className="font-semibold mb-2 text-foreground">Password</h3>
+                <p className="text-sm text-muted mb-3">Change your password regularly to keep your account secure</p>
+                <button 
+                  onClick={() => setShowPasswordModal(true)}
+                  className="bg-foreground text-background hover:opacity-90 px-4 py-2 rounded-xl font-semibold transition-all"
+                >
                   Change Password
                 </button>
               </div>
 
-              <div className="p-4 bg-gray-700/30 rounded-lg">
-                <h3 className="font-semibold mb-2">Two-Factor Authentication</h3>
-                <p className="text-sm text-gray-400 mb-3">Add an extra layer of security to your account</p>
-                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+              <div className="p-4 bg-card border border-border rounded-xl">
+                <h3 className="font-semibold mb-2 text-foreground">Two-Factor Authentication</h3>
+                <p className="text-sm text-muted mb-3">Add an extra layer of security to your account</p>
+                <button 
+                  onClick={handleEnable2FA}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl font-semibold transition-colors"
+                >
                   Enable 2FA
                 </button>
               </div>
 
-              <div className="p-4 bg-gray-700/30 rounded-lg">
-                <h3 className="font-semibold mb-2">Data Download</h3>
-                <p className="text-sm text-gray-400 mb-3">Download a copy of your data</p>
-                <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+              <div className="p-4 bg-card border border-border rounded-xl">
+                <h3 className="font-semibold mb-2 text-foreground">Data Download</h3>
+                <p className="text-sm text-muted mb-3">Download a copy of your data</p>
+                <button 
+                  onClick={handleRequestData}
+                  className="bg-foreground text-background hover:opacity-90 px-4 py-2 rounded-xl font-semibold transition-all"
+                >
                   Request Data
                 </button>
               </div>
 
-              <div className="p-4 bg-gray-700/30 rounded-lg">
-                <h3 className="font-semibold mb-2">Privacy Policy</h3>
-                <p className="text-sm text-gray-400 mb-3">Review how we handle your data</p>
+              <div className="p-4 bg-card border border-border rounded-xl">
+                <h3 className="font-semibold mb-2 text-foreground">Privacy Policy</h3>
+                <p className="text-sm text-muted mb-3">Review how we handle your data</p>
                 <button
                   onClick={() => router.push('/privacy-policy')}
-                  className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                  className="text-foreground hover:opacity-70 font-semibold transition-all"
                 >
                   Read Privacy Policy →
                 </button>
@@ -500,14 +586,15 @@ export default function Settings() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-gray-800/30 backdrop-blur-md rounded-lg p-6 border border-red-900/50"
+            className="glass-card p-6 border-2 border-red-600/50"
           >
-            <p className="text-gray-400 mb-4">
+            <h2 className="text-2xl font-bold mb-4 text-red-500">Danger Zone</h2>
+            <p className="text-muted mb-4">
               Once you delete your account, there is no going back. Please be certain.
             </p>
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-xl font-semibold transition-colors"
             >
               Delete Account Permanently
             </button>
@@ -521,15 +608,17 @@ export default function Settings() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowDeleteConfirm(false)}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", duration: 0.3 }}
-            className="bg-gray-800/90 backdrop-blur-md rounded-lg p-6 max-w-md w-full border border-red-900"
+            className="glass-card p-6 max-w-md w-full border-2 border-red-600"
+            onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-2xl font-bold mb-4 text-red-400">Confirm Account Deletion</h3>
-            <p className="text-gray-300 mb-6">
+            <p className="text-foreground mb-6">
               Are you absolutely sure you want to delete your account? This action cannot be undone.
               All your bookings and data will be permanently deleted.
             </p>
@@ -537,18 +626,93 @@ export default function Settings() {
               <button
                 onClick={handleDeleteAccount}
                 disabled={deleting}
-                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white px-4 py-2 rounded-xl font-semibold transition-colors"
               >
                 {deleting ? 'Deleting...' : 'Yes, Delete My Account'}
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={deleting}
-                className="flex-1 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                className="flex-1 bg-card border-2 border-border hover:border-foreground disabled:opacity-50 text-foreground px-4 py-2 rounded-xl font-semibold transition-all"
               >
                 Cancel
               </button>
             </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Change Password Modal */}
+      {showPasswordModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowPasswordModal(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", duration: 0.3 }}
+            className="glass-card p-6 max-w-md w-full border border-accent/20"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-2xl font-bold mb-4 text-foreground">Change Password</h3>
+            <form onSubmit={handleChangePassword} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">Current Password</label>
+                <input
+                  type="password"
+                  value={passwordData.currentPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                  className="w-full bg-card border-2 border-border rounded-xl px-4 py-2 focus:outline-none focus:border-accent text-foreground transition-all"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">New Password</label>
+                <input
+                  type="password"
+                  value={passwordData.newPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                  className="w-full bg-card border-2 border-border rounded-xl px-4 py-2 focus:outline-none focus:border-accent text-foreground transition-all"
+                  required
+                  minLength={6}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">Confirm New Password</label>
+                <input
+                  type="password"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                  className="w-full bg-card border-2 border-border rounded-xl px-4 py-2 focus:outline-none focus:border-accent text-foreground transition-all"
+                  required
+                  minLength={6}
+                />
+              </div>
+              <div className="flex gap-4 mt-6">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 disabled:opacity-50 text-white px-4 py-2 rounded-xl font-semibold transition-all"
+                >
+                  {saving ? 'Changing...' : 'Change Password'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPasswordModal(false)
+                    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
+                  }}
+                  disabled={saving}
+                  className="flex-1 bg-card border-2 border-border hover:border-foreground disabled:opacity-50 text-foreground px-4 py-2 rounded-xl font-semibold transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </motion.div>
         </motion.div>
       )}

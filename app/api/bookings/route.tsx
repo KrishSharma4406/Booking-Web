@@ -158,44 +158,17 @@ export async function POST(req) {
       paymentId: razorpayPaymentId,
       paymentStatus: 'paid',
       paymentMethod: 'razorpay',
-      status: 'confirmed',
+      status: 'pending', // Set to pending for admin approval
     })
 
     await booking.populate('user', 'name email')
 
-    // Send confirmation email with PDF receipt
-    try {
-      console.log('📧 Preparing to send booking confirmation email to:', guestEmail)
-      const emailResult = await sendBookingConfirmation({
-        guestName,
-        guestEmail,
-        guestPhone,
-        numberOfGuests,
-        bookingDate,
-        bookingTime,
-        specialRequests,
-        tableNumber,
-        tableArea: tableArea || 'indoor',
-        paymentAmount,
-        paymentId: razorpayPaymentId,
-        paymentStatus: 'paid',
-        paymentMethod: 'razorpay'
-      })
-      
-      if (emailResult.success) {
-        console.log('✅ Confirmation email sent successfully! Message ID:', emailResult.messageId)
-      } else {
-        console.error('❌ Email failed to send:', emailResult.error)
-      }
-    } catch (emailError) {
-      console.error('❌ Failed to send confirmation email:', emailError)
-      console.error('Error details:', emailError.message)
-      // Don't fail the booking if email fails
-    }
+    // Email will be sent by admin when booking is confirmed
+    console.log('✅ Booking created successfully with pending status. Awaiting admin approval.')
 
     return NextResponse.json({ 
       booking, 
-      message: 'Booking created successfully! Payment confirmed. Confirmation email sent.' 
+      message: 'Booking created successfully! Payment confirmed. Awaiting admin approval.' 
     }, { status: 201 })
   } catch (error) {
     console.error('Error creating booking:', error)

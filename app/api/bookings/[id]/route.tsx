@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import connectDB from '@/lib/mongodb'
 import Booking from '@/models/Booking'
 import User from '@/models/User'
+import { sendBookingConfirmation } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,6 +44,27 @@ export async function PATCH(req, { params }) {
 
     if (!booking) {
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
+    }
+
+    // Send confirmation email when booking is confirmed
+    if (status === 'confirmed') {
+      try {
+        await sendBookingConfirmation({
+          guestName: booking.guestName,
+          guestEmail: booking.guestEmail,
+          guestPhone: booking.guestPhone,
+          numberOfGuests: booking.numberOfGuests,
+          bookingDate: booking.bookingDate,
+          bookingTime: booking.bookingTime,
+          tableNumber: booking.tableNumber,
+          specialRequests: booking.specialRequests,
+          status: booking.status
+        })
+        console.log('✅ Confirmation email sent to:', booking.guestEmail)
+      } catch (emailError) {
+        console.error('❌ Failed to send confirmation email:', emailError)
+        // Don't fail the request if email fails
+      }
     }
 
     return NextResponse.json({ booking, message: 'Booking updated successfully!' }, { status: 200 })

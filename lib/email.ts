@@ -1,6 +1,12 @@
 import nodemailer from 'nodemailer'
 import PDFDocument from 'pdfkit'
 
+// Validate email configuration on module load
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+  console.warn('⚠️ Email configuration missing! Set EMAIL_USER and EMAIL_PASSWORD in .env file')
+  console.warn('⚠️ Emails will not be sent until configuration is complete')
+}
+
 // Create transporter with explicit port configuration
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -238,9 +244,19 @@ export function generateReceiptPDF(bookingData) {
 // Send booking confirmation email with PDF receipt
 export async function sendBookingConfirmation(bookingData) {
   try {
-    console.log('Generating PDF receipt...')
+    // Check if email is configured
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      console.error('❌ Email not configured! Please set EMAIL_USER and EMAIL_PASSWORD in .env file')
+      return { 
+        success: false, 
+        error: 'Email service not configured. Please contact administrator.' 
+      }
+    }
+
+    console.log('📧 Starting email send process...')
+    console.log('📧 Generating PDF receipt...')
     const pdfBuffer = await generateReceiptPDF(bookingData)
-    console.log('PDF generated successfully, size:', pdfBuffer.length, 'bytes')
+    console.log('✅ PDF generated successfully, size:', pdfBuffer.length, 'bytes')
 
     const mailOptions = {
       from: `"${process.env.EMAIL_FROM_NAME || 'Booking App'}" <${process.env.EMAIL_USER}>`,

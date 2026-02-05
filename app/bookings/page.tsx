@@ -3,12 +3,30 @@ import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import Link from 'next/link'
 import { ToastContainer, toast } from 'react-toastify'
 // @ts-expect-error - CSS import
 import 'react-toastify/dist/ReactToastify.css'
 import { calculateBookingPrice, getAreaDisplayName, AREA_PRICING } from '@/lib/pricing'
 import PaymentForm from '@/components/PaymentForm'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  Calendar, 
+  Clock, 
+  Users as UsersIcon, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  FileText, 
+  CreditCard, 
+  Plus, 
+  X,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Table as TableIcon,
+  ArrowLeft
+} from 'lucide-react'
 
 interface Table {
   _id: string
@@ -208,93 +226,174 @@ export default function BookingsPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-950 via-black to-teal-950 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <motion.div 
+          className="rounded-full h-12 w-12 border-t-2 border-b-2 border-foreground"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        />
       </div>
     )
   }
 
+  const pendingCount = bookings.filter(b => b.status === 'pending').length
+  const confirmedCount = bookings.filter(b => b.status === 'confirmed').length
+  const completedCount = bookings.filter(b => b.status === 'completed').length
+
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-emerald-950 via-black to-teal-950 text-white overflow-hidden pt-16 md:pt-20">
+    <div className="relative min-h-screen bg-background text-foreground p-4 md:p-8 pt-20 md:pt-24">
       <ToastContainer position="top-right" theme="dark" />
 
-      <div className="relative h-64 md:h-80 mb-8">
-        <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1920&q=80')"}}>
-          <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/80 to-gray-900"></div>
-        </div>
-        <div className="relative z-10 h-full flex items-end pb-8 px-4 md:px-8">
-          <div className="max-w-7xl mx-auto w-full">
-            <motion.h1 
-              className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 bg-clip-text text-transparent"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              All Bookings
-            </motion.h1>
-            <motion.p 
-              className="text-gray-300 mt-2 text-lg"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              Manage your restaurant reservations
-            </motion.p>
+      <div className="relative max-w-7xl mx-auto z-10">
+        {/* Header */}
+        <motion.div 
+          className="mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 text-foreground flex items-center gap-3">
+                <Calendar className="w-8 h-8" />
+                My Bookings
+              </h1>
+              <p className="text-muted">View and manage your table reservations</p>
+            </div>
+            <div className="flex gap-3">
+              <Link
+                href="/dashboard"
+                className="px-6 py-3 bg-card border border-border text-foreground rounded-xl hover:bg-card/80 transition-all flex items-center gap-2 font-semibold"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Dashboard
+              </Link>
+              {userRole !== 'admin' && (
+                <motion.button
+                  onClick={() => setShowForm(!showForm)}
+                  className="bg-foreground text-background px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 hover:opacity-90"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {showForm ? <><X className="w-5 h-5" /> Cancel</> : <><Plus className="w-5 h-5" /> New Booking</>}
+                </motion.button>
+              )}
+            </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 pb-8">
-        {userRole !== 'admin' && (
-          <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
-            <button
-              onClick={() => setShowForm(!showForm)}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 rounded-lg font-semibold"
-            >
-              {showForm ? 'Cancel' : 'New Booking'}
-            </button>
+        {/* Stats Cards */}
+        <motion.div 
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <div className="glass-card p-6 rounded-2xl">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-3 bg-blue-500/20 rounded-xl">
+                <Calendar className="w-6 h-6 text-blue-500" />
+              </div>
+              <div>
+                <p className="text-sm text-muted">Total</p>
+                <p className="text-2xl font-bold text-foreground">{bookings.length}</p>
+              </div>
+            </div>
           </div>
-        )}
 
+          <div className="glass-card p-6 rounded-2xl">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-3 bg-yellow-500/20 rounded-xl">
+                <AlertCircle className="w-6 h-6 text-yellow-500" />
+              </div>
+              <div>
+                <p className="text-sm text-muted">Pending</p>
+                <p className="text-2xl font-bold text-foreground">{pendingCount}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-card p-6 rounded-2xl">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-3 bg-green-500/20 rounded-xl">
+                <CheckCircle className="w-6 h-6 text-green-500" />
+              </div>
+              <div>
+                <p className="text-sm text-muted">Confirmed</p>
+                <p className="text-2xl font-bold text-foreground">{confirmedCount}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-card p-6 rounded-2xl">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-3 bg-purple-500/20 rounded-xl">
+                <CheckCircle className="w-6 h-6 text-purple-500" />
+              </div>
+              <div>
+                <p className="text-sm text-muted">Completed</p>
+                <p className="text-2xl font-bold text-foreground">{completedCount}</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <AnimatePresence>
         {showForm && userRole !== 'admin' && (
-          <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 mb-8 border border-gray-700">
-            <h2 className="text-2xl font-bold mb-6">Create New Booking</h2>
+          <motion.div 
+            className="glass-card p-6 mb-8 rounded-2xl"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <TableIcon className="w-6 h-6" />
+              Create New Booking
+            </h2>
             <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block mb-2 font-medium">Guest Name *</label>
+                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                  <UsersIcon className="w-4 h-4" /> Guest Name *
+                </label>
                 <input
                   type="text"
                   required
                   value={formData.guestName}
                   onChange={(e) => setFormData({...formData, guestName: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">Email *</label>
+                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                  <Mail className="w-4 h-4" /> Email *
+                </label>
                 <input
                   type="email"
                   required
                   value={formData.guestEmail}
                   onChange={(e) => setFormData({...formData, guestEmail: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">Phone *</label>
+                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                  <Phone className="w-4 h-4" /> Phone *
+                </label>
                 <input
                   type="tel"
                   required
                   value={formData.guestPhone}
                   onChange={(e) => setFormData({...formData, guestPhone: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">Number of Guests *</label>
+                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                  <UsersIcon className="w-4 h-4" /> Number of Guests *
+                </label>
                 <input
                   type="number"
                   required
@@ -302,12 +401,12 @@ export default function BookingsPage() {
                   max="20"
                   value={formData.numberOfGuests}
                   onChange={(e) => setFormData({...formData, numberOfGuests: parseInt(e.target.value)})}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block mb-3 font-medium text-lg">Select Dining Area *</label>
+                <label className="block mb-3 font-medium text-lg text-foreground">Select Dining Area *</label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {Object.entries(AREA_PRICING).map(([area, price], index) => {
                     const areaImages: Record<string, string> = {
@@ -322,10 +421,10 @@ export default function BookingsPage() {
                       <motion.div
                         key={area}
                         onClick={() => setFormData({...formData, tableArea: area})}
-                        className={`cursor-pointer rounded-lg border-2 overflow-hidden ${
+                        className={`cursor-pointer rounded-xl border-2 overflow-hidden transition-all ${
                           formData.tableArea === area
-                            ? 'border-purple-500'
-                            : 'border-gray-600 hover:border-gray-500'
+                            ? 'border-foreground'
+                            : 'border-border hover:border-foreground/50'
                         }`}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -335,9 +434,9 @@ export default function BookingsPage() {
                         <div className="relative h-32">
                           <Image src={areaImages[area]} alt={getAreaDisplayName(area)} className="w-full h-full object-cover" fill sizes="400px" />
                         </div>
-                        <div className="p-3 bg-gray-800/80">
-                          <div className="font-semibold text-sm">{getAreaDisplayName(area)}</div>
-                          <div className="text-xs text-purple-400 mt-1">₹{price}/person</div>
+                        <div className="p-3 bg-card">
+                          <div className="font-semibold text-sm text-foreground">{getAreaDisplayName(area)}</div>
+                          <div className="text-xs text-muted mt-1">₹{price}/person</div>
                         </div>
                       </motion.div>
                     )
@@ -346,58 +445,62 @@ export default function BookingsPage() {
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">Date *</label>
+                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                  <Calendar className="w-4 h-4" /> Date *
+                </label>
                 <input
                   type="date"
                   required
                   min={new Date().toISOString().split('T')[0]}
                   value={formData.bookingDate}
                   onChange={(e) => setFormData({...formData, bookingDate: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">Time *</label>
+                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                  <Clock className="w-4 h-4" /> Time *
+                </label>
                 <input
                   type="time"
                   required
                   value={formData.bookingTime}
                   onChange={(e) => setFormData({...formData, bookingTime: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block mb-2 font-medium">Select Table (Optional)</label>
+                <label className="block mb-2 font-medium text-foreground">Select Table (Optional)</label>
                 {loadingTables ? (
-                  <div className="flex items-center justify-center p-4 bg-gray-700 rounded-lg">
-                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
-                    <span className="ml-2">Loading available tables...</span>
+                  <div className="flex items-center justify-center p-4 bg-card rounded-xl">
+                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-foreground"></div>
+                    <span className="ml-2 text-foreground">Loading available tables...</span>
                   </div>
                 ) : availableTables.length > 0 ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     <div
                       onClick={() => setFormData({...formData, tableNumber: ''})}
-                      className={`cursor-pointer p-4 rounded-lg border-2 ${
+                      className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
                         formData.tableNumber === ''
-                          ? 'border-blue-500 bg-blue-900/30 shadow-blue-500/20'
-                          : 'border-gray-600 bg-gray-700 hover:border-gray-500'
+                          ? 'border-foreground bg-foreground/10'
+                          : 'border-border bg-card hover:border-foreground/50'
                       }`}
                     >
                       <div className="text-center">
-                        <div className="font-semibold">Any Table</div>
-                        <div className="text-xs text-gray-400">Auto-assign</div>
+                        <div className="font-semibold text-foreground">Any Table</div>
+                        <div className="text-xs text-muted">Auto-assign</div>
                       </div>
                     </div>
                     {availableTables.map((table) => (
                       <div
                         key={table._id}
                         onClick={() => setFormData({...formData, tableNumber: table.tableNumber})}
-                        className={`cursor-pointer p-4 rounded-lg border-2 ${
+                        className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
                           formData.tableNumber === table.tableNumber
-                            ? 'border-green-500 bg-green-900/30 shadow-green-500/20'
-                            : 'border-gray-600 bg-gray-700 hover:border-gray-500'
+                            ? 'border-foreground bg-foreground/10'
+                            : 'border-border bg-card hover:border-foreground/50'
                         }`}
                       >
                         <div className="text-center">
@@ -406,15 +509,15 @@ export default function BookingsPage() {
                              table.location === 'private-room' ? '' :
                              table.location === 'rooftop' ? '' : ''}
                           </div>
-                          <div className="font-semibold">Table #{table.tableNumber}</div>
-                          <div className="text-xs text-gray-400">{table.tableName}</div>
-                          <div className="text-xs text-gray-500">
+                          <div className="font-semibold text-foreground">Table #{table.tableNumber}</div>
+                          <div className="text-xs text-muted">{table.tableName}</div>
+                          <div className="text-xs text-muted">
                             {table.capacity} seats • {table.location.split('-').join(' ')}
                           </div>
                           {table.features && table.features.length > 0 && (
                             <div className="mt-1 flex flex-wrap gap-1 justify-center">
                               {table.features.slice(0, 2).map((f: string) => (
-                                <span key={f} className="text-xs bg-gray-600 px-1 rounded">
+                                <span key={f} className="text-xs bg-card border border-border px-1 rounded">
                                   {f === 'window-view' ? '' :
                                    f === 'romantic' ? '' :
                                    f === 'vip' ? '' :
@@ -428,37 +531,41 @@ export default function BookingsPage() {
                     ))}
                   </div>
                 ) : formData.bookingDate && formData.bookingTime ? (
-                  <div className="p-4 bg-gray-700 rounded-lg text-center text-gray-400">
+                  <div className="p-4 bg-card rounded-xl text-center text-muted">
                     No tables available for the selected time. Try a different time or let us auto-assign a table.
                   </div>
                 ) : (
-                  <div className="p-4 bg-gray-700 rounded-lg text-center text-gray-400">
+                  <div className="p-4 bg-card rounded-xl text-center text-muted">
                     Select date, time, and number of guests to see available tables
                   </div>
                 )}
               </div>
 
               <div className="md:col-span-2">
-                <label className="block mb-2 font-medium">Special Requests</label>
+                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                  <FileText className="w-4 h-4" /> Special Requests
+                </label>
                 <textarea
                   value={formData.specialRequests}
                   onChange={(e) => setFormData({...formData, specialRequests: e.target.value})}
                   rows={3}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
                   placeholder="Any dietary restrictions or special occasions?"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 rounded-lg border border-purple-500/30">
+                <div className="glass-card p-6 rounded-xl">
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="text-lg font-semibold">Total Price</p>
-                      <p className="text-sm text-gray-400">
-                        {formData.numberOfGuests} guests * ₹{(AREA_PRICING as Record<string, number>)[formData.tableArea]}/person ({getAreaDisplayName(formData.tableArea)})
+                      <p className="text-lg font-semibold text-foreground flex items-center gap-2">
+                        <CreditCard className="w-5 h-5" /> Total Price
+                      </p>
+                      <p className="text-sm text-muted mt-1">
+                        {formData.numberOfGuests} guests × ₹{(AREA_PRICING as Record<string, number>)[formData.tableArea]}/person ({getAreaDisplayName(formData.tableArea)})
                       </p>
                     </div>
-                    <div className="text-3xl font-bold text-green-400">
+                    <div className="text-3xl font-bold text-green-500">
                       ₹{calculateBookingPrice(formData.numberOfGuests, formData.tableArea).toFixed(2)}
                     </div>
                   </div>
@@ -468,14 +575,16 @@ export default function BookingsPage() {
               <div className="md:col-span-2">
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-gradient-to-r from-green-600 to-teal-500 hover:from-green-700 hover:to-teal-600 rounded-lg font-semibold"
+                  className="w-full px-6 py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
                 >
+                  <CreditCard className="w-5 h-5" />
                   Proceed to Payment
                 </button>
               </div>
             </form>
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
 
         {/* Payment Section */}
         {showPayment && orderId && (
@@ -510,53 +619,110 @@ export default function BookingsPage() {
           </div>
         )}
 
-        <div className="grid gap-4">
+        <motion.div 
+          className="grid gap-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
           {bookings.length === 0 ? (
-            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-12 text-center border border-gray-700">
-              <p className="text-xl text-gray-400 mb-4">No bookings yet</p>
-              <p className="text-gray-500">Create your first reservation to get started!</p>
+            <div className="glass-card p-12 text-center rounded-2xl">
+              <div className="w-20 h-20 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-10 h-10 text-muted" />
+              </div>
+              <p className="text-xl text-foreground font-semibold mb-2">No bookings yet</p>
+              <p className="text-muted mb-6">Create your first reservation to get started!</p>
+              {userRole !== 'admin' && !showForm && (
+                <button
+                  onClick={() => setShowForm(true)}
+                  className="bg-foreground text-background px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition-all inline-flex items-center gap-2"
+                >
+                  <Plus className="w-5 h-5" />
+                  Make Your First Booking
+                </button>
+              )}
             </div>
           ) : (
-            bookings.map((booking) => (
-              <div key={booking._id} className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 border border-gray-700 hover:border-gray-600">
+            bookings.map((booking, index) => (
+              <motion.div 
+                key={booking._id} 
+                className="glass-card p-6 rounded-2xl hover:scale-[1.01] transition-all"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+              >
                 <div className="flex justify-between items-start flex-wrap gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                      <h3 className="text-xl font-bold">{booking.guestName}</h3>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(booking.status)} text-white`}>
+                    <div className="flex items-center gap-2 mb-4 flex-wrap">
+                      <h3 className="text-xl font-bold text-foreground">{booking.guestName}</h3>
+                      <span className={`px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1 border ${
+                        booking.status === 'confirmed' ? 'bg-green-500/20 text-green-500 border-green-500/30' :
+                        booking.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30' :
+                        booking.status === 'cancelled' ? 'bg-red-500/20 text-red-500 border-red-500/30' :
+                        'bg-blue-500/20 text-blue-500 border-blue-500/30'
+                      }`}>
+                        {booking.status === 'confirmed' && <CheckCircle className="w-3 h-3" />}
+                        {booking.status === 'pending' && <AlertCircle className="w-3 h-3" />}
+                        {booking.status === 'cancelled' && <XCircle className="w-3 h-3" />}
                         {booking.status.toUpperCase()}
                       </span>
                       {booking.tableNumber && (
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-600 text-white">
+                        <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-500 border border-purple-500/30 inline-flex items-center gap-1">
+                          <TableIcon className="w-3 h-3" />
                           Table #{booking.tableNumber}
                         </span>
                       )}
                       {booking.paymentStatus === 'paid' && (
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-600 text-white">
-                          ✓ PAID ₹{booking.paymentAmount}
+                        <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-green-500/20 text-green-500 border border-green-500/30 inline-flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" />
+                          PAID ₹{booking.paymentAmount}
                         </span>
                       )}
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-3 text-gray-300">
-                      <div>Email - {booking.guestEmail}</div>
-                      <div>Contact - {booking.guestPhone}</div>
-                      <div>Guests - {booking.numberOfGuests}</div>
-                      <div>Date - {new Date(booking.bookingDate).toLocaleDateString()}</div>
-                      <div>Time - {booking.bookingTime}</div>
+                    <div className="grid md:grid-cols-2 gap-3 text-sm">
+                      <div className="flex items-center gap-2 text-foreground">
+                        <Mail className="w-4 h-4 text-muted" />
+                        <span className="text-muted">Email:</span> {booking.guestEmail}
+                      </div>
+                      <div className="flex items-center gap-2 text-foreground">
+                        <Phone className="w-4 h-4 text-muted" />
+                        <span className="text-muted">Phone:</span> {booking.guestPhone}
+                      </div>
+                      <div className="flex items-center gap-2 text-foreground">
+                        <UsersIcon className="w-4 h-4 text-muted" />
+                        <span className="text-muted">Guests:</span> {booking.numberOfGuests}
+                      </div>
+                      <div className="flex items-center gap-2 text-foreground">
+                        <Calendar className="w-4 h-4 text-muted" />
+                        <span className="text-muted">Date:</span> {new Date(booking.bookingDate).toLocaleDateString()}
+                      </div>
+                      <div className="flex items-center gap-2 text-foreground">
+                        <Clock className="w-4 h-4 text-muted" />
+                        <span className="text-muted">Time:</span> {booking.bookingTime}
+                      </div>
                       {booking.tableArea && (
-                        <div>Area - {getAreaDisplayName(booking.tableArea)}</div>
+                        <div className="flex items-center gap-2 text-foreground">
+                          <MapPin className="w-4 h-4 text-muted" />
+                          <span className="text-muted">Area:</span> {getAreaDisplayName(booking.tableArea)}
+                        </div>
                       )}
                     </div>
 
                     {booking.specialRequests && (
-                      <div className="mt-3 p-3 bg-gray-700 rounded">
-                        <span className="font-semibold">Special Requests: </span>
-                        <span className="text-gray-300">{booking.specialRequests}</span>
+                      <div className="mt-4 p-4 bg-card border border-border rounded-xl">
+                        <div className="flex items-start gap-2">
+                          <FileText className="w-4 h-4 text-muted mt-0.5" />
+                          <div>
+                            <span className="font-semibold text-foreground text-sm">Special Requests:</span>
+                            <p className="text-muted text-sm mt-1">{booking.specialRequests}</p>
+                          </div>
+                        </div>
                       </div>
                     )}
 
-                    <div className="mt-3 text-sm text-gray-400">
+                    <div className="mt-4 text-xs text-muted flex items-center gap-2">
+                      <Clock className="w-3 h-3" />
                       Created: {new Date(booking.createdAt).toLocaleString()}
                     </div>
                   </div>
@@ -565,17 +731,18 @@ export default function BookingsPage() {
                     {booking.status === 'pending' && (
                       <button
                         onClick={() => cancelBooking(booking._id)}
-                        className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-semibold"
+                        className="px-4 py-2.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/30 rounded-xl font-semibold transition-all flex items-center gap-2"
                       >
+                        <XCircle className="w-4 h-4" />
                         Cancel
                       </button>
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   )
