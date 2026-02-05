@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🍽️ Booking Web
+# Booking Web
 
 ### Modern Restaurant Table Booking System
 
@@ -110,7 +110,7 @@ Before you begin, ensure you have the following installed:
    # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/bookingweb
    
    # NextAuth Configuration
-   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_URL=http://localhost:3001
    NEXTAUTH_SECRET=your-secret-key-here-generate-with-openssl-rand-base64-32
    
    # SendGrid Email Service
@@ -146,7 +146,7 @@ Before you begin, ensure you have the following installed:
 
 6. **Open your browser**
    
-   Navigate to [http://localhost:3000](http://localhost:3000)
+   Navigate to [http://localhost:3001](http://localhost:3000)
 
 ### 🎯 Initial Setup
 
