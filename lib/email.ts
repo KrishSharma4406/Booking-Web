@@ -186,6 +186,7 @@ export function generateReceiptPDF(bookingData) {
       doc.fontSize(10).fillColor('#000')
       doc.text(`Receipt Date: ${new Date().toLocaleDateString()}`, { align: 'right' })
       doc.text(`Receipt #: ${bookingData.paymentId || 'N/A'}`, { align: 'right' })
+      doc.text(`Status: ${bookingData.status || 'Confirmed'}`, { align: 'right' })
       doc.moveDown(2)
 
       // Customer Details
@@ -226,7 +227,7 @@ export function generateReceiptPDF(bookingData) {
 
       // Amount
       doc.fontSize(16).fillColor('#000')
-      doc.text(`Total Amount Paid: ₹${bookingData.paymentAmount}`, { bold: true })
+      doc.text(`Total Amount Paid: Rs. ${bookingData.paymentAmount}`, { bold: true })
       doc.moveDown(2)
 
       // Footer
@@ -253,10 +254,26 @@ export async function sendBookingConfirmation(bookingData) {
       }
     }
 
+    // Validate required booking data
+    if (!bookingData.guestEmail) {
+      console.error('❌ No guest email provided for booking confirmation')
+      return { success: false, error: 'No guest email provided' }
+    }
+
     console.log('📧 Starting email send process...')
-    console.log('📧 Generating PDF receipt...')
-    const pdfBuffer = await generateReceiptPDF(bookingData)
-    console.log('✅ PDF generated successfully, size:', pdfBuffer.length, 'bytes')
+    console.log('📧 Email recipient:', bookingData.guestEmail)
+    console.log('📧 Booking data keys:', Object.keys(bookingData).join(', '))
+    
+    let pdfBuffer
+    try {
+      console.log('📧 Generating PDF receipt...')
+      pdfBuffer = await generateReceiptPDF(bookingData)
+      console.log('✅ PDF generated successfully, size:', pdfBuffer.length, 'bytes')
+    } catch (pdfError) {
+      console.error('❌ PDF generation failed:', pdfError.message)
+      // Send email without PDF attachment if PDF fails
+      pdfBuffer = null
+    }
 
     const mailOptions = {
       from: `"${process.env.EMAIL_FROM_NAME || 'Booking App'}" <${process.env.EMAIL_USER}>`,
@@ -364,17 +381,17 @@ export async function sendBookingConfirmation(bookingData) {
           </body>
         </html>
       `,
-      attachments: [
+      attachments: pdfBuffer ? [
         {
-          filename: `booking-receipt-${bookingData.paymentId}.pdf`,
+          filename: `booking-receipt-${bookingData.paymentId || 'booking'}.pdf`,
           content: pdfBuffer,
           contentType: 'application/pdf'
         }
-      ]
+      ] : []
     }
 
-    console.log('Sending booking confirmation email to:', bookingData.guestEmail)
-    console.log('Attachment:', `booking-receipt-${bookingData.paymentId}.pdf`)
+    console.log('📧 Sending booking confirmation email to:', bookingData.guestEmail)
+    console.log('📧 Has PDF attachment:', !!pdfBuffer)
 
     await transporter.verify()
     console.log('SMTP connection verified for booking email')

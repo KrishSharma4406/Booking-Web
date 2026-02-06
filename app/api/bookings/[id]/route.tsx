@@ -47,9 +47,11 @@ export async function PATCH(req, { params }) {
     }
 
     // Send confirmation email when booking is confirmed
+    let emailSent = false
+    let emailError = null
     if (status === 'confirmed') {
       try {
-        await sendBookingConfirmation({
+        const emailResult = await sendBookingConfirmation({
           guestName: booking.guestName,
           guestEmail: booking.guestEmail,
           guestPhone: booking.guestPhone,
@@ -57,17 +59,33 @@ export async function PATCH(req, { params }) {
           bookingDate: booking.bookingDate,
           bookingTime: booking.bookingTime,
           tableNumber: booking.tableNumber,
+          tableArea: booking.tableArea,
           specialRequests: booking.specialRequests,
-          status: booking.status
+          status: booking.status,
+          paymentAmount: booking.paymentAmount,
+          paymentId: booking.paymentId,
+          paymentStatus: booking.paymentStatus,
+          paymentMethod: booking.paymentMethod,
         })
-        console.log('✅ Confirmation email sent to:', booking.guestEmail)
-      } catch (emailError) {
-        console.error('❌ Failed to send confirmation email:', emailError)
-        // Don't fail the request if email fails
+        if (emailResult.success) {
+          emailSent = true
+          console.log('✅ Confirmation email sent to:', booking.guestEmail)
+        } else {
+          emailError = emailResult.error
+          console.error('❌ Email sending failed:', emailResult.error)
+        }
+      } catch (err) {
+        emailError = err.message
+        console.error('❌ Failed to send confirmation email:', err)
       }
     }
 
-    return NextResponse.json({ booking, message: 'Booking updated successfully!' }, { status: 200 })
+    return NextResponse.json({ 
+      booking, 
+      message: 'Booking updated successfully!',
+      emailSent,
+      emailError: emailError || undefined
+    }, { status: 200 })
   } catch (error) {
     console.error('Error updating booking:', error)
     return NextResponse.json({ error: 'Failed to update booking' }, { status: 500 })
