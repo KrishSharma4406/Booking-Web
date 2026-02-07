@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ToastContainer, toast } from 'react-toastify'
@@ -47,6 +47,18 @@ const CATEGORIES = [
 ]
 
 export default function ReviewsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="rounded-full h-12 w-12 border-t-2 border-b-2 border-accent animate-spin" />
+      </div>
+    }>
+      <ReviewsContent />
+    </Suspense>
+  )
+}
+
+function ReviewsContent() {
   const { status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
