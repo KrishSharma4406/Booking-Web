@@ -9,16 +9,16 @@ import 'react-toastify/dist/ReactToastify.css'
 import { calculateBookingPrice, getAreaDisplayName, AREA_PRICING } from '@/lib/pricing'
 import PaymentForm from '@/components/PaymentForm'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Calendar, 
-  Clock, 
-  Users as UsersIcon, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  FileText, 
-  CreditCard, 
-  Plus, 
+import {
+  Calendar,
+  Clock,
+  Users as UsersIcon,
+  Mail,
+  Phone,
+  MapPin,
+  FileText,
+  CreditCard,
+  Plus,
   X,
   CheckCircle,
   XCircle,

@@ -6,7 +6,6 @@ import User from '@/models/User'
 import Table from '@/models/Table'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
-import { sendBookingConfirmation } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 
