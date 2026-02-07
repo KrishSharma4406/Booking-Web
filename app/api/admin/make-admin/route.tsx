@@ -23,11 +23,13 @@ export async function POST(req: Request) {
     // Allow bypass with ADMIN_SECRET from environment variable
     let bypassCheck = false
     try {
-      const body = await req.json().catch(() => ({}))
-      if (body.secret && process.env.ADMIN_SECRET && body.secret === process.env.ADMIN_SECRET) {
+      const body = await req.json()
+      if (body?.secret && process.env.ADMIN_SECRET && body.secret === process.env.ADMIN_SECRET) {
         bypassCheck = true
       }
-    } catch {}
+    } catch {
+      // No body or invalid JSON — continue without bypass
+    }
 
     if (!bypassCheck) {
       // Check if any admin exists
@@ -41,14 +43,10 @@ export async function POST(req: Request) {
       }
     }
 
-    // Make current user admin if no admin exists
+    // Make current user admin
     const user = await User.findOneAndUpdate(
       { email: session.user.email },
-      { 
-        role: 'admin',
-        approved: true,
-        approvedAt: new Date()
-      },
+      { role: 'admin' },
       { new: true }
     )
 
@@ -67,10 +65,11 @@ export async function POST(req: Request) {
         role: user.role
       }
     })
-  } catch (error) {
-    console.error('Make admin error:', error)
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : 'Unknown error'
+    console.error('Make admin error:', errMsg)
     return NextResponse.json(
-      { error: 'Failed to make admin' },
+      { error: 'Failed to make admin: ' + errMsg },
       { status: 500 }
     )
   }
