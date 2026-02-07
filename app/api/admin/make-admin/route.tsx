@@ -43,17 +43,25 @@ export async function POST(req: Request) {
       }
     }
 
-    // Make current user admin
+    // Make current user admin (upsert - create if not found)
     const user = await User.findOneAndUpdate(
       { email: session.user.email },
-      { role: 'admin' },
-      { new: true }
+      { 
+        role: 'admin',
+        $setOnInsert: {
+          name: session.user.name || 'Admin',
+          email: session.user.email,
+          image: session.user.image || '',
+          provider: 'credentials',
+        }
+      },
+      { new: true, upsert: true }
     )
 
     if (!user) {
       return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
+        { error: 'Failed to create/update user' },
+        { status: 500 }
       )
     }
 
