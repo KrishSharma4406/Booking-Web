@@ -10,6 +10,7 @@ export default function MakeAdminPage() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [secret, setSecret] = useState('')
 
   const handleMakeAdmin = async () => {
     setLoading(true)
@@ -18,7 +19,9 @@ export default function MakeAdminPage() {
 
     try {
       const res = await fetch('/api/admin/make-admin', {
-        method: 'POST'
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: secret || undefined })
       })
 
       const data = await res.json()
@@ -71,7 +74,6 @@ export default function MakeAdminPage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <div className="text-6xl mb-4">👑</div>
           <h1 className="text-3xl font-bold mb-2 text-foreground">Become Admin</h1>
           <p className="text-muted">
             This will make your account an admin account
@@ -104,6 +106,17 @@ export default function MakeAdminPage() {
           </div>
         )}
 
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-muted mb-2">Admin Secret (optional)</label>
+          <input
+            type="password"
+            value={secret}
+            onChange={(e) => setSecret(e.target.value)}
+            placeholder="Enter secret if admin already exists"
+            className="w-full px-4 py-3 bg-card border border-border focus:border-accent rounded-xl outline-none transition-colors text-foreground"
+          />
+        </div>
+
         <motion.button
           onClick={handleMakeAdmin}
           disabled={loading}
@@ -123,7 +136,7 @@ export default function MakeAdminPage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.5 }}
         >
-          Note: This only works if no admin exists yet
+          Note: Works without secret if no admin exists. Use ADMIN_SECRET to bypass.
         </motion.p>
       </motion.div>
     </div>

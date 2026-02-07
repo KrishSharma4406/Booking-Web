@@ -6,7 +6,7 @@ import User from '@/models/User'
 
 export const dynamic = 'force-dynamic'
 
-// POST - Make first user admin or self-promote if no admins exist
+// POST - Make first user admin or self-promote with secret key
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions)
@@ -20,14 +20,25 @@ export async function POST(req: Request) {
 
     await connectDB()
 
-    // Check if any admin exists
-    const adminExists = await User.findOne({ role: 'admin' })
+    // Allow bypass with ADMIN_SECRET from environment variable
+    let bypassCheck = false
+    try {
+      const body = await req.json().catch(() => ({}))
+      if (body.secret && process.env.ADMIN_SECRET && body.secret === process.env.ADMIN_SECRET) {
+        bypassCheck = true
+      }
+    } catch {}
 
-    if (adminExists) {
-      return NextResponse.json(
-        { error: 'An admin already exists. Contact existing admin for promotion.' },
-        { status: 403 }
-      )
+    if (!bypassCheck) {
+      // Check if any admin exists
+      const adminExists = await User.findOne({ role: 'admin' })
+
+      if (adminExists) {
+        return NextResponse.json(
+          { error: 'An admin already exists. Contact existing admin for promotion.' },
+          { status: 403 }
+        )
+      }
     }
 
     // Make current user admin if no admin exists
