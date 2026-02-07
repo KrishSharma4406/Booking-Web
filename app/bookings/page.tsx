@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ToastContainer, toast } from 'react-toastify'
-// @ts-expect-error - CSS import
 import 'react-toastify/dist/ReactToastify.css'
 import { calculateBookingPrice, getAreaDisplayName, AREA_PRICING } from '@/lib/pricing'
 import PaymentForm from '@/components/PaymentForm'
@@ -25,7 +24,8 @@ import {
   XCircle,
   AlertCircle,
   Table as TableIcon,
-  ArrowLeft
+  ArrowLeft,
+  Star
 } from 'lucide-react'
 
 interface Table {
@@ -70,7 +70,7 @@ export default function BookingsPage() {
     numberOfGuests: 2,
     bookingDate: '',
     bookingTime: '',
-    tableNumber: '' as string | number,
+    tableNumber: undefined as number | undefined,
     tableArea: 'indoor',
     specialRequests: ''
   })
@@ -481,9 +481,9 @@ export default function BookingsPage() {
                 ) : availableTables.length > 0 ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     <div
-                      onClick={() => setFormData({...formData, tableNumber: ''})}
+                      onClick={() => setFormData({...formData, tableNumber: undefined})}
                       className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
-                        formData.tableNumber === ''
+                        !formData.tableNumber
                           ? 'border-foreground bg-foreground/10'
                           : 'border-border bg-card hover:border-foreground/50'
                       }`}
@@ -605,7 +605,7 @@ export default function BookingsPage() {
                   numberOfGuests: 2,
                   bookingDate: '',
                   bookingTime: '',
-                  tableNumber: '',
+                  tableNumber: undefined,
                   tableArea: 'indoor',
                   specialRequests: ''
                 })
@@ -736,6 +736,15 @@ export default function BookingsPage() {
                         <XCircle className="w-4 h-4" />
                         Cancel
                       </button>
+                    )}
+                    {booking.status === 'completed' && (
+                      <Link
+                        href={`/reviews?booking=${booking._id}`}
+                        className="px-4 py-2.5 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 border border-yellow-500/30 rounded-xl font-semibold transition-all flex items-center gap-2"
+                      >
+                        <Star className="w-4 h-4" />
+                        Write Review
+                      </Link>
                     )}
                   </div>
                 </div>

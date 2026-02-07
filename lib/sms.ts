@@ -4,18 +4,15 @@
 /**
  * Generate a random 6-digit OTP code
  */
-export function generateOTP() {
+export function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
 /**
  * Send OTP via SMS using configured provider
- * @param {string} phone - Phone number with country code (e.g., +1234567890)
- * @param {string} otp - 6-digit OTP code
- * @returns {Promise<boolean>} - Success status
  */
-export async function sendOTP(phone, otp) {
-  const provider = process.env.SMS_PROVIDER || 'console'
+export async function sendOTP(phone: string, otp: string): Promise<boolean> {
+  const provider: string = process.env.SMS_PROVIDER || 'console'
 
   try {
     switch (provider) {
@@ -39,10 +36,8 @@ export async function sendOTP(phone, otp) {
 
 /**
  * Send OTP via Twilio
- * Requires: npm install twilio
- * Environment variables: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
  */
-async function sendViaTwilio(phone, otp) {
+async function sendViaTwilio(phone: string, otp: string): Promise<boolean> {
   try {
     const twilio = require('twilio')
     const client = twilio(
@@ -65,10 +60,8 @@ async function sendViaTwilio(phone, otp) {
 
 /**
  * Send OTP via AWS SNS
- * Requires: npm install @aws-sdk/client-sns
- * Environment variables: AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
  */
-async function sendViaAWSSNS(phone, otp) {
+async function sendViaAWSSNS(phone: string, otp: string): Promise<boolean> {
   try {
     const { SNSClient, PublishCommand } = require('@aws-sdk/client-sns')
     
@@ -101,30 +94,23 @@ async function sendViaAWSSNS(phone, otp) {
 
 /**
  * Validate phone number format (India only - +91)
- * @param {string} phone - Phone number to validate
- * @returns {boolean} - Whether phone number is valid
  */
-export function validatePhoneNumber(phone) {
-  // India phone validation: +91 followed by 10 digits
+export function validatePhoneNumber(phone: string): boolean {
   const indiaPhoneRegex = /^\+91[6-9]\d{9}$/
   return indiaPhoneRegex.test(phone)
 }
 
 /**
  * Check if phone number is from India
- * @param {string} phone - Phone number to check
- * @returns {boolean} - Whether phone is from India
  */
-export function isIndianNumber(phone) {
-  return phone && phone.startsWith('+91')
+export function isIndianNumber(phone: string): boolean {
+  return !!phone && phone.startsWith('+91')
 }
 
 /**
  * Format phone number for display (mask middle digits)
- * @param {string} phone - Phone number to format
- * @returns {string} - Formatted phone (e.g., +1234****890)
  */
-export function formatPhoneForDisplay(phone) {
+export function formatPhoneForDisplay(phone: string): string {
   if (!phone || phone.length < 8) return phone
   const start = phone.substring(0, 5)
   const end = phone.substring(phone.length - 3)

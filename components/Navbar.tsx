@@ -151,6 +151,9 @@ const Navbar = () => {
                           <Link href="/bookings" onClick={() => setIsDropdownOpen(false)} className="block px-4 py-3 text-sm text-muted hover:text-foreground hover:bg-card transition-colors">
                             My Bookings
                           </Link>
+                          <Link href="/reviews" onClick={() => setIsDropdownOpen(false)} className="block px-4 py-3 text-sm text-muted hover:text-foreground hover:bg-card transition-colors">
+                            My Reviews
+                          </Link>
                           <Link href="/settings" onClick={() => setIsDropdownOpen(false)} className="block px-4 py-3 text-sm text-muted hover:text-foreground hover:bg-card transition-colors">
                             Settings
                           </Link>
@@ -274,6 +277,7 @@ const Navbar = () => {
                       {[
                         { href: "/dashboard", label: "Dashboard" },
                         { href: "/bookings", label: "My Bookings" },
+                        { href: "/reviews", label: "My Reviews" },
                         { href: "/settings", label: "Settings" }
                       ].map((link, index) => (
                         <motion.div

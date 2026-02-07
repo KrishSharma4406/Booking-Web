@@ -1,8 +1,15 @@
 import connectDB from './mongodb'
 import User from '@/models/User'
 import bcrypt from 'bcryptjs'
+import type { IUser, UserPublic, UserWithPassword } from '@/types/models'
 
-export async function createUser(email, password, name = null, provider = 'credentials', phone = null) {
+export async function createUser(
+  email: string,
+  password: string,
+  name: string | null = null,
+  provider: string = 'credentials',
+  phone: string | null = null
+): Promise<UserPublic> {
   await connectDB()
 
   const existingUser = await User.findOne({ email: email.toLowerCase() })
@@ -18,11 +25,11 @@ export async function createUser(email, password, name = null, provider = 'crede
     }
   }
 
-  const hashedPassword = provider === 'credentials'
+  const hashedPassword: string = provider === 'credentials'
     ? await bcrypt.hash(password, 10)
     : password
 
-  const userData = {
+  const userData: Record<string, string> = {
     email: email.toLowerCase(),
     password: hashedPassword,
     name: name || email.split('@')[0],
@@ -33,7 +40,7 @@ export async function createUser(email, password, name = null, provider = 'crede
     userData.phone = phone
   }
 
-  const user = await User.create(userData)
+  const user: IUser = await User.create(userData)
 
   return {
     id: user._id.toString(),
@@ -44,9 +51,9 @@ export async function createUser(email, password, name = null, provider = 'crede
   }
 }
 
-export async function findUserByEmail(email) {
+export async function findUserByEmail(email: string): Promise<UserWithPassword | null> {
   await connectDB()
-  const user = await User.findOne({ email: email.toLowerCase() })
+  const user: IUser | null = await User.findOne({ email: email.toLowerCase() })
 
   if (!user) return null
 
@@ -56,13 +63,15 @@ export async function findUserByEmail(email) {
     password: user.password,
     name: user.name,
     provider: user.provider,
+    role: user.role,
+    phone: user.phone,
     createdAt: user.createdAt
   }
 }
 
-export async function findUserById(id) {
+export async function findUserById(id: string): Promise<UserPublic | null> {
   await connectDB()
-  const user = await User.findById(id)
+  const user: IUser | null = await User.findById(id)
 
   if (!user) return null
 
@@ -75,11 +84,11 @@ export async function findUserById(id) {
   }
 }
 
-export async function getAllUsers() {
+export async function getAllUsers(): Promise<UserPublic[]> {
   await connectDB()
-  const users = await User.find({}).select('-password').sort({ createdAt: -1 })
+  const users: IUser[] = await User.find({}).select('-password').sort({ createdAt: -1 })
 
-  return users.map(user => ({
+  return users.map((user) => ({
     id: user._id.toString(),
     email: user.email,
     name: user.name,
@@ -88,7 +97,11 @@ export async function getAllUsers() {
   }))
 }
 
-export async function updateUserResetToken(email, token, expiry) {
+export async function updateUserResetToken(
+  email: string,
+  token: string,
+  expiry: Date
+): Promise<IUser | null> {
   await connectDB()
   const user = await User.findOneAndUpdate(
     { email: email.toLowerCase() },
@@ -98,9 +111,9 @@ export async function updateUserResetToken(email, token, expiry) {
   return user
 }
 
-export async function findUserByResetToken(token) {
+export async function findUserByResetToken(token: string): Promise<UserPublic | null> {
   await connectDB()
-  const user = await User.findOne({
+  const user: IUser | null = await User.findOne({
     resetToken: token,
     resetTokenExpiry: { $gt: Date.now() }
   })
@@ -114,9 +127,9 @@ export async function findUserByResetToken(token) {
   }
 }
 
-export async function updateUserPassword(userId, newPassword) {
+export async function updateUserPassword(userId: string, newPassword: string): Promise<void> {
   await connectDB()
-  const hashedPassword = await bcrypt.hash(newPassword, 10)
+  const hashedPassword: string = await bcrypt.hash(newPassword, 10)
   await User.findByIdAndUpdate(userId, {
     password: hashedPassword,
     resetToken: null,

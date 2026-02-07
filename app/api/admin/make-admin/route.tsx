@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
 
 export const dynamic = 'force-dynamic'
 
 // POST - Make first user admin or self-promote if no admins exist
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions)
 

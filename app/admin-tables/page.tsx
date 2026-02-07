@@ -4,7 +4,6 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ToastContainer, toast } from 'react-toastify'
-// @ts-expect-error - CSS import
 import 'react-toastify/dist/ReactToastify.css'
 import { motion, AnimatePresence } from 'framer-motion'
 import {

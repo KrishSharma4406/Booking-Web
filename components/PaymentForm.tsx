@@ -1,6 +1,27 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 
+interface BookingFormData {
+  guestName: string
+  guestEmail: string
+  guestPhone: string
+  numberOfGuests: number
+  bookingDate: string
+  bookingTime: string
+  tableArea?: string
+  tableNumber?: number
+  specialRequests?: string
+}
+
+interface PaymentFormProps {
+  formData: BookingFormData
+  orderId: string
+  keyId: string
+  totalAmount: number
+  onSuccess: () => void
+  onCancel: () => void
+}
+
 export default function PaymentForm({ 
   formData, 
   orderId,
@@ -8,10 +29,10 @@ export default function PaymentForm({
   totalAmount, 
   onSuccess, 
   onCancel 
-}) {
-  const [processing, setProcessing] = useState(false)
+}: PaymentFormProps) {
+  const [processing, setProcessing] = useState<boolean>(false)
 
-  const loadRazorpayScript = () => {
+  const loadRazorpayScript = (): Promise<boolean> => {
     return new Promise((resolve) => {
       const script = document.createElement('script')
       script.src = 'https://checkout.razorpay.com/v1/checkout.js'
@@ -21,7 +42,7 @@ export default function PaymentForm({
     })
   }
 
-  const handlePayment = async () => {
+  const handlePayment = async (): Promise<void> => {
     setProcessing(true)
 
     const res = await loadRazorpayScript()
@@ -32,16 +53,15 @@ export default function PaymentForm({
       return
     }
 
-    const options = {
+    const options: RazorpayOptions = {
       key: keyId,
-      amount: totalAmount * 100, // Amount in paise
+      amount: totalAmount * 100,
       currency: 'INR',
       name: 'Restaurant Booking',
       description: `Table booking for ${formData.numberOfGuests} guests`,
       order_id: orderId,
-      handler: async function (response) {
+      handler: async function (response: RazorpayResponse) {
         try {
-          // Create booking after successful payment
           const res = await fetch('/api/bookings', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

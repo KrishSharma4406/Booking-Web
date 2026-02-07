@@ -1,22 +1,22 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import Table from '@/models/Table'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(req) {
+export async function GET(req: Request) {
   try {
     await connectDB()
 
     const { searchParams } = new URL(req.url)
-    const availableOnly = searchParams.get('available') === 'true'
-    const date = searchParams.get('date')
-    const time = searchParams.get('time')
-    const guests = parseInt(searchParams.get('guests') || '1')
+    const availableOnly: boolean = searchParams.get('available') === 'true'
+    const date: string | null = searchParams.get('date')
+    const time: string | null = searchParams.get('time')
+    const guests: number = parseInt(searchParams.get('guests') || '1')
 
-    let query = { isActive: true }
+    let query: Record<string, unknown> = { isActive: true }
 
     if (availableOnly) {
       query.status = 'available'
@@ -65,7 +65,7 @@ export async function GET(req) {
   }
 }
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions)
 
@@ -94,9 +94,10 @@ export async function POST(req) {
       message: 'Table created successfully',
       table
     }, { status: 201 })
-  } catch (error) {
+  } catch (error: unknown) {
+    const err = error as Error & { code?: number }
     console.error('Table POST error:', error)
-    if (error.code === 11000) {
+    if (err.code === 11000) {
       return NextResponse.json(
         { error: 'Table number already exists' },
         { status: 400 }

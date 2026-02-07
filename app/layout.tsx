@@ -1,10 +1,11 @@
 import "./globals.css";
+import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import SessionWrapper from "@/components/SessionProvider";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Booking Web - Live Booking System",
   description: "Book your table with real-time availability and instant confirmation",
   icons: {

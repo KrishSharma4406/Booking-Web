@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import Table from '@/models/Table'
 
 export const dynamic = 'force-dynamic'
 
-export async function PUT(req, { params }) {
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions)
 
@@ -55,7 +55,7 @@ export async function PUT(req, { params }) {
   }
 }
 
-export async function DELETE(req, { params }) {
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions)
 

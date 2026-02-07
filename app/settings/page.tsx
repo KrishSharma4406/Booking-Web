@@ -4,7 +4,6 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ToastContainer, toast } from 'react-toastify'
-// @ts-expect-error - CSS import
 import 'react-toastify/dist/ReactToastify.css'
 
 interface UserData {

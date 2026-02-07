@@ -5,7 +5,7 @@ import User from '@/models/User'
 
 export const dynamic = 'force-dynamic'
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const { token, password } = await req.json()
 

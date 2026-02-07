@@ -1,6 +1,7 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema, Model } from 'mongoose'
+import type { IBooking } from '@/types/models'
 
-const BookingSchema = new mongoose.Schema({
+const BookingSchema = new Schema<IBooking>({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -47,7 +48,6 @@ const BookingSchema = new mongoose.Schema({
   specialRequests: {
     type: String,
   },
-  // Payment fields
   paymentStatus: {
     type: String,
     enum: ['pending', 'paid', 'failed', 'refunded'],
@@ -77,4 +77,5 @@ const BookingSchema = new mongoose.Schema({
   timestamps: true,
 })
 
-export default mongoose.models.Booking || mongoose.model('Booking', BookingSchema)
+const Booking: Model<IBooking> = mongoose.models.Booking || mongoose.model<IBooking>('Booking', BookingSchema)
+export default Booking

@@ -1,6 +1,7 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema, Model } from 'mongoose'
+import type { ITable } from '@/types/models'
 
-const TableSchema = new mongoose.Schema({
+const TableSchema = new Schema<ITable>({
   tableNumber: {
     type: Number,
     required: [true, 'Please provide table number'],
@@ -42,4 +43,5 @@ const TableSchema = new mongoose.Schema({
   timestamps: true,
 })
 
-export default mongoose.models.Table || mongoose.model('Table', TableSchema)
+const Table: Model<ITable> = mongoose.models.Table || mongoose.model<ITable>('Table', TableSchema)
+export default Table

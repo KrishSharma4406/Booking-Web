@@ -3,7 +3,7 @@ import { createUser, findUserByEmail } from '@/lib/users'
 
 export const dynamic = 'force-dynamic'
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const { email, password, name, phone } = await req.json()
 
@@ -51,10 +51,11 @@ export async function POST(req) {
       },
       { status: 201 }
     )
-  } catch (error) {
+  } catch (error: unknown) {
+    const err = error as Error
     console.error('Signup error:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to create user' },
+      { error: err.message || 'Failed to create user' },
       { status: 500 }
     )
   }

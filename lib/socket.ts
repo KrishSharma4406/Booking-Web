@@ -1,10 +1,11 @@
-import { Server } from 'socket.io'
+import { Server as SocketIOServer } from 'socket.io'
+import type { Server as HTTPServer } from 'http'
 
-let io = null
+let io: SocketIOServer | null = null
 
-export const initSocket = (server) => {
+export const initSocket = (server: HTTPServer): SocketIOServer => {
   if (!io) {
-    io = new Server(server, {
+    io = new SocketIOServer(server, {
       cors: {
         origin: '*',
         methods: ['GET', 'POST']
@@ -22,7 +23,7 @@ export const initSocket = (server) => {
   return io
 }
 
-export const getIO = () => {
+export const getIO = (): SocketIOServer => {
   if (!io) {
     throw new Error('Socket.io not initialized')
   }

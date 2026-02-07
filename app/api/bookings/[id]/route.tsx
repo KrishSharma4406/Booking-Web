@@ -7,7 +7,7 @@ import { sendBookingConfirmation } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 
-export async function PATCH(req, { params }) {
+export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession()
 
@@ -19,15 +19,15 @@ export async function PATCH(req, { params }) {
 
     const user = await User.findOne({ email: session.user.email })
 
-    if (user.role !== 'admin') {
+    if (!user || user.role !== 'admin') {
       return NextResponse.json({ error: 'Only admins can update bookings' }, { status: 403 })
     }
 
     const { id } = params
     const body = await req.json()
-    const { status, tableNumber } = body
+    const { status, tableNumber } = body as { status: string; tableNumber?: number }
 
-    const updateData = { status }
+    const updateData: Record<string, unknown> = { status }
     if (status === 'confirmed') {
       updateData.confirmedBy = user._id
       updateData.confirmedAt = new Date()
@@ -47,8 +47,8 @@ export async function PATCH(req, { params }) {
     }
 
     // Send confirmation email when booking is confirmed
-    let emailSent = false
-    let emailError = null
+    let emailSent: boolean = false
+    let emailError: string | null = null
     if (status === 'confirmed') {
       try {
         const emailResult = await sendBookingConfirmation({
@@ -71,11 +71,11 @@ export async function PATCH(req, { params }) {
           emailSent = true
           console.log('✅ Confirmation email sent to:', booking.guestEmail)
         } else {
-          emailError = emailResult.error
+          emailError = emailResult.error ?? null
           console.error('❌ Email sending failed:', emailResult.error)
         }
-      } catch (err) {
-        emailError = err.message
+      } catch (err: unknown) {
+        emailError = (err as Error).message
         console.error('❌ Failed to send confirmation email:', err)
       }
     }
@@ -84,7 +84,7 @@ export async function PATCH(req, { params }) {
       booking, 
       message: 'Booking updated successfully!',
       emailSent,
-      emailError: emailError || undefined
+      emailError: emailError ?? undefined
     }, { status: 200 })
   } catch (error) {
     console.error('Error updating booking:', error)
@@ -92,7 +92,7 @@ export async function PATCH(req, { params }) {
   }
 }
 
-export async function DELETE(req, { params }) {
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession()
     
@@ -112,7 +112,7 @@ export async function DELETE(req, { params }) {
     }
 
     // Users can delete their own bookings, admins can delete any
-    if (user.role !== 'admin' && booking.user.toString() !== user._id.toString()) {
+    if (!user || (user.role !== 'admin' && booking.user.toString() !== user._id.toString())) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 

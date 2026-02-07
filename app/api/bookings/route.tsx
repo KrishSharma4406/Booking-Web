@@ -15,7 +15,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret'
 })
 
-export async function GET(req) {
+export async function GET(req: Request) {
   try {
     const session = await getServerSession()
     
@@ -27,6 +27,10 @@ export async function GET(req) {
 
     const user = await User.findOne({ email: session.user.email })
     
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
     let bookings
     if (user.role === 'admin') {
       bookings = await Booking.find()
@@ -45,7 +49,7 @@ export async function GET(req) {
   }
 }
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const session = await getServerSession()
 
@@ -56,6 +60,10 @@ export async function POST(req) {
     await connectDB()
 
     const user = await User.findOne({ email: session.user.email })
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
 
     const body = await req.json()
     const { 
@@ -85,7 +93,7 @@ export async function POST(req) {
     try {
       const body = razorpayOrderId + '|' + razorpayPaymentId
       const expectedSignature = crypto
-        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
         .update(body.toString())
         .digest('hex')
 
@@ -170,10 +178,11 @@ export async function POST(req) {
       booking, 
       message: 'Booking created successfully! Payment confirmed. Awaiting admin approval.' 
     }, { status: 201 })
-  } catch (error) {
+  } catch (error: unknown) {
+    const err = error as Error
     console.error('Error creating booking:', error)
     return NextResponse.json({ 
-      error: error.message || 'Failed to create booking' 
+      error: err.message || 'Failed to create booking' 
     }, { status: 500 })
   }
 }

@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
-export async function POST(request) {
+export async function POST(request: Request) {
   try {
     const { phone } = await request.json()
 

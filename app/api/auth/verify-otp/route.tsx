@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
-export async function POST(request) {
+export async function POST(request: Request) {
   try {
     const { phone, otp } = await request.json()
 
@@ -45,7 +45,7 @@ export async function POST(request) {
     }
 
     // Check if OTP has expired
-    if (new Date() > user.otpExpiry) {
+    if (user.otpExpiry && new Date() > user.otpExpiry) {
       // Clear expired OTP
       user.otpCode = undefined
       user.otpExpiry = undefined

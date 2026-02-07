@@ -6,7 +6,7 @@ import { sendPasswordResetEmail } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const { email } = await req.json()
 
@@ -58,10 +58,11 @@ export async function POST(req) {
       { message: 'Password reset link has been sent to your email!' },
       { status: 200 }
     )
-  } catch (error) {
+  } catch (error: unknown) {
+    const err = error as Error
     console.error('Forgot password error:', error)
     return NextResponse.json(
-      { error: `An error occurred: ${error.message}` },
+      { error: `An error occurred: ${err.message}` },
       { status: 500 }
     )
   }

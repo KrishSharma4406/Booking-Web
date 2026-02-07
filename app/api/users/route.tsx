@@ -17,7 +17,7 @@ export async function GET() {
 
     const currentUser = await User.findOne({ email: session.user.email })
 
-    if (currentUser.role !== 'admin') {
+    if (!currentUser || currentUser.role !== 'admin') {
       return NextResponse.json({ error: 'Only admins can view all users' }, { status: 403 })
     }
 
@@ -35,7 +35,7 @@ export async function GET() {
   }
 }
 
-export async function DELETE(request) {
+export async function DELETE(request: Request) {
   try {
     const session = await getServerSession()
 
@@ -47,7 +47,7 @@ export async function DELETE(request) {
 
     const currentUser = await User.findOne({ email: session.user.email })
 
-    if (currentUser.role !== 'admin') {
+    if (!currentUser || currentUser.role !== 'admin') {
       return NextResponse.json({ error: 'Only admins can delete users' }, { status: 403 })
     }
 

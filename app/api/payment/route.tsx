@@ -9,7 +9,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret'
 })
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const session = await getServerSession()
 
@@ -29,13 +29,13 @@ export async function POST(req) {
       currency: 'INR',
       receipt: `booking_${Date.now()}`,
       notes: {
-        userEmail: session.user.email,
+        userEmail: session.user.email ?? '',
         numberOfGuests: numberOfGuests.toString(),
         tableArea: tableArea || 'indoor',
         bookingDate: bookingDate,
         bookingTime: bookingTime,
       }
-    })
+    }) as { id: string; amount: number; currency: string }
 
     return NextResponse.json({ 
       orderId: order.id,
@@ -43,10 +43,11 @@ export async function POST(req) {
       currency: order.currency,
       keyId: process.env.RAZORPAY_KEY_ID
     }, { status: 200 })
-  } catch (error) {
+  } catch (error: unknown) {
+    const err = error as Error
     console.error('Payment order creation error:', error)
     return NextResponse.json({ 
-      error: error.message || 'Failed to create payment order' 
+      error: err.message || 'Failed to create payment order' 
     }, { status: 500 })
   }
 }

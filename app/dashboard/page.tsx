@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { IUser, IBooking } from '@/types/models'
-import { Calendar, Clock, CheckCircle, User, Mail, Shield, CalendarCheck, Plus, LayoutDashboard } from 'lucide-react'
+import { Calendar, Clock, CheckCircle, User, Mail, Shield, CalendarCheck, Plus, LayoutDashboard, Star } from 'lucide-react'
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
@@ -202,6 +202,27 @@ export default function Dashboard() {
                 </div>
                 <div className="font-semibold text-foreground">View Bookings</div>
                 <p className="text-sm text-muted mt-1">Manage reservations</p>
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.95 }}
+              whileHover={{ scale: 1.03, y: -3 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <Link
+                href="/reviews"
+                className="block glass-card hover:bg-card/70 rounded-xl p-6 text-center group transition-all border border-border hover:border-yellow-500/40"
+              >
+                <div className="flex justify-center mb-3">
+                  <div className="p-3 rounded-xl bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-colors">
+                    <Star className="w-6 h-6 text-yellow-500" />
+                  </div>
+                </div>
+                <div className="font-semibold text-foreground">Write Review</div>
+                <p className="text-sm text-muted mt-1">Share your experience</p>
               </Link>
             </motion.div>
 

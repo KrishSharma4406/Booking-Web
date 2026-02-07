@@ -7,6 +7,7 @@ declare module 'next-auth' {
       role?: string
       phone?: string
       phoneVerified?: boolean
+      provider?: string
     } & DefaultSession['user']
   }
 
@@ -15,6 +16,7 @@ declare module 'next-auth' {
     role?: string
     phone?: string
     phoneVerified?: boolean
+    provider?: string
   }
 }
 
@@ -24,5 +26,6 @@ declare module 'next-auth/jwt' {
     role?: string
     phone?: string
     phoneVerified?: boolean
+    provider?: string
   }
 }

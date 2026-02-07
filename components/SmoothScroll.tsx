@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export function SmoothScroll() {
   useEffect(() => {
-    let lenisInstance: any = null;
+    let lenisInstance: InstanceType<typeof import('lenis').default> | null = null;
     let rafId: number;
 
     // Dynamically import Lenis to avoid SSR issues
@@ -23,7 +23,7 @@ export function SmoothScroll() {
       });
 
       function raf(time: number) {
-        lenisInstance.raf(time);
+        lenisInstance!.raf(time);
         rafId = requestAnimationFrame(raf);
       }
 

@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer'
 import PDFDocument from 'pdfkit'
+import type { BookingEmailData, EmailResult } from '@/types/models'
 
 // Validate email configuration on module load
 if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
@@ -25,7 +26,7 @@ const transporter = nodemailer.createTransport({
 })
 
 // Send password reset email
-export async function sendPasswordResetEmail(to, resetToken) {
+export async function sendPasswordResetEmail(to: string, resetToken: string): Promise<EmailResult> {
   console.log('Attempting to send email to:', to)
   console.log('Email config:', {
     user: process.env.EMAIL_USER,
@@ -125,16 +126,17 @@ export async function sendPasswordResetEmail(to, resetToken) {
     const info = await transporter.sendMail(mailOptions)
     console.log('Email sent successfully!', info.messageId)
     return { success: true, messageId: info.messageId }
-  } catch (error) {
+  } catch (error: unknown) {
+    const err = error as { code?: string; message: string }
     console.error('Email sending error:', error)
-    console.error('Error code:', error.code)
-    console.error('Error message:', error.message)
+    console.error('Error code:', err.code)
+    console.error('Error message:', err.message)
     
     // Return more specific error message
-    let errorMessage = error.message
-    if (error.code === 'ESOCKET' || error.code === 'ETIMEDOUT') {
+    let errorMessage: string = err.message
+    if (err.code === 'ESOCKET' || err.code === 'ETIMEDOUT') {
       errorMessage = 'Email server connection failed. Please check your network or try again later.'
-    } else if (error.code === 'EAUTH') {
+    } else if (err.code === 'EAUTH') {
       errorMessage = 'Email authentication failed. Please check your email credentials.'
     }
     
@@ -142,7 +144,7 @@ export async function sendPasswordResetEmail(to, resetToken) {
   }
 }
 
-export async function verifyEmailConfig() {
+export async function verifyEmailConfig(): Promise<boolean> {
   try {
     if (!process.env.EMAIL_USER) {
       console.error('EMAIL_USER is not set')
@@ -161,8 +163,8 @@ export async function verifyEmailConfig() {
 }
 
 // Generate PDF receipt
-export function generateReceiptPDF(bookingData) {
-  return new Promise((resolve, reject) => {
+export function generateReceiptPDF(bookingData: BookingEmailData): Promise<Buffer> {
+  return new Promise<Buffer>((resolve, reject) => {
     try {
       // Create PDF without specifying fonts (uses default embedded fonts)
       const doc = new PDFDocument({ 
@@ -170,7 +172,7 @@ export function generateReceiptPDF(bookingData) {
         bufferPages: true,
         autoFirstPage: true
       })
-      const chunks = []
+      const chunks: Buffer[] = []
 
       doc.on('data', (chunk) => chunks.push(chunk))
       doc.on('end', () => resolve(Buffer.concat(chunks)))
@@ -227,7 +229,7 @@ export function generateReceiptPDF(bookingData) {
 
       // Amount
       doc.fontSize(16).fillColor('#000')
-      doc.text(`Total Amount Paid: Rs. ${bookingData.paymentAmount}`, { bold: true })
+      doc.font('Helvetica-Bold').text(`Total Amount Paid: Rs. ${bookingData.paymentAmount}`).font('Helvetica')
       doc.moveDown(2)
 
       // Footer
@@ -243,7 +245,7 @@ export function generateReceiptPDF(bookingData) {
 }
 
 // Send booking confirmation email with PDF receipt
-export async function sendBookingConfirmation(bookingData) {
+export async function sendBookingConfirmation(bookingData: BookingEmailData): Promise<EmailResult> {
   try {
     // Check if email is configured
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
@@ -264,13 +266,13 @@ export async function sendBookingConfirmation(bookingData) {
     console.log('📧 Email recipient:', bookingData.guestEmail)
     console.log('📧 Booking data keys:', Object.keys(bookingData).join(', '))
     
-    let pdfBuffer
+    let pdfBuffer: Buffer | null
     try {
       console.log('📧 Generating PDF receipt...')
       pdfBuffer = await generateReceiptPDF(bookingData)
       console.log('✅ PDF generated successfully, size:', pdfBuffer.length, 'bytes')
-    } catch (pdfError) {
-      console.error('❌ PDF generation failed:', pdfError.message)
+    } catch (pdfError: unknown) {
+      console.error('❌ PDF generation failed:', (pdfError as Error).message)
       // Send email without PDF attachment if PDF fails
       pdfBuffer = null
     }
@@ -399,11 +401,12 @@ export async function sendBookingConfirmation(bookingData) {
     const info = await transporter.sendMail(mailOptions)
     console.log('Booking confirmation email sent successfully! Message ID:', info.messageId)
     return { success: true, messageId: info.messageId }
-  } catch (error) {
+  } catch (error: unknown) {
+    const err = error as { code?: string; message: string; stack?: string }
     console.error('Error sending booking confirmation email:', error)
-    console.error('Error code:', error.code)
-    console.error('Error message:', error.message)
-    console.error('Stack:', error.stack)
-    return { success: false, error: error.message }
+    console.error('Error code:', err.code)
+    console.error('Error message:', err.message)
+    console.error('Stack:', err.stack)
+    return { success: false, error: err.message }
   }
 }

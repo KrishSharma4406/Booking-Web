@@ -1,16 +1,26 @@
 'use client'
 import { useEffect, useState } from 'react'
 
-export function useTimezone() {
-  const [timezone, setTimezone] = useState('UTC')
-  const [currentTime, setCurrentTime] = useState(new Date())
+interface TimezoneHook {
+  timezone: string
+  currentTime: Date
+  formatDate: (dateString: string | Date, includeTime?: boolean) => string
+  formatDateShort: (dateString: string | Date, includeTime?: boolean) => string
+  getCurrentTime: (includeSeconds?: boolean) => string
+  getCurrentDateTime: () => string
+  getTimezoneAbbr: () => string
+}
+
+export function useTimezone(): TimezoneHook {
+  const [timezone, setTimezone] = useState<string>('UTC')
+  const [currentTime, setCurrentTime] = useState<Date>(new Date())
 
   useEffect(() => {
     // Load timezone from localStorage
     const savedPrefs = localStorage.getItem('userPreferences')
     if (savedPrefs) {
       try {
-        const prefs = JSON.parse(savedPrefs)
+        const prefs: { timezone?: string } = JSON.parse(savedPrefs)
         if (prefs.timezone) {
           setTimezone(prefs.timezone)
         }
@@ -28,11 +38,11 @@ export function useTimezone() {
   }, [])
 
   // Format date according to timezone
-  const formatDate = (dateString, includeTime = false) => {
+  const formatDate = (dateString: string | Date, includeTime: boolean = false): string => {
     if (!dateString) return 'N/A'
     
     const date = new Date(dateString)
-    const options = {
+    const options: Intl.DateTimeFormatOptions = {
       timeZone: timezone,
       year: 'numeric',
       month: 'long',
@@ -49,11 +59,11 @@ export function useTimezone() {
   }
 
   // Format date with short format
-  const formatDateShort = (dateString, includeTime = false) => {
+  const formatDateShort = (dateString: string | Date, includeTime: boolean = false): string => {
     if (!dateString) return 'N/A'
     
     const date = new Date(dateString)
-    const options = {
+    const options: Intl.DateTimeFormatOptions = {
       timeZone: timezone,
       year: 'numeric',
       month: 'short',
@@ -69,8 +79,8 @@ export function useTimezone() {
   }
 
   // Get current time in timezone
-  const getCurrentTime = (includeSeconds = true) => {
-    const options = {
+  const getCurrentTime = (includeSeconds: boolean = true): string => {
+    const options: Intl.DateTimeFormatOptions = {
       timeZone: timezone,
       hour: '2-digit',
       minute: '2-digit',
@@ -81,8 +91,8 @@ export function useTimezone() {
   }
 
   // Get current date and time in timezone
-  const getCurrentDateTime = () => {
-    const options = {
+  const getCurrentDateTime = (): string => {
+    const options: Intl.DateTimeFormatOptions = {
       timeZone: timezone,
       weekday: 'long',
       year: 'numeric',
@@ -97,8 +107,8 @@ export function useTimezone() {
   }
 
   // Get timezone abbreviation
-  const getTimezoneAbbr = () => {
-    const options = {
+  const getTimezoneAbbr = (): string => {
+    const options: Intl.DateTimeFormatOptions = {
       timeZone: timezone,
       timeZoneName: 'short'
     }
