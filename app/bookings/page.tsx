@@ -241,13 +241,13 @@ export default function BookingsPage() {
   const completedCount = bookings.filter(b => b.status === 'completed').length
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground p-4 md:p-8 pt-20 md:pt-24">
+    <div className="relative min-h-screen bg-background text-foreground p-4 sm:p-6 md:p-8 pt-20 sm:pt-20 md:pt-24">
       <ToastContainer position="top-right" theme="dark" />
 
       <div className="relative max-w-7xl mx-auto z-10">
         {/* Header */}
         <motion.div 
-          className="mb-8"
+          className="mb-6 sm:mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}

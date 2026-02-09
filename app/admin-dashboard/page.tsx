@@ -3,7 +3,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Users, Calendar, Clock, CheckCircle, XCircle, User, Mail, Phone,
@@ -293,7 +292,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* ─── Top KPI Cards ─────────────────────────────── */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-6">
             {[
               { icon: DollarSign, label: 'Total Revenue', value: `₹${(ov?.totalRevenue || 0).toLocaleString()}`, color: 'text-green-500', border: 'border-green-500/20', bg: 'bg-green-500/10' },
               { icon: Calendar, label: 'Total Bookings', value: ov?.totalBookings || 0, color: 'text-blue-500', border: 'border-blue-500/20', bg: 'bg-blue-500/10' },
@@ -304,24 +303,24 @@ export default function AdminDashboard() {
             ].map((card, i) => (
               <motion.div
                 key={i}
-                className={`glass-card p-4 border ${card.border}`}
+                className={`glass-card p-3 md:p-4 border ${card.border}`}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.05 }}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <div className={`p-2 rounded-lg ${card.bg}`}>
-                    <card.icon className={`w-4 h-4 ${card.color}`} />
+                  <div className={`p-1.5 md:p-2 rounded-lg ${card.bg}`}>
+                    <card.icon className={`w-3.5 h-3.5 md:w-4 md:h-4 ${card.color}`} />
                   </div>
                 </div>
-                <div className="text-2xl font-bold">{card.value}</div>
+                <div className="text-xl md:text-2xl font-bold truncate">{card.value}</div>
                 <div className="text-xs text-muted mt-1">{card.label}</div>
               </motion.div>
             ))}
           </div>
 
           {/* ─── Secondary KPIs ────────────────────────────── */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
             {[
               { label: 'Pending', value: analytics?.bookingsByStatus?.pending || 0, icon: Clock, color: 'text-amber-500', border: 'border-amber-500/20' },
               { label: 'Confirmed', value: analytics?.bookingsByStatus?.confirmed || 0, icon: CheckCircle, color: 'text-green-500', border: 'border-green-500/20' },
@@ -336,9 +335,9 @@ export default function AdminDashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + i * 0.05 }}
               >
-                <card.icon className={`w-5 h-5 ${card.color}`} />
+                <card.icon className={`w-4 h-4 md:w-5 md:h-5 ${card.color}`} />
                 <div>
-                  <div className="text-lg font-bold">{card.value}</div>
+                  <div className="text-base md:text-lg font-bold truncate">{card.value}</div>
                   <div className="text-xs text-muted">{card.label}</div>
                 </div>
               </motion.div>
@@ -346,7 +345,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* ─── Tab Navigation ────────────────────────────── */}
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
             {([
               { key: 'overview', icon: BarChart3, label: 'Analytics' },
               { key: 'bookings', icon: Calendar, label: `Bookings (${bookings.length})` },
@@ -357,7 +356,7 @@ export default function AdminDashboard() {
               <motion.button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-5 py-2.5 rounded-xl font-semibold transition-all flex items-center gap-2 text-sm ${
+                className={`px-4 md:px-5 py-2 md:py-2.5 rounded-xl font-semibold transition-all flex items-center gap-2 text-xs md:text-sm whitespace-nowrap ${
                   activeTab === tab.key
                     ? 'bg-gradient-to-r from-indigo-600 to-violet-600 !text-white shadow-lg shadow-indigo-500/30'
                     : 'glass-card border border-border hover:border-accent/40'
@@ -365,8 +364,9 @@ export default function AdminDashboard() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
+                <tab.icon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
               </motion.button>
             ))}
           </div>
@@ -387,10 +387,10 @@ export default function AdminDashboard() {
               <div className="grid lg:grid-cols-3 gap-6">
                 {/* Monthly Revenue Chart */}
                 <div className="lg:col-span-2 glass-card p-6 border border-accent/10">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-green-500" /> Monthly Revenue &amp; Bookings
+                  <h3 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-green-500" /> Monthly Revenue &amp; Bookings
                   </h3>
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={250} className="md:h-[300px]">
                     <AreaChart data={analytics.monthlyRevenue}>
                       <defs>
                         <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
@@ -414,11 +414,11 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Booking Status Pie */}
-                <div className="glass-card p-6 border border-accent/10">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <PieChartIcon className="w-5 h-5 text-violet-500" /> Booking Status
+                <div className="glass-card p-4 md:p-6 border border-accent/10">
+                  <h3 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                    <PieChartIcon className="w-4 h-4 md:w-5 md:h-5 text-violet-500" /> Booking Status
                   </h3>
-                  <ResponsiveContainer width="100%" height={250}>
+                  <ResponsiveContainer width="100%" height={200} className="md:h-[250px]">
                     <PieChart>
                       <Pie
                         data={statusPieData}
@@ -450,12 +450,12 @@ export default function AdminDashboard() {
               </div>
 
               {/* Row 2: Daily Bookings + Guest Distribution */}
-              <div className="grid lg:grid-cols-2 gap-6">
-                <div className="glass-card p-6 border border-accent/10">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-blue-500" /> Daily Bookings (Last 30 Days)
+              <div className="grid lg:grid-cols-2 gap-4 md:gap-6">
+                <div className="glass-card p-4 md:p-6 border border-accent/10">
+                  <h3 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                    <Activity className="w-4 h-4 md:w-5 md:h-5 text-blue-500" /> Daily Bookings (Last 30 Days)
                   </h3>
-                  <ResponsiveContainer width="100%" height={260}>
+                  <ResponsiveContainer width="100%" height={220} className="md:h-[260px]">
                     <BarChart data={analytics.dailyBookings}>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                       <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#888' }} />
@@ -466,11 +466,11 @@ export default function AdminDashboard() {
                   </ResponsiveContainer>
                 </div>
 
-                <div className="glass-card p-6 border border-accent/10">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-purple-500" /> Guest Size Distribution
+                <div className="glass-card p-4 md:p-6 border border-accent/10">
+                  <h3 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                    <Users className="w-4 h-4 md:w-5 md:h-5 text-purple-500" /> Guest Size Distribution
                   </h3>
-                  <ResponsiveContainer width="100%" height={260}>
+                  <ResponsiveContainer width="100%" height={220} className="md:h-[260px]">
                     <BarChart data={analytics.guestDistribution.map((g) => ({ size: g._id + ' guests', count: g.count }))}>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                       <XAxis dataKey="size" tick={{ fontSize: 12, fill: '#888' }} />
@@ -483,10 +483,10 @@ export default function AdminDashboard() {
               </div>
 
               {/* Row 3: Area Popularity + Peak Hours + New Users */}
-              <div className="grid lg:grid-cols-3 gap-6">
-                <div className="glass-card p-6 border border-accent/10">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-pink-500" /> Area Popularity
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <div className="glass-card p-4 md:p-6 border border-accent/10">
+                  <h3 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                    <MapPin className="w-4 h-4 md:w-5 md:h-5 text-pink-500" /> Area Popularity
                   </h3>
                   {analytics.areaPopularity.length === 0 ? (
                     <p className="text-muted text-center py-16">No area data yet</p>
@@ -512,11 +512,11 @@ export default function AdminDashboard() {
                   )}
                 </div>
 
-                <div className="glass-card p-6 border border-accent/10">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-amber-500" /> Peak Booking Hours
+                <div className="glass-card p-4 md:p-6 border border-accent/10">
+                  <h3 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                    <Clock className="w-4 h-4 md:w-5 md:h-5 text-amber-500" /> Peak Booking Hours
                   </h3>
-                  <div className="space-y-2 max-h-[250px] overflow-y-auto pr-2">
+                  <div className="space-y-2 max-h-[220px] md:max-h-[250px] overflow-y-auto pr-2">
                     {analytics.bookingsByHour.length === 0 ? (
                       <p className="text-muted text-center py-16">No booking time data</p>
                     ) : (
@@ -542,11 +542,11 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="glass-card p-6 border border-accent/10">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <ArrowUpRight className="w-5 h-5 text-green-500" /> User Growth
+                <div className="glass-card p-4 md:p-6 border border-accent/10">
+                  <h3 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                    <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5 text-green-500" /> User Growth
                   </h3>
-                  <ResponsiveContainer width="100%" height={250}>
+                  <ResponsiveContainer width="100%" height={220} className="md:h-[250px]">
                     <AreaChart data={analytics.newUsers}>
                       <defs>
                         <linearGradient id="userGrad" x1="0" y1="0" x2="0" y2="1">
@@ -565,11 +565,11 @@ export default function AdminDashboard() {
               </div>
 
               {/* Row 4: Review Analytics */}
-              <div className="grid lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {/* Rating Overview */}
-                <div className="glass-card p-6 border border-yellow-500/20">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <Star className="w-5 h-5 text-yellow-500" /> Rating Overview
+                <div className="glass-card p-4 md:p-6 border border-yellow-500/20">
+                  <h3 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                    <Star className="w-4 h-4 md:w-5 md:h-5 text-yellow-500" /> Rating Overview
                   </h3>
                   <div className="text-center mb-4">
                     <div className="text-5xl font-bold text-yellow-500">
@@ -612,9 +612,9 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Reviews by Category */}
-                <div className="glass-card p-6 border border-accent/10">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-indigo-500" /> Reviews By Category
+                <div className="glass-card p-4 md:p-6 border border-accent/10">
+                  <h3 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                    <BarChart3 className="w-4 h-4 md:w-5 md:h-5 text-indigo-500" /> Reviews By Category
                   </h3>
                   {analytics.reviews.byCategory.length === 0 ? (
                     <p className="text-muted text-center py-16">No review categories yet</p>
@@ -644,9 +644,9 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Payment Methods */}
-                <div className="glass-card p-6 border border-accent/10">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-cyan-500" /> Payment Breakdown
+                <div className="glass-card p-4 md:p-6 border border-accent/10">
+                  <h3 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                    <CreditCard className="w-4 h-4 md:w-5 md:h-5 text-cyan-500" /> Payment Breakdown
                   </h3>
                   {analytics.paymentMethods.length === 0 ? (
                     <p className="text-muted text-center py-16">No payment data yet</p>
@@ -679,12 +679,12 @@ export default function AdminDashboard() {
               exit={{ opacity: 0, x: 20 }}
             >
               {/* Pending Bookings */}
-              <div className="glass-card p-6 border border-amber-500/20">
+              <div className="glass-card p-4 md:p-6 border border-amber-500/20">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-2 rounded-lg bg-amber-500/10">
-                    <Clock className="w-6 h-6 text-amber-500" />
+                    <Clock className="w-5 h-5 md:w-6 md:h-6 text-amber-500" />
                   </div>
-                  <h2 className="text-2xl font-bold">Pending Bookings ({pendingBookings.length})</h2>
+                  <h2 className="text-xl md:text-2xl font-bold">Pending Bookings ({pendingBookings.length})</h2>
                 </div>
                 {pendingBookings.length === 0 ? (
                   <p className="text-muted text-center py-8">No pending bookings</p>
@@ -698,18 +698,18 @@ export default function AdminDashboard() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.05 }}
                       >
-                        <div className="flex justify-between items-start flex-wrap gap-4">
+                        <div className="flex flex-col gap-4">
                           <div className="flex-1 space-y-3">
-                            <h3 className="font-bold text-xl flex items-center gap-2">
-                              <User className="w-5 h-5 text-accent" />
-                              {booking.guestName}
+                            <h3 className="font-bold text-lg md:text-xl flex items-center gap-2 flex-wrap">
+                              <User className="w-4 h-4 md:w-5 md:h-5 text-accent" />
+                              <span className="break-all">{booking.guestName}</span>
                               {booking.paymentAmount != null && (
-                                <span className="text-sm px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 border border-green-500/30">
+                                <span className="text-xs md:text-sm px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 border border-green-500/30">
                                   ₹{booking.paymentAmount}
                                 </span>
                               )}
                             </h3>
-                            <div className="grid md:grid-cols-2 gap-3">
+                            <div className="grid sm:grid-cols-2 gap-2 md:gap-3">
                               <div className="flex items-center gap-2 text-sm"><Mail className="w-4 h-4 text-muted" /><span className="text-muted">{booking.guestEmail}</span></div>
                               <div className="flex items-center gap-2 text-sm"><Phone className="w-4 h-4 text-muted" /><span className="text-muted">{booking.guestPhone}</span></div>
                               <div className="flex items-center gap-2 text-sm"><Users className="w-4 h-4 text-muted" /><span className="text-muted">{booking.numberOfGuests} guests</span></div>
@@ -727,9 +727,9 @@ export default function AdminDashboard() {
                               </div>
                             )}
                           </div>
-                          <div className="space-y-2 w-full md:w-auto">
-                            <div className="flex gap-2 items-center">
-                              <div className="relative">
+                          <div className="space-y-2 w-full">
+                            <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                              <div className="relative flex-1 sm:flex-initial">
                                 <Hash className="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
                                 <input
                                   type="number"
@@ -737,12 +737,12 @@ export default function AdminDashboard() {
                                   min="1"
                                   value={tableNumber[booking._id] || ''}
                                   onChange={(e) => setTableNumber({ ...tableNumber, [booking._id]: parseInt(e.target.value) })}
-                                  className="pl-9 pr-3 py-2 bg-card border border-border focus:border-accent rounded-lg w-28 text-center outline-none transition-colors"
+                                  className="w-full sm:w-28 pl-9 pr-3 py-2 bg-card border border-border focus:border-accent rounded-lg text-center outline-none transition-colors"
                                 />
                               </div>
                               <motion.button
                                 onClick={() => updateBookingStatus(booking._id, 'confirmed', tableNumber[booking._id])}
-                                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                                className="flex-1 sm:flex-initial px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors text-sm md:text-base"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                               >
@@ -751,7 +751,7 @@ export default function AdminDashboard() {
                             </div>
                             <motion.button
                               onClick={() => updateBookingStatus(booking._id, 'cancelled')}
-                              className="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
+                              className="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors text-sm md:text-base"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                             >
@@ -766,12 +766,12 @@ export default function AdminDashboard() {
               </div>
 
               {/* Confirmed Bookings */}
-              <div className="glass-card p-6 border border-green-500/20">
+              <div className="glass-card p-4 md:p-6 border border-green-500/20">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-2 rounded-lg bg-green-500/10">
-                    <CheckCircle className="w-6 h-6 text-green-500" />
+                    <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-green-500" />
                   </div>
-                  <h2 className="text-2xl font-bold">Confirmed Bookings ({confirmedBookings.length})</h2>
+                  <h2 className="text-xl md:text-2xl font-bold">Confirmed Bookings ({confirmedBookings.length})</h2>
                 </div>
                 {confirmedBookings.length === 0 ? (
                   <p className="text-muted text-center py-8">No confirmed bookings</p>
@@ -827,15 +827,15 @@ export default function AdminDashboard() {
               </div>
 
               {/* All Bookings Table */}
-              <div className="glass-card p-6 border border-accent/10">
+              <div className="glass-card p-4 md:p-6 border border-accent/10">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-2 rounded-lg bg-blue-500/10">
-                    <Calendar className="w-6 h-6 text-blue-500" />
+                    <Calendar className="w-5 h-5 md:w-6 md:h-6 text-blue-500" />
                   </div>
-                  <h2 className="text-2xl font-bold">All Bookings ({bookings.length})</h2>
+                  <h2 className="text-xl md:text-2xl font-bold">All Bookings ({bookings.length})</h2>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                <div className="overflow-x-auto -mx-4 md:mx-0">
+                  <table className="w-full text-xs md:text-sm min-w-[640px]">
                     <thead className="bg-card/50 border-b border-border">
                       <tr>
                         <th className="px-3 py-3 text-left font-semibold">Guest</th>
@@ -894,43 +894,45 @@ export default function AdminDashboard() {
               exit={{ opacity: 0, x: 20 }}
             >
               {/* Filter bar */}
-              <div className="glass-card p-4 border border-accent/10 flex items-center gap-4 flex-wrap">
+              <div className="glass-card p-3 md:p-4 border border-accent/10 flex items-center gap-2 md:gap-4 flex-wrap">
                 <div className="flex items-center gap-2">
                   <Filter className="w-4 h-4 text-muted" />
-                  <span className="text-sm font-semibold">Filter:</span>
+                  <span className="text-xs md:text-sm font-semibold">Filter:</span>
                 </div>
-                {['all', 'pending', 'approved', 'rejected'].map((f) => (
-                  <button
-                    key={f}
-                    onClick={() => setReviewFilter(f)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                      reviewFilter === f
-                        ? 'bg-accent text-white'
-                        : 'bg-card/50 border border-border hover:border-accent/40'
-                    }`}
-                  >
-                    <span className="capitalize">{f}</span>
-                    {f !== 'all' && (
-                      <span className="ml-1 opacity-75">
-                        ({reviews.filter((r) => r.status === f).length})
-                      </span>
-                    )}
-                  </button>
-                ))}
+                <div className="flex gap-2 flex-wrap">
+                  {['all', 'pending', 'approved', 'rejected'].map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setReviewFilter(f)}
+                      className={`px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-xs md:text-sm font-medium transition-all ${
+                        reviewFilter === f
+                          ? 'bg-accent text-white'
+                          : 'bg-card/50 border border-border hover:border-accent/40'
+                      }`}
+                    >
+                      <span className="capitalize">{f}</span>
+                      {f !== 'all' && (
+                        <span className="ml-1 opacity-75">
+                          ({reviews.filter((r) => r.status === f).length})
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Reviews List */}
               {filteredReviews.length === 0 ? (
-                <div className="glass-card p-12 border border-accent/10 text-center">
-                  <AlertCircle className="w-12 h-12 text-muted mx-auto mb-4" />
-                  <p className="text-lg text-muted">No reviews found</p>
+                <div className="glass-card p-8 md:p-12 border border-accent/10 text-center">
+                  <AlertCircle className="w-10 h-10 md:w-12 md:h-12 text-muted mx-auto mb-4" />
+                  <p className="text-base md:text-lg text-muted">No reviews found</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {filteredReviews.map((review, idx) => (
                     <motion.div
                       key={review._id}
-                      className={`glass-card p-6 border transition-all ${
+                      className={`glass-card p-4 md:p-6 border transition-all ${
                         review.status === 'pending' ? 'border-amber-500/30' :
                         review.status === 'approved' ? 'border-green-500/20' :
                         'border-red-500/20'
@@ -1011,56 +1013,56 @@ export default function AdminDashboard() {
                         </div>
 
                         {/* Actions */}
-                        <div className="space-y-2 w-full md:w-auto">
+                        <div className="space-y-2 w-full">
                           {review.status === 'pending' && (
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-2">
                               <motion.button
                                 onClick={() => updateReviewStatus(review._id, 'approved')}
-                                className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-colors"
+                                className="flex-1 px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs md:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                               >
-                                <ThumbsUp className="w-4 h-4" /> Approve
+                                <ThumbsUp className="w-3.5 h-3.5 md:w-4 md:h-4" /> Approve
                               </motion.button>
                               <motion.button
                                 onClick={() => updateReviewStatus(review._id, 'rejected')}
-                                className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-colors"
+                                className="flex-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs md:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                               >
-                                <ThumbsDown className="w-4 h-4" /> Reject
+                                <ThumbsDown className="w-3.5 h-3.5 md:w-4 md:h-4" /> Reject
                               </motion.button>
                             </div>
                           )}
 
                           {/* Reply Input */}
                           {!review.adminReply && (
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-2">
                               <input
                                 type="text"
                                 placeholder="Write a reply..."
                                 value={replyText[review._id] || ''}
                                 onChange={(e) => setReplyText({ ...replyText, [review._id]: e.target.value })}
-                                className="flex-1 px-3 py-2 bg-card border border-border focus:border-accent rounded-lg text-sm outline-none transition-colors min-w-[180px]"
+                                className="flex-1 px-3 py-2 bg-card border border-border focus:border-accent rounded-lg text-xs md:text-sm outline-none transition-colors"
                               />
                               <motion.button
                                 onClick={() => replyToReview(review._id)}
-                                className="px-3 py-2 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-colors"
+                                className="px-3 py-2 bg-accent hover:bg-accent/80 text-white rounded-lg text-xs md:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shrink-0"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                               >
-                                <Reply className="w-4 h-4" /> Reply
+                                <Reply className="w-3.5 h-3.5 md:w-4 md:h-4" /> Reply
                               </motion.button>
                             </div>
                           )}
 
                           <motion.button
                             onClick={() => deleteReview(review._id)}
-                            className="w-full px-3 py-2 bg-card border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 transition-all"
+                            className="w-full px-3 py-2 bg-card border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-xs md:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                           >
-                            <Trash2 className="w-4 h-4" /> Delete
+                            <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" /> Delete
                           </motion.button>
                         </div>
                       </div>
@@ -1081,15 +1083,15 @@ export default function AdminDashboard() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
             >
-              <div className="glass-card p-6 border border-accent/10">
+              <div className="glass-card p-4 md:p-6 border border-accent/10">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-2 rounded-lg bg-accent/10">
-                    <Users className="w-6 h-6 text-accent" />
+                    <Users className="w-5 h-5 md:w-6 md:h-6 text-accent" />
                   </div>
-                  <h2 className="text-2xl font-bold">All Users ({users.length})</h2>
+                  <h2 className="text-xl md:text-2xl font-bold">All Users ({users.length})</h2>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
+                <div className="overflow-x-auto -mx-4 md:mx-0">
+                  <table className="w-full min-w-[540px]">
                     <thead className="bg-card/50 border-b border-border">
                       <tr>
                         <th className="px-4 py-3 text-left font-semibold">Name</th>
@@ -1148,12 +1150,12 @@ export default function AdminDashboard() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
             >
-              <div className="glass-card p-6 border border-accent/10">
+              <div className="glass-card p-4 md:p-6 border border-accent/10">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-2 rounded-lg bg-yellow-500/10">
-                    <Award className="w-6 h-6 text-yellow-500" />
+                    <Award className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
                   </div>
-                  <h2 className="text-2xl font-bold">Top Customers</h2>
+                  <h2 className="text-xl md:text-2xl font-bold">Top Customers</h2>
                 </div>
                 {analytics.topCustomers.length === 0 ? (
                   <p className="text-muted text-center py-8">No customer data yet</p>
@@ -1204,11 +1206,11 @@ export default function AdminDashboard() {
 
               {/* Customer Leaderboard Bar Chart */}
               {analytics.topCustomers.length > 0 && (
-                <div className="glass-card p-6 border border-accent/10">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-indigo-500" /> Customer Spending Leaderboard
+                <div className="glass-card p-4 md:p-6 border border-accent/10">
+                  <h3 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                    <BarChart3 className="w-4 h-4 md:w-5 md:h-5 text-indigo-500" /> Customer Spending Leaderboard
                   </h3>
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={250} className="md:h-[300px]">
                     <BarChart data={analytics.topCustomers.map((c) => ({ name: c.user.name.split(' ')[0], spent: c.totalSpent, bookings: c.totalBookings }))}>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                       <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#888' }} />

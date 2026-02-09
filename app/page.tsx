@@ -38,7 +38,7 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative min-h-screen bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 pt-16">
+      <section className="relative min-h-screen bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 sm:px-6 pt-16 md:pt-20">
         
         {/* Grain Texture */}
         <div className="absolute inset-0 pointer-events-none z-20 opacity-20 grain-texture" />
@@ -70,36 +70,36 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <h1 className="font-bold text-5xl md:text-7xl lg:text-8xl leading-tight tracking-tight text-foreground">
+            <h1 className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-tight tracking-tight text-foreground">
               <span className="block">Your Table,</span>
               <span className="block">Reserved Instantly</span>
             </h1>
 
             <motion.div 
-              className="flex items-center justify-center gap-3 text-muted text-sm"
+              className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-muted text-xs sm:text-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
             >
               <span className="flex items-center gap-1">
-                <CheckCircle className="w-4 h-4" />
+                <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                 Instant confirmations
               </span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span className="flex items-center gap-1">
-                <CheckCircle className="w-4 h-4" />
+                <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                 Secure payments
               </span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span className="flex items-center gap-1">
-                <CheckCircle className="w-4 h-4" />
+                <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                 No hidden fees
               </span>
             </motion.div>
           </motion.div>
 
           <motion.p 
-            className="text-xl md:text-2xl text-muted max-w-3xl mx-auto leading-relaxed font-light"
+            className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted max-w-3xl mx-auto leading-relaxed font-light px-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
@@ -128,7 +128,7 @@ export default function Home() {
                       onClick={() => router.push('/admin-dashboard')}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-10 py-4 bg-foreground text-background font-bold rounded-full transition-all duration-300"
+                      className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-foreground text-background font-bold rounded-full transition-all duration-300 text-sm sm:text-base"
                     >
                       Admin Dashboard
                     </motion.button>
@@ -136,7 +136,7 @@ export default function Home() {
                       onClick={() => router.push('/admin-tables')}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-10 py-4 bg-card backdrop-blur-sm border border-border text-foreground font-bold rounded-full transition-all duration-300 hover:bg-card"
+                      className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-card backdrop-blur-sm border border-border text-foreground font-bold rounded-full transition-all duration-300 hover:bg-card text-sm sm:text-base"
                     >
                       Manage Tables
                     </motion.button>
@@ -147,7 +147,7 @@ export default function Home() {
                       onClick={() => router.push('/bookings')}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-10 py-4 bg-foreground text-background font-bold rounded-full transition-all duration-300"
+                      className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-foreground text-background font-bold rounded-full transition-all duration-300 text-sm sm:text-base"
                     >
                       Book a Table
                     </motion.button>
@@ -155,7 +155,7 @@ export default function Home() {
                       onClick={() => router.push('/dashboard')}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-10 py-4 bg-card backdrop-blur-sm border border-border text-foreground font-bold rounded-full transition-all duration-300 hover:bg-card "
+                      className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-card backdrop-blur-sm border border-border text-foreground font-bold rounded-full transition-all duration-300 hover:bg-card text-sm sm:text-base"
                     >
                       My Dashboard
                     </motion.button>
@@ -164,23 +164,23 @@ export default function Home() {
               </>
             ) : (
               <>
-                <Link href="/Login">
+                <Link href="/Login" className="w-full sm:w-auto">
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-10 py-4 bg-foreground text-background font-bold rounded-full transition-all duration-300 hover:shadow-2xl "
+                    className="w-full px-8 sm:px-10 py-3 sm:py-4 bg-foreground text-background font-bold rounded-full transition-all duration-300 hover:shadow-2xl text-sm sm:text-base"
                   >
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center justify-center gap-2">
                       Get Started
-                      <ArrowRight className="w-5 h-5" />
+                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                     </span>
                   </motion.button>
                 </Link>
-                <Link href="/about">
+                <Link href="/about" className="w-full sm:w-auto">
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-10 py-4 bg-card backdrop-blur-sm border border-border text-foreground font-bold rounded-full transition-all duration-300 hover:bg-card "
+                    className="w-full px-8 sm:px-10 py-3 sm:py-4 bg-card backdrop-blur-sm border border-border text-foreground font-bold rounded-full transition-all duration-300 hover:bg-card text-sm sm:text-base"
                   >
                     How it works
                   </motion.button>
@@ -191,34 +191,34 @@ export default function Home() {
 
           {/* Stats */}
           <motion.div 
-            className="grid grid-cols-3 gap-8 pt-16 max-w-3xl mx-auto"
+            className="grid grid-cols-3 gap-4 sm:gap-8 pt-12 sm:pt-16 max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2 }}
           >
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-foreground">500+</div>
-              <div className="text-xs md:text-base text-muted mt-2 uppercase tracking-widest">Happy Diners</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">500+</div>
+              <div className="text-[10px] sm:text-xs md:text-sm lg:text-base text-muted mt-1 sm:mt-2 uppercase tracking-widest">Happy Diners</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-foreground">24/7</div>
-              <div className="text-xs md:text-base text-muted mt-2 uppercase tracking-widest">Live Booking</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">24/7</div>
+              <div className="text-[10px] sm:text-xs md:text-sm lg:text-base text-muted mt-1 sm:mt-2 uppercase tracking-widest">Live Booking</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-foreground">95%</div>
-              <div className="text-xs md:text-base text-muted mt-2 uppercase tracking-widest">Satisfaction</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">95%</div>
+              <div className="text-[10px] sm:text-xs md:text-sm lg:text-base text-muted mt-1 sm:mt-2 uppercase tracking-widest">Satisfaction</div>
             </div>
           </motion.div>
 
           {/* Hero Image Gallery */}
           <motion.div 
-            className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-16 max-w-4xl mx-auto"
+            className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 pt-12 sm:pt-16 max-w-4xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4 }}
           >
             <motion.div 
-              className="relative h-48 rounded-2xl overflow-hidden border border-border"
+              className="relative h-32 sm:h-40 md:h-48 rounded-xl sm:rounded-2xl overflow-hidden border border-border"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
             >
@@ -230,7 +230,7 @@ export default function Home() {
               />
             </motion.div>
             <motion.div 
-              className="relative h-48 rounded-2xl overflow-hidden border border-border"
+              className="relative h-32 sm:h-40 md:h-48 rounded-xl sm:rounded-2xl overflow-hidden border border-border"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
             >
@@ -242,7 +242,7 @@ export default function Home() {
               />
             </motion.div>
             <motion.div 
-              className="relative h-48 rounded-2xl overflow-hidden border border-border col-span-2 md:col-span-1"
+              className="relative h-32 sm:h-40 md:h-48 rounded-xl sm:rounded-2xl overflow-hidden border border-border col-span-2 md:col-span-1"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
             >
@@ -261,22 +261,22 @@ export default function Home() {
       <div className="relative h-px bg-border"></div>
 
       {/* Features Section */}
-      <section className="bg-background text-foreground py-24 px-4">
+      <section className="bg-background text-foreground py-16 sm:py-20 md:py-24 px-4 sm:px-6">
         <div className="container mx-auto max-w-6xl">
           <motion.div 
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl md:text-6xl font-bold mb-4 uppercase tracking-tighter text-foreground">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 uppercase tracking-tighter text-foreground">
               Why Choose Us?
             </h2>
-            <p className="text-muted text-lg font-light">Discover the features that make us stand out</p>
+            <p className="text-muted text-base sm:text-lg font-light">Discover the features that make us stand out</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
             {[
               {
                 icon: <Clock className="w-10 h-10" />,

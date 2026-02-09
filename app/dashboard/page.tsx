@@ -64,16 +64,16 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-accent/5 text-foreground p-4 md:p-8 pt-20 md:pt-24">
+    <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-accent/5 text-foreground p-4 sm:p-6 md:p-8 pt-20 sm:pt-20 md:pt-24">
       <div className="relative max-w-7xl mx-auto z-10">
         <motion.div 
-          className="mb-8"
+          className="mb-6 sm:mb-8"
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, type: "spring", bounce: 0.4 }}
         >
           <motion.h1 
-            className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-foreground to-accent bg-clip-text text-transparent"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-foreground to-accent bg-clip-text text-transparent"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -81,7 +81,7 @@ export default function Dashboard() {
             Welcome back, {session?.user?.name || 'User'}!
           </motion.h1>
           <motion.p 
-            className="text-muted text-lg"
+            className="text-muted text-base sm:text-lg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -91,99 +91,99 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Stats Grid */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <motion.div 
-            className="glass-card p-6 border border-accent/20 hover:border-accent/40 transition-all"
+            className="glass-card p-4 sm:p-6 border border-accent/20 hover:border-accent/40 transition-all"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2, type: "spring", stiffness: 100 }}
             whileHover={{ scale: 1.02, y: -5 }}
             whileTap={{ scale: 0.98 }}
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-accent/10 border border-accent/20">
-                <Calendar className="w-6 h-6 text-accent" />
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+              <div className="p-2 sm:p-3 rounded-xl bg-accent/10 border border-accent/20">
+                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
               </div>
             </div>
             <motion.div 
-              className="text-4xl font-bold mb-1 text-foreground"
+              className="text-3xl sm:text-4xl font-bold mb-1 text-foreground"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.5, type: "spring", stiffness: 200 }}
             >
               {stats.bookings}
             </motion.div>
-            <div className="text-muted">Total Bookings</div>
+            <div className="text-muted text-sm sm:text-base">Total Bookings</div>
           </motion.div>
 
           <motion.div 
-            className="glass-card p-6 border border-amber-500/20 hover:border-amber-500/40 transition-all"
+            className="glass-card p-4 sm:p-6 border border-amber-500/20 hover:border-amber-500/40 transition-all"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3, type: "spring", stiffness: 100 }}
             whileHover={{ scale: 1.02, y: -5 }}
             whileTap={{ scale: 0.98 }}
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                <Clock className="w-6 h-6 text-amber-500" />
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+              <div className="p-2 sm:p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
               </div>
             </div>
             <motion.div 
-              className="text-4xl font-bold mb-1 text-foreground"
+              className="text-3xl sm:text-4xl font-bold mb-1 text-foreground"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.6, type: "spring", stiffness: 200 }}
             >
               {stats.pending}
             </motion.div>
-            <div className="text-muted">Pending</div>
+            <div className="text-muted text-sm sm:text-base">Pending</div>
           </motion.div>
 
           <motion.div 
-            className="glass-card p-6 border border-green-500/20 hover:border-green-500/40 transition-all"
+            className="glass-card p-4 sm:p-6 border border-green-500/20 hover:border-green-500/40 transition-all"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4, type: "spring", stiffness: 100 }}
             whileHover={{ scale: 1.02, y: -5 }}
             whileTap={{ scale: 0.98 }}
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20">
-                <CheckCircle className="w-6 h-6 text-green-500" />
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+              <div className="p-2 sm:p-3 rounded-xl bg-green-500/10 border border-green-500/20">
+                <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" />
               </div>
             </div>
             <motion.div 
-              className="text-4xl font-bold mb-1 text-foreground"
+              className="text-3xl sm:text-4xl font-bold mb-1 text-foreground"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.7, type: "spring", stiffness: 200 }}
             >
               {stats.confirmed}
             </motion.div>
-            <div className="text-muted">Confirmed</div>
+            <div className="text-muted text-sm sm:text-base">Confirmed</div>
           </motion.div>
         </div>
 
         {/* Quick Actions */}
         <motion.div 
-          className="glass-card p-8 mb-8 border border-accent/10"
+          className="glass-card p-5 sm:p-6 md:p-8 mb-6 sm:mb-8 border border-accent/10"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
           <motion.div
-            className="flex items-center gap-3 mb-6"
+            className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.8 }}
           >
             <div className="p-2 rounded-lg bg-accent/10">
-              <LayoutDashboard className="w-5 h-5 text-accent" />
+              <LayoutDashboard className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground">Quick Actions</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground">Quick Actions</h2>
           </motion.div>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
