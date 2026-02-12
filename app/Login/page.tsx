@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 const Login = () => {
@@ -20,7 +19,6 @@ const Login = () => {
   const [success, setSuccess] = useState('')
   const [devOTP, setDevOTP] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
-  const router = useRouter()
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,8 +35,9 @@ const Login = () => {
       if (result?.error) {
         setError(result.error)
         setIsLoading(false)
-      } else {
-        router.push('/dashboard')
+      } else if (result?.ok) {
+        // Successful login - force redirect to dashboard
+        window.location.href = '/dashboard'
       }
     } catch (error) {
       console.error('Login error:', error)
@@ -109,8 +108,9 @@ const Login = () => {
       if (result?.error) {
         setError(result.error)
         setIsLoading(false)
-      } else {
-        router.push('/dashboard')
+      } else if (result?.ok) {
+        // Successful login - force redirect to dashboard
+        window.location.href = '/dashboard'
       }
     } catch (error) {
       console.error('Phone login error:', error)
@@ -121,7 +121,7 @@ const Login = () => {
 
   const handleSocialLogin = async (provider: string) => {
     try {
-      await signIn(provider, { callbackUrl: '/bookings' })
+      await signIn(provider, { callbackUrl: '/dashboard' })
     } catch (error) {
       console.error(`${provider} login error:`, error)
       setError(`Failed to login with ${provider}. Please try again.`)

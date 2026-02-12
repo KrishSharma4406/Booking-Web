@@ -2,7 +2,6 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { motion } from 'framer-motion'
 
@@ -16,7 +15,6 @@ const Signup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
 
   const handleSocialSignup = async (provider: string) => {
     try {
@@ -70,10 +68,10 @@ const Signup = () => {
 
       if (result?.error) {
         setError('Account created! Please wait for admin approval before logging in.')
-        setTimeout(() => router.push('/Login'), 3000)
-      } else {
+        setTimeout(() => { window.location.href = '/Login' }, 3000)
+      } else if (result?.ok) {
         setError('Account created! Please wait for admin approval to access all features.')
-        setTimeout(() => router.push('/dashboard'), 2000)
+        setTimeout(() => { window.location.href = '/dashboard' }, 2000)
       }
     } catch (error) {
       console.error('Signup error:', error)

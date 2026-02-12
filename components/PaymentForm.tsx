@@ -78,6 +78,8 @@ export default function PaymentForm({
 
           if (res.ok) {
             toast.success(data.message || 'Booking confirmed! Payment successful.')
+            // Scroll to top to show the updated bookings list
+            window.scrollTo({ top: 0, behavior: 'smooth' })
             onSuccess()
           } else {
             toast.error(data.error || 'Booking failed after payment. Please contact support.')

@@ -161,6 +161,14 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
+    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      // Default redirect to dashboard after sign in
+      return `${baseUrl}/dashboard`
+    },
     async signIn({ user, account, profile }: { user: NextAuthUser; account: Account | null; profile?: Profile }) {
       // For OAuth providers, sync with database
       if (account?.provider !== 'credentials' && account?.provider !== 'phone') {
@@ -190,6 +198,8 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id
         token.name = user.name
         token.email = user.email
+        token.phone = (user as any).phone
+        token.role = (user as any).role
         token.provider = account?.provider || 'credentials'
       }
       return token
@@ -199,6 +209,8 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id
         session.user.name = token.name
         session.user.email = token.email
+        session.user.phone = token.phone as string
+        session.user.role = token.role as string
         session.user.provider = token.provider
       }
       return session
