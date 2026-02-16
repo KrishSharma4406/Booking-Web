@@ -103,10 +103,9 @@ export default function AIChatbot() {
       <div className="fixed bottom-6 right-6 z-50 group">
         <button
           onClick={() => setIsOpen(true)}
-          className="relative bg-gradient-to-br from-purple-600 via-violet-600 to-blue-600 hover:from-purple-700 hover:via-violet-700 hover:to-blue-700 text-white rounded-full p-5 shadow-2xl transition-all duration-300 hover:scale-110 hover:shadow-purple-500/50 animate-pulse-slow"
+          className="relative bg-foreground hover:bg-foreground/90 text-background rounded-full p-5 shadow-2xl transition-all duration-300 hover:scale-105 border border-border/20"
           aria-label="Open AI Chatbot"
         >
-          <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full blur opacity-30 group-hover:opacity-50 transition duration-300"></div>
           <svg
             className="w-7 h-7 relative z-10"
             fill="none"
@@ -122,40 +121,38 @@ export default function AIChatbot() {
           </svg>
           <span className="absolute -top-1 -right-1 flex h-4 w-4">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500 border-2 border-white"></span>
+            <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500 border-2 border-background"></span>
           </span>
         </button>
-        <div className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-          Ask me anything!
+        <div className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-card text-foreground text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-border/50">
+          Ask me anything
         </div>
       </div>
     )
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-96 h-[36rem] backdrop-blur-xl bg-gray-900/95 rounded-2xl shadow-2xl border border-purple-500/30 flex flex-col overflow-hidden animate-slideIn">
-      {/* Decorative gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-transparent to-blue-600/10 pointer-events-none"></div>
+    <div className="fixed bottom-6 right-6 z-50 w-96 h-[36rem] backdrop-blur-md bg-card/95 rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-slideIn">
       
       {/* Header */}
-      <div className="relative bg-gradient-to-r from-purple-600 via-violet-600 to-blue-600 p-5 flex justify-between items-center shadow-lg">
+      <div className="relative bg-background/50 p-5 flex justify-between items-center border-b border-border backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            <div className="w-10 h-10 bg-card border border-border rounded-full flex items-center justify-center">
+              <svg className="w-6 h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
             </div>
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-purple-600 animate-pulse"></div>
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-background animate-pulse"></div>
           </div>
           <div>
-            <h3 className="font-bold text-white text-lg">AI Assistant</h3>
-            <p className="text-xs text-purple-100">Always here to help</p>
+            <h3 className="font-bold text-foreground text-lg">AI Assistant</h3>
+            <p className="text-xs text-muted">Always here to help</p>
           </div>
         </div>
         <button
           onClick={() => setIsOpen(false)}
-          className="text-white hover:bg-white/20 rounded-lg p-2 transition-all duration-200 hover:rotate-90"
+          className="text-muted hover:text-foreground hover:bg-card rounded-lg p-2 transition-all duration-200"
           aria-label="Close chatbot"
         >
           <svg
@@ -175,7 +172,7 @@ export default function AIChatbot() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-gray-900/50 to-gray-900/80 backdrop-blur-sm custom-scrollbar">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-background/30 backdrop-blur-sm custom-scrollbar">
         {messages.map((message, index) => (
           <div
             key={index}
@@ -185,20 +182,20 @@ export default function AIChatbot() {
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <div
-              className={`max-w-[85%] rounded-2xl p-4 shadow-lg backdrop-blur-sm ${
+              className={`max-w-[85%] rounded-2xl p-4 shadow-sm transition-all ${
                 message.role === 'user'
-                  ? 'bg-gradient-to-br from-purple-600 to-violet-600 text-white ml-auto'
-                  : 'bg-gray-800/90 text-gray-100 border border-gray-700/50'
+                  ? 'bg-foreground text-background ml-auto'
+                  : 'bg-card/90 text-foreground border border-border/50'
               }`}
             >
               {message.role === 'assistant' && (
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-6 h-6 bg-foreground text-background rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
-                  <span className="text-xs font-semibold text-purple-400">AI</span>
+                  <span className="text-xs font-semibold text-muted">AI</span>
                 </div>
               )}
               <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -216,14 +213,14 @@ export default function AIChatbot() {
         ))}
         {isLoading && (
           <div className="flex justify-start animate-fadeIn">
-            <div className="bg-gray-800/90 border border-gray-700/50 rounded-2xl p-4 backdrop-blur-sm">
+            <div className="bg-card/90 border border-border/50 rounded-2xl p-4 backdrop-blur-sm">
               <div className="flex items-center gap-2">
                 <div className="flex gap-1">
-                  <div className="w-2.5 h-2.5 bg-purple-500 rounded-full animate-bounce"></div>
-                  <div className="w-2.5 h-2.5 bg-violet-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2.5 h-2.5 bg-foreground rounded-full animate-bounce"></div>
+                  <div className="w-2.5 h-2.5 bg-foreground/80 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2.5 h-2.5 bg-foreground/60 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 </div>
-                <span className="text-xs text-gray-400">AI is thinking...</span>
+                <span className="text-xs text-muted">AI is thinking...</span>
               </div>
             </div>
           </div>
@@ -232,7 +229,7 @@ export default function AIChatbot() {
       </div>
 
       {/* Input Area */}
-      <div className="relative p-5 border-t border-purple-500/20 bg-gray-900/80 backdrop-blur-md">
+      <div className="relative p-5 border-t border-border bg-background/50 backdrop-blur-md">
         <div className="flex gap-3 items-end">
           <div className="flex-1 relative">
             <input
@@ -242,22 +239,22 @@ export default function AIChatbot() {
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
               disabled={isLoading}
-              className="w-full bg-gray-800 text-white rounded-xl px-5 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 border border-gray-700 placeholder-gray-500 transition-all"
+              className="w-full bg-card text-foreground rounded-xl px-5 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-foreground/20 disabled:opacity-50 border border-border placeholder-muted transition-all"
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
               </svg>
             </div>
           </div>
           <button
             onClick={sendMessage}
             disabled={isLoading || !input.trim()}
-            className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl px-5 py-3 transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/50 disabled:hover:shadow-none group"
+            className="bg-foreground hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed text-background rounded-xl px-5 py-3 transition-all duration-200 hover:shadow-lg disabled:hover:shadow-none"
             aria-label="Send message"
           >
             <svg
-              className="w-6 h-6 group-hover:translate-x-0.5 transition-transform"
+              className="w-6 h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
