@@ -26,7 +26,7 @@ export async function chatWithAI(messages: ChatMessage[]): Promise<string> {
   if (!apiKey || apiKey.trim() === '' || apiKey.includes('your-openai-api-key')) {
     console.error('❌ OpenAI API key not configured or invalid')
     console.error('Please set OPENAI_API_KEY in your .env.local file')
-    return getFallbackResponse(messages[messages.length - 1]?.content || '') + '\n\n⚠️ _Note: Using fallback responses. Configure OpenAI API key for AI-powered answers._'
+    return getFallbackResponse(messages[messages.length - 1]?.content || '')
   }
 
   try {
@@ -94,8 +94,8 @@ Remember: You're here to help with ANYTHING the user asks while maintaining focu
     console.log('Tokens used:', completion.usage?.total_tokens || 'unknown')
     
     if (!response) {
-      console.error('❌ Empty response from OpenAI')
-      throw new Error('Empty response from OpenAI API')
+      console.error('❌ Empty response from OpenAI - using fallback')
+      return getFallbackResponse(messages[messages.length - 1]?.content || '')
     }
     
     return response
@@ -106,25 +106,25 @@ Remember: You're here to help with ANYTHING the user asks while maintaining focu
     console.error('Error status:', error.status)
     console.error('Error code:', error.code)
     
-    // Provide specific error feedback
+    // Provide specific error feedback - but use fallback responses for better UX
     if (error.status === 401) {
       console.error('🔑 Authentication failed - API key may be invalid')
-      return 'I apologize, but I\'m having authentication issues. Please contact support.\n\n⚠️ _API key authentication failed._'
+      return getFallbackResponse(messages[messages.length - 1]?.content || '')
     }
     
     if (error.status === 429) {
-      console.error('⏱️ Rate limit exceeded')
-      return 'I apologize, but I\'m experiencing high demand right now. Please try again in a moment.\n\n⚠️ _Rate limit reached._'
+      console.error('⏱️ Rate limit exceeded - using fallback response')
+      return getFallbackResponse(messages[messages.length - 1]?.content || '')
     }
     
     if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
       console.error('🌐 Network connection issue')
-      return getFallbackResponse(messages[messages.length - 1]?.content || '') + '\n\n⚠️ _Network issue. Using fallback response._'
+      return getFallbackResponse(messages[messages.length - 1]?.content || '')
     }
 
-    // Generic fallback with error indication
+    // Generic fallback for any other errors
     console.error('Using fallback response due to error')
-    return getFallbackResponse(messages[messages.length - 1]?.content || '') + '\n\n⚠️ _AI temporarily unavailable. Using fallback response._'
+    return getFallbackResponse(messages[messages.length - 1]?.content || '')
   }
 }
 
