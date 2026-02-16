@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import Razorpay from 'razorpay'
 
 export const dynamic = 'force-dynamic'
@@ -11,7 +12,7 @@ const razorpay = new Razorpay({
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

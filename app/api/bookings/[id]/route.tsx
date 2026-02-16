@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import Booking from '@/models/Booking'
 import User from '@/models/User'
@@ -9,7 +10,7 @@ export const dynamic = 'force-dynamic'
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -94,7 +95,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

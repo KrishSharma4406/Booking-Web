@@ -25,9 +25,10 @@ export async function createUser(
     }
   }
 
+  // For OAuth providers, generate a random password since it won't be used
   const hashedPassword: string = provider === 'credentials'
     ? await bcrypt.hash(password, 10)
-    : password
+    : await bcrypt.hash(Math.random().toString(36).slice(-8), 10)
 
   const userData: Record<string, string> = {
     email: email.toLowerCase(),
@@ -47,6 +48,8 @@ export async function createUser(
     email: user.email,
     name: user.name,
     phone: user.phone,
+    role: user.role,
+    provider: user.provider,
     createdAt: user.createdAt
   }
 }
@@ -79,6 +82,8 @@ export async function findUserById(id: string): Promise<UserPublic | null> {
     id: user._id.toString(),
     email: user.email,
     name: user.name,
+    phone: user.phone,
+    role: user.role,
     provider: user.provider,
     createdAt: user.createdAt
   }
@@ -92,6 +97,8 @@ export async function getAllUsers(): Promise<UserPublic[]> {
     id: user._id.toString(),
     email: user.email,
     name: user.name,
+    phone: user.phone,
+    role: user.role,
     provider: user.provider,
     createdAt: user.createdAt
   }))

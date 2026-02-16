@@ -32,7 +32,10 @@ export default function Dashboard() {
 
       if (userRes.ok) {
         const user = await userRes.json()
+        console.log('User data fetched:', user)
         setUserData(user)
+      } else {
+        console.error('Failed to fetch user data:', await userRes.text())
       }
 
       if (bookingsRes.ok) {
@@ -304,7 +307,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex-1">
                   <div className="text-muted text-sm mb-1">Full Name</div>
-                  <div className="font-semibold text-foreground">{userData?.name || 'N/A'}</div>
+                  <div className="font-semibold text-foreground">{userData?.name || session?.user?.name || 'N/A'}</div>
                 </div>
               </div>
             </motion.div>
@@ -321,7 +324,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex-1">
                   <div className="text-muted text-sm mb-1">Email Address</div>
-                  <div className="font-semibold text-foreground truncate">{userData?.email || 'N/A'}</div>
+                  <div className="font-semibold text-foreground truncate">{userData?.email || session?.user?.email || 'N/A'}</div>
                 </div>
               </div>
             </motion.div>
@@ -341,15 +344,15 @@ export default function Dashboard() {
                   <div>
                     <motion.span 
                       className={`px-3 py-1.5 rounded-full text-sm font-semibold inline-flex items-center gap-2 ${
-                        userData?.role === 'admin' 
+                        (userData?.role || session?.user?.role) === 'admin' 
                           ? 'bg-gradient-to-r from-accent to-accent/80 text-white' 
                           : 'bg-accent/10 text-accent border border-accent/30'
                       }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      {userData?.role === 'admin' && <Shield className="w-4 h-4" />}
-                      {userData?.role || 'user'}
+                      {(userData?.role || session?.user?.role) === 'admin' && <Shield className="w-4 h-4" />}
+                      {userData?.role || session?.user?.role || 'user'}
                     </motion.span>
                   </div>
                 </div>
@@ -369,11 +372,15 @@ export default function Dashboard() {
                 <div className="flex-1">
                   <div className="text-muted text-sm mb-1">Member Since</div>
                   <div className="font-semibold text-foreground">
-                    {userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString('en-US', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    }) : 'N/A'}
+                    {userData?.createdAt ? (
+                      new Date(userData.createdAt).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })
+                    ) : (
+                      <span className="text-muted">Loading...</span>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
 import Booking from '@/models/Booking'
@@ -8,7 +9,7 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -23,7 +24,21 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    return NextResponse.json(user, { status: 200 })
+    // Return clean user object with all fields
+    const userData = {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      provider: user.provider,
+      phoneVerified: user.phoneVerified,
+      image: user.image,
+      createdAt: user.createdAt?.toISOString() || new Date().toISOString(),
+      updatedAt: user.updatedAt?.toISOString() || new Date().toISOString()
+    }
+
+    return NextResponse.json(userData, { status: 200 })
   } catch (error) {
     console.error('Error fetching user:', error)
     return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 })
@@ -32,7 +47,7 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -57,9 +72,27 @@ export async function PATCH(request: Request) {
 
     const updatedUser = await User.findById(user._id).select('-password')
 
+    if (!updatedUser) {
+      return NextResponse.json({ error: 'Failed to retrieve updated user' }, { status: 500 })
+    }
+
+    // Return clean user object
+    const userData = {
+      id: updatedUser._id.toString(),
+      name: updatedUser.name,
+      email: updatedUser.email,
+      phone: updatedUser.phone,
+      role: updatedUser.role,
+      provider: updatedUser.provider,
+      phoneVerified: updatedUser.phoneVerified,
+      image: updatedUser.image,
+      createdAt: updatedUser.createdAt?.toISOString() || new Date().toISOString(),
+      updatedAt: updatedUser.updatedAt?.toISOString() || new Date().toISOString()
+    }
+
     return NextResponse.json({
       message: 'Profile updated successfully',
-      user: updatedUser
+      user: userData
     }, { status: 200 })
   } catch (error) {
     console.error('Error updating profile:', error)
@@ -69,7 +102,7 @@ export async function PATCH(request: Request) {
 
 export async function DELETE() {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb'
 import Review from '@/models/Review'
 import User from '@/models/User'
@@ -9,7 +10,7 @@ export const dynamic = 'force-dynamic'
 // GET all reviews (admin) or user's own reviews
 export async function GET() {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -43,7 +44,7 @@ export async function GET() {
 // POST - Create a new review
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

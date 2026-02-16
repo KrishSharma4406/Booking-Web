@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb'
 import Review from '@/models/Review'
 import User from '@/models/User'
@@ -9,7 +10,7 @@ export const dynamic = 'force-dynamic'
 // PATCH - Update review status, add admin reply
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -48,7 +49,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 // DELETE - Delete a review
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

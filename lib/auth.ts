@@ -193,14 +193,47 @@ export const authOptions: NextAuthOptions = {
       }
       return true
     },
-    async jwt({ token, user, account }: { token: JWT; user?: NextAuthUser; account?: Account | null }) {
+    async jwt({ token, user, account, trigger }: { token: JWT; user?: NextAuthUser; account?: Account | null; trigger?: string }) {
       if (user) {
-        token.id = user.id
-        token.name = user.name
-        token.email = user.email
-        token.phone = (user as any).phone
-        token.role = (user as any).role
-        token.provider = account?.provider || 'credentials'
+        // For OAuth providers, fetch complete user data from database
+        if (account?.provider !== 'credentials' && account?.provider !== 'phone') {
+          try {
+            const dbUser = await findUserByEmail(user.email ?? '')
+            if (dbUser) {
+              token.id = dbUser.id
+              token.name = dbUser.name
+              token.email = dbUser.email
+              token.phone = dbUser.phone
+              token.role = dbUser.role
+              token.provider = account?.provider || 'credentials'
+            } else {
+              // Fallback to user object from OAuth
+              token.id = user.id
+              token.name = user.name
+              token.email = user.email
+              token.phone = (user as any).phone
+              token.role = 'user' // Default role
+              token.provider = account?.provider || 'credentials'
+            }
+          } catch (error) {
+            console.error('Error fetching user in JWT callback:', error)
+            // Fallback to basic user data
+            token.id = user.id
+            token.name = user.name
+            token.email = user.email
+            token.phone = (user as any).phone
+            token.role = 'user'
+            token.provider = account?.provider || 'credentials'
+          }
+        } else {
+          // For credentials/phone login, use data from user object
+          token.id = user.id
+          token.name = user.name
+          token.email = user.email
+          token.phone = (user as any).phone
+          token.role = (user as any).role
+          token.provider = account?.provider || 'credentials'
+        }
       }
       return token
     },
