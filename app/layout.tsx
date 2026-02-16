@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import SessionWrapper from "@/components/SessionProvider";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import AIChatbot from "@/components/AIChatbot";
 
 export const metadata: Metadata = {
   title: "Booking Web - Live Booking System",
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="min-h-screen relative">
               {children}
             </div>
+            <AIChatbot />
           </SessionWrapper>
         </ThemeProvider>
       </body>

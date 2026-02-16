@@ -63,6 +63,12 @@ export default function BookingsPage() {
   const [userRole, setUserRole] = useState('user')
   const [availableTables, setAvailableTables] = useState<Table[]>([])
   const [loadingTables, setLoadingTables] = useState(false)
+  const [aiRecommendation, setAiRecommendation] = useState<{
+    recommendation: string
+    tableArea: string
+    reasoning: string
+  } | null>(null)
+  const [loadingAI, setLoadingAI] = useState(false)
   const [formData, setFormData] = useState({
     guestName: '',
     guestEmail: '',
@@ -211,8 +217,36 @@ export default function BookingsPage() {
   useEffect(() => {
     if (formData.bookingDate && formData.bookingTime && formData.numberOfGuests) {
       fetchAvailableTables()
+      getAIRecommendation()
     }
-  }, [formData.bookingDate, formData.bookingTime, formData.numberOfGuests, fetchAvailableTables])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.bookingDate, formData.bookingTime, formData.numberOfGuests])
+
+  const getAIRecommendation = async () => {
+    if (!formData.numberOfGuests) return
+    
+    setLoadingAI(true)
+    try {
+      const res = await fetch('/api/ai/table-recommendation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          numberOfGuests: formData.numberOfGuests,
+          preferences: formData.specialRequests,
+          specialRequests: formData.specialRequests
+        })
+      })
+
+      const data = await res.json()
+      if (res.ok) {
+        setAiRecommendation(data)
+      }
+    } catch (err) {
+      console.error('AI recommendation error:', err)
+    } finally {
+      setLoadingAI(false)
+    }
+  }
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
@@ -407,6 +441,83 @@ export default function BookingsPage() {
 
               <div className="md:col-span-2">
                 <label className="block mb-3 font-medium text-lg text-foreground">Select Dining Area *</label>
+                
+                {/* AI Recommendation Banner - Enhanced */}
+                {loadingAI && (
+                  <div className="mb-5 p-5 bg-gradient-to-br from-purple-900/30 via-violet-900/20 to-blue-900/30 border border-purple-500/40 rounded-2xl backdrop-blur-sm flex items-center gap-4 shadow-lg">
+                    <div className="relative">
+                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+                      <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-md"></div>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-purple-300 flex items-center gap-2">
+                        <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        AI Analyzing Your Preferences
+                      </p>
+                      <p className="text-sm text-purple-200/80 mt-1">Finding the perfect dining spot just for you...</p>
+                    </div>
+                  </div>
+                )}
+                
+                {aiRecommendation && !loadingAI && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className="mb-5 relative overflow-hidden rounded-2xl border border-purple-500/50 shadow-2xl shadow-purple-500/20"
+                  >
+                    {/* Animated gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/30 via-violet-600/20 to-blue-600/30 animate-pulse-slow"></div>
+                    <div className="absolute inset-0 backdrop-blur-md bg-gray-900/50"></div>
+                    
+                    {/* Content */}
+                    <div className="relative p-6">
+                      <div className="flex items-start gap-4">
+                        {/* AI Icon */}
+                        <div className="relative flex-shrink-0">
+                          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                          </div>
+                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-gray-900 animate-pulse"></div>
+                        </div>
+                        
+                        {/* Recommendation Content */}
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="font-bold text-lg bg-gradient-to-r from-purple-300 via-violet-300 to-blue-300 bg-clip-text text-transparent">
+                              AI Recommendation
+                            </h4>
+                            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                          </div>
+                          <p className="text-gray-200 leading-relaxed mb-4">{aiRecommendation.reasoning}</p>
+                          
+                          <button
+                            type="button"
+                            onClick={() => setFormData({...formData, tableArea: aiRecommendation.tableArea})}
+                            className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 rounded-xl text-white font-medium shadow-lg hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
+                          >
+                            <svg className="w-5 h-5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            Use {getAreaDisplayName(aiRecommendation.tableArea)}
+                            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Decorative elements */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl"></div>
+                  </motion.div>
+                )}
+                
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {Object.entries(AREA_PRICING).map(([area, price], index) => {
                     const areaImages: Record<string, string> = {

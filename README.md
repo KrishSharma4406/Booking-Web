@@ -2,23 +2,31 @@
 
 # Booking Web
 
-### Modern Restaurant Table Booking System
+### Modern Restaurant Table Booking System with AI Integration
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6-green?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38bdf8?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-412991?style=for-the-badge&logo=openai)](https://openai.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-A full-stack restaurant booking platform with real-time table management, secure authentication, and an intuitive admin dashboard. Built with modern web technologies for performance, scalability, and exceptional user experience.
+A full-stack restaurant booking platform with **AI-powered recommendations**, real-time table management, secure authentication, and an intuitive admin dashboard. Built with modern web technologies for performance, scalability, and exceptional user experience.
 
-[Live Demo](#) • [Documentation](#) • [Report Bug](#) • [Request Feature](#)
+[Live Demo](#) • [AI Features Guide](AI_INTEGRATION_README.md) • [Report Bug](#) • [Request Feature](#)
 
 </div>
 
 ---
 
 ## ✨ Features
+
+### 🤖 **AI-Powered Intelligence** (NEW!)
+- **Smart Chatbot Assistant** - 24/7 AI support for reservations and inquiries
+- **Intelligent Table Recommendations** - ML-based dining area suggestions
+- **Sentiment Analysis** - Automated review analysis and insights
+- **Smart Booking Suggestions** - AI-optimized time slot recommendations
+- **Personalized Experience** - Learns from guest preferences
 
 ### 🔐 **Authentication & Security**
 - NextAuth.js integration with multiple providers (Credentials, Google, GitHub, Facebook)
@@ -27,6 +35,7 @@ A full-stack restaurant booking platform with real-time table management, secure
 - JWT-based session management
 - Role-based access control (Admin/User)
 - User approval workflow
+- **Online-only payment enforcement** (NEW!)
 
 ### 📊 **Admin Dashboard**
 - Comprehensive analytics and statistics
@@ -43,11 +52,14 @@ A full-stack restaurant booking platform with real-time table management, secure
   - Status tracking (Available, Occupied, Reserved, Maintenance)
 - Real-time availability checking
 - Automatic or manual table assignment
+- **AI-recommended table assignments** (NEW!)
 
-### 📅 **Booking System**
+### 📅 **Enhanced Booking System**
 - Intelligent date and time selection
 - Guest count-based filtering
 - Instant availability verification
+- **Real-time connectivity monitoring** (NEW!)
+- **AI-powered table area recommendations** (NEW!)
 - Booking status workflow (Pending → Confirmed → Completed/Cancelled)
 - User booking history and management
 - Email notifications for bookings
