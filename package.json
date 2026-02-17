@@ -40,6 +40,7 @@
     "@types/pdfkit": "^0.17.4",
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
+    "@types/react-toastify": "^4.0.2",
     "autoprefixer": "^10.4.23",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.0",

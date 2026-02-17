@@ -100,14 +100,14 @@ export default function AIChatbot() {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-6 right-6 z-50 group">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 group">
         <button
           onClick={() => setIsOpen(true)}
-          className="relative bg-foreground hover:bg-foreground/90 text-background rounded-full p-5 shadow-2xl transition-all duration-300 hover:scale-105 border border-border/20"
+          className="relative bg-foreground hover:bg-foreground/90 text-background rounded-full p-4 sm:p-5 shadow-2xl transition-all duration-300 hover:scale-105 border border-border/20"
           aria-label="Open AI Chatbot"
         >
           <svg
-            className="w-7 h-7 relative z-10"
+            className="w-6 h-6 sm:w-7 sm:h-7 relative z-10"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -132,7 +132,7 @@ export default function AIChatbot() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-96 h-[36rem] backdrop-blur-md bg-card/95 rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-slideIn">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-h-[calc(100vh-2rem)] sm:max-h-[36rem] h-[600px] sm:h-[36rem] backdrop-blur-md bg-card/95 rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-slideIn">
       
       {/* Header */}
       <div className="relative bg-background/50 p-5 flex justify-between items-center border-b border-border backdrop-blur-sm">

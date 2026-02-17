@@ -24,7 +24,7 @@ export async function chatWithAI(messages: ChatMessage[]): Promise<string> {
   console.log('API Key prefix:', apiKey?.substring(0, 10) || 'none')
   
   if (!apiKey || apiKey.trim() === '' || apiKey.includes('your-openai-api-key')) {
-    console.error('❌ OpenAI API key not configured or invalid')
+    console.error('OpenAI API key not configured or invalid')
     console.error('Please set OPENAI_API_KEY in your .env.local file')
     return getFallbackResponse(messages[messages.length - 1]?.content || '')
   }
@@ -71,7 +71,7 @@ RESPONSE GUIDELINES:
 
 Remember: You're here to help with ANYTHING the user asks while maintaining focus on providing excellent restaurant service.`
 
-    console.log('🚀 Calling OpenAI API with', messages.length, 'messages...')
+    console.log('Calling OpenAI API with', messages.length, 'messages...')
     
     const startTime = Date.now()
     const completion = await openai.chat.completions.create({
@@ -89,36 +89,37 @@ Remember: You're here to help with ANYTHING the user asks while maintaining focu
     const endTime = Date.now()
     const response = completion.choices[0]?.message?.content
     
-    console.log('✅ OpenAI response received in', endTime - startTime, 'ms')
+    console.log('OpenAI response received in', endTime - startTime, 'ms')
     console.log('Response preview:', response?.substring(0, 100))
     console.log('Tokens used:', completion.usage?.total_tokens || 'unknown')
     
     if (!response) {
-      console.error('❌ Empty response from OpenAI - using fallback')
+      console.error('Empty response from OpenAI - using fallback')
       return getFallbackResponse(messages[messages.length - 1]?.content || '')
     }
     
     return response
-  } catch (error: any) {
-    console.error('❌ OpenAI API Error:', error)
-    console.error('Error type:', error.constructor.name)
-    console.error('Error message:', error.message)
-    console.error('Error status:', error.status)
-    console.error('Error code:', error.code)
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error))
+    console.error('OpenAI API Error:', err)
+    console.error('Error type:', err.constructor.name)
+    console.error('Error message:', err.message)
+    console.error('Error status:', (error as Record<string, unknown>).status)
+    console.error('Error code:', (error as Record<string, unknown>).code)
     
     // Provide specific error feedback - but use fallback responses for better UX
-    if (error.status === 401) {
-      console.error('🔑 Authentication failed - API key may be invalid')
+    if ((error as Record<string, unknown>).status === 401) {
+      console.error('Authentication failed - API key may be invalid')
       return getFallbackResponse(messages[messages.length - 1]?.content || '')
     }
     
-    if (error.status === 429) {
-      console.error('⏱️ Rate limit exceeded - using fallback response')
+    if ((error as Record<string, unknown>).status === 429) {
+      console.error('Rate limit exceeded - using fallback response')
       return getFallbackResponse(messages[messages.length - 1]?.content || '')
     }
     
-    if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
-      console.error('🌐 Network connection issue')
+    if ((error as Record<string, unknown>).code === 'ENOTFOUND' || (error as Record<string, unknown>).code === 'ECONNREFUSED') {
+      console.error('Network connection issue')
       return getFallbackResponse(messages[messages.length - 1]?.content || '')
     }
 

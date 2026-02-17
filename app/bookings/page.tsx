@@ -1,32 +1,34 @@
+// filepath: c:\Users\Krish Kumar\OneDrive\Desktop\Mega Project\mega\app\bookings\page.tsx
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
-import Link from 'next/link'
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import { calculateBookingPrice, getAreaDisplayName, AREA_PRICING } from '@/lib/pricing'
-import PaymentForm from '@/components/PaymentForm'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import Link from 'next/link'
 import {
   Calendar,
   Clock,
   Users as UsersIcon,
   Mail,
   Phone,
-  MapPin,
-  FileText,
-  CreditCard,
+  Table as TableIcon,
   Plus,
   X,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Table as TableIcon,
   ArrowLeft,
-  Star
+  CheckCircle,
+  AlertCircle,
+  Sparkles,
+  Star,
+  MapPin,
+  Trash2,
+  Eye
 } from 'lucide-react'
+import Image from 'next/image'
+
+// ...existing code...
 
 interface Table {
   _id: string
@@ -52,6 +54,49 @@ interface Booking {
   paymentStatus?: string
   paymentAmount?: number
   createdAt: string
+}
+
+const AREA_PRICING = {
+  'indoor': 500,
+  'outdoor': 750,
+  'private-room': 1500,
+  'rooftop': 1000,
+  'bar-area': 600,
+  'patio': 800
+}
+
+const calculateBookingPrice = (guests: number, area: string): number => {
+  const basePrice = AREA_PRICING[area as keyof typeof AREA_PRICING] || 500
+  const guestMultiplier = Math.ceil(guests / 2) * 100
+  return basePrice + guestMultiplier
+}
+
+interface RazorpayOptions {
+  key: string
+  amount: number
+  currency: string
+  name: string
+  description: string
+  order_id: string
+  handler: (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void
+  prefill: {
+    name: string
+    email: string
+    contact: string
+  }
+  theme: {
+    color: string
+  }
+}
+
+interface RazorpayInstance {
+  open: () => void
+}
+
+declare global {
+  interface Window {
+    Razorpay: new (options: RazorpayOptions) => RazorpayInstance
+  }
 }
 
 export default function BookingsPage() {
@@ -84,6 +129,18 @@ export default function BookingsPage() {
   const [keyId, setKeyId] = useState('')
   const [showPayment, setShowPayment] = useState(false)
   const [totalAmount, setTotalAmount] = useState(0)
+
+  useEffect(() => {
+    // Load Razorpay script
+    const script = document.createElement('script')
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.async = true
+    document.body.appendChild(script)
+
+    return () => {
+      document.body.removeChild(script)
+    }
+  }, [])
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -126,11 +183,9 @@ export default function BookingsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Calculate price
     const amount = calculateBookingPrice(formData.numberOfGuests, formData.tableArea)
     setTotalAmount(amount)
 
-    // Create payment order
     try {
       const res = await fetch('/api/payment', {
         method: 'POST',
@@ -214,15 +269,7 @@ export default function BookingsPage() {
     }
   }, [formData.bookingDate, formData.bookingTime, formData.numberOfGuests])
 
-  useEffect(() => {
-    if (formData.bookingDate && formData.bookingTime && formData.numberOfGuests) {
-      fetchAvailableTables()
-      getAIRecommendation()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.bookingDate, formData.bookingTime, formData.numberOfGuests])
-
-  const getAIRecommendation = async () => {
+  const getAIRecommendation = useCallback(async () => {
     if (!formData.numberOfGuests) return
     
     setLoadingAI(true)
@@ -246,16 +293,76 @@ export default function BookingsPage() {
     } finally {
       setLoadingAI(false)
     }
-  }
+  }, [formData.numberOfGuests, formData.specialRequests])
 
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      pending: 'bg-yellow-500',
-      confirmed: 'bg-green-500',
-      cancelled: 'bg-red-500',
-      completed: 'bg-blue-500'
+  useEffect(() => {
+    if (formData.bookingDate && formData.bookingTime && formData.numberOfGuests) {
+      fetchAvailableTables()
+      getAIRecommendation()
     }
-    return colors[status] || 'bg-gray-500'
+  }, [formData.bookingDate, formData.bookingTime, formData.numberOfGuests, fetchAvailableTables, getAIRecommendation])
+
+  const handlePayment = async () => {
+    if (!window.Razorpay) {
+      toast.error('Payment gateway not loaded')
+      return
+    }
+
+    const options = {
+      key: keyId,
+      amount: totalAmount * 100,
+      currency: 'INR',
+      name: 'Restaurant Booking',
+      description: 'Table Reservation',
+      order_id: orderId,
+      handler: async function (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) {
+        try {
+          const verifyRes = await fetch('/api/payment/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...response,
+              bookingData: formData
+            })
+          })
+
+          const data = await verifyRes.json()
+
+          if (verifyRes.ok) {
+            toast.success('Payment successful! Booking confirmed.')
+            setShowForm(false)
+            setShowPayment(false)
+            fetchBookings()
+            setFormData({
+              guestName: '',
+              guestEmail: '',
+              guestPhone: '',
+              numberOfGuests: 2,
+              bookingDate: '',
+              bookingTime: '',
+              tableNumber: undefined,
+              tableArea: 'indoor',
+              specialRequests: ''
+            })
+          } else {
+            toast.error(data.error || 'Payment verification failed')
+          }
+        } catch {
+          toast.error('Error verifying payment')
+        }
+      },
+      prefill: {
+        name: formData.guestName,
+        email: formData.guestEmail,
+        contact: formData.guestPhone
+      },
+      theme: {
+        color: '#000000'
+      }
+    }
+
+    const rzp = new window.Razorpay(options)
+    rzp.open()
   }
 
   if (status === 'loading' || loading) {
@@ -275,29 +382,29 @@ export default function BookingsPage() {
   const completedCount = bookings.filter(b => b.status === 'completed').length
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground p-4 sm:p-6 md:p-8 pt-20 sm:pt-20 md:pt-24">
+    <div className="relative min-h-screen bg-background text-foreground p-3 sm:p-4 md:p-6 lg:p-8 pt-16 sm:pt-18 md:pt-20 lg:pt-24">
       <ToastContainer position="top-right" theme="dark" />
 
       <div className="relative max-w-7xl mx-auto z-10">
         {/* Header */}
         <motion.div 
-          className="mb-6 sm:mb-8"
+          className="mb-4 sm:mb-6 md:mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div>
-              <h1 className="text-4xl font-bold mb-2 text-foreground flex items-center gap-3">
-                <Calendar className="w-8 h-8" />
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2 text-foreground flex items-center gap-2 sm:gap-3">
+                <Calendar className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />
                 My Bookings
               </h1>
-              <p className="text-muted">View and manage your table reservations</p>
+              <p className="text-sm sm:text-base text-muted">View and manage your table reservations</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <Link
                 href="/dashboard"
-                className="px-6 py-3 bg-card border border-border text-foreground rounded-xl hover:bg-card/80 transition-all flex items-center gap-2 font-semibold"
+                className="px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 bg-card border border-border text-foreground rounded-xl hover:bg-card/80 transition-all flex items-center justify-center gap-2 font-semibold text-sm sm:text-base"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Dashboard
@@ -305,11 +412,11 @@ export default function BookingsPage() {
               {userRole !== 'admin' && (
                 <motion.button
                   onClick={() => setShowForm(!showForm)}
-                  className="bg-foreground text-background px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 hover:opacity-90"
+                  className="bg-foreground text-background px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 hover:opacity-90 text-sm sm:text-base"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  {showForm ? <><X className="w-5 h-5" /> Cancel</> : <><Plus className="w-5 h-5" /> New Booking</>}
+                  {showForm ? <><X className="w-4 h-4 sm:w-5 sm:h-5" /> Cancel</> : <><Plus className="w-4 h-4 sm:w-5 sm:h-5" /> New Booking</>}
                 </motion.button>
               )}
             </div>
@@ -318,55 +425,55 @@ export default function BookingsPage() {
 
         {/* Stats Cards */}
         <motion.div 
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <div className="glass-card p-6 rounded-2xl">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 bg-blue-500/20 rounded-xl">
-                <Calendar className="w-6 h-6 text-blue-500" />
+          <div className="glass-card p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <div className="p-2 sm:p-3 bg-blue-500/20 rounded-lg sm:rounded-xl">
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-blue-500" />
               </div>
               <div>
-                <p className="text-sm text-muted">Total</p>
-                <p className="text-2xl font-bold text-foreground">{bookings.length}</p>
+                <p className="text-xs sm:text-sm text-muted">Total</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">{bookings.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="glass-card p-6 rounded-2xl">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 bg-yellow-500/20 rounded-xl">
-                <AlertCircle className="w-6 h-6 text-yellow-500" />
+          <div className="glass-card p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <div className="p-2 sm:p-3 bg-yellow-500/20 rounded-lg sm:rounded-xl">
+                <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-yellow-500" />
               </div>
               <div>
-                <p className="text-sm text-muted">Pending</p>
-                <p className="text-2xl font-bold text-foreground">{pendingCount}</p>
+                <p className="text-xs sm:text-sm text-muted">Pending</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">{pendingCount}</p>
               </div>
             </div>
           </div>
 
-          <div className="glass-card p-6 rounded-2xl">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 bg-green-500/20 rounded-xl">
-                <CheckCircle className="w-6 h-6 text-green-500" />
+          <div className="glass-card p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <div className="p-2 sm:p-3 bg-green-500/20 rounded-lg sm:rounded-xl">
+                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-500" />
               </div>
               <div>
-                <p className="text-sm text-muted">Confirmed</p>
-                <p className="text-2xl font-bold text-foreground">{confirmedCount}</p>
+                <p className="text-xs sm:text-sm text-muted">Confirmed</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">{confirmedCount}</p>
               </div>
             </div>
           </div>
 
-          <div className="glass-card p-6 rounded-2xl">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 bg-purple-500/20 rounded-xl">
-                <CheckCircle className="w-6 h-6 text-purple-500" />
+          <div className="glass-card p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <div className="p-2 sm:p-3 bg-purple-500/20 rounded-lg sm:rounded-xl">
+                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-purple-500" />
               </div>
               <div>
-                <p className="text-sm text-muted">Completed</p>
-                <p className="text-2xl font-bold text-foreground">{completedCount}</p>
+                <p className="text-xs sm:text-sm text-muted">Completed</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">{completedCount}</p>
               </div>
             </div>
           </div>
@@ -375,18 +482,18 @@ export default function BookingsPage() {
         <AnimatePresence>
         {showForm && userRole !== 'admin' && (
           <motion.div 
-            className="glass-card p-6 mb-8 rounded-2xl"
+            className="glass-card p-4 sm:p-5 md:p-6 mb-6 sm:mb-8 rounded-xl sm:rounded-2xl"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-              <TableIcon className="w-6 h-6" />
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+              <TableIcon className="w-5 h-5 sm:w-6 sm:h-6" />
               Create New Booking
             </h2>
-            <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                <label className="mb-2 font-medium text-foreground flex items-center gap-2 text-sm sm:text-base">
                   <UsersIcon className="w-4 h-4" /> Guest Name *
                 </label>
                 <input
@@ -394,12 +501,12 @@ export default function BookingsPage() {
                   required
                   value={formData.guestName}
                   onChange={(e) => setFormData({...formData, guestName: e.target.value})}
-                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-card rounded-lg sm:rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all text-sm sm:text-base"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                <label className="mb-2 font-medium text-foreground flex items-center gap-2 text-sm sm:text-base">
                   <Mail className="w-4 h-4" /> Email *
                 </label>
                 <input
@@ -407,12 +514,12 @@ export default function BookingsPage() {
                   required
                   value={formData.guestEmail}
                   onChange={(e) => setFormData({...formData, guestEmail: e.target.value})}
-                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-card rounded-lg sm:rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all text-sm sm:text-base"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                <label className="mb-2 font-medium text-foreground flex items-center gap-2 text-sm sm:text-base">
                   <Phone className="w-4 h-4" /> Phone *
                 </label>
                 <input
@@ -420,12 +527,12 @@ export default function BookingsPage() {
                   required
                   value={formData.guestPhone}
                   onChange={(e) => setFormData({...formData, guestPhone: e.target.value})}
-                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-card rounded-lg sm:rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all text-sm sm:text-base"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                <label className="mb-2 font-medium text-foreground flex items-center gap-2 text-sm sm:text-base">
                   <UsersIcon className="w-4 h-4" /> Number of Guests *
                 </label>
                 <input
@@ -435,28 +542,26 @@ export default function BookingsPage() {
                   max="20"
                   value={formData.numberOfGuests}
                   onChange={(e) => setFormData({...formData, numberOfGuests: parseInt(e.target.value)})}
-                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-card rounded-lg sm:rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all text-sm sm:text-base"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block mb-3 font-medium text-lg text-foreground">Select Dining Area *</label>
+                <label className="block mb-3 font-medium text-base sm:text-lg text-foreground">Select Dining Area *</label>
                 
-                {/* AI Recommendation Banner - Enhanced */}
+                {/* AI Recommendation Banner */}
                 {loadingAI && (
-                  <div className="mb-5 p-5 bg-gradient-to-br from-purple-900/30 via-violet-900/20 to-blue-900/30 border border-purple-500/40 rounded-2xl backdrop-blur-sm flex items-center gap-4 shadow-lg">
-                    <div className="relative">
-                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+                  <div className="mb-4 sm:mb-5 p-4 sm:p-5 bg-gradient-to-br from-purple-900/30 via-violet-900/20 to-blue-900/30 border border-purple-500/40 rounded-xl sm:rounded-2xl backdrop-blur-sm flex items-center gap-3 sm:gap-4 shadow-lg">
+                    <div className="relative flex-shrink-0">
+                      <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-t-2 border-b-2 border-purple-500"></div>
                       <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-md"></div>
                     </div>
                     <div>
-                      <p className="font-semibold text-purple-300 flex items-center gap-2">
-                        <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
+                      <p className="font-semibold text-purple-300 flex items-center gap-2 text-sm sm:text-base">
+                        <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" />
                         AI Analyzing Your Preferences
                       </p>
-                      <p className="text-sm text-purple-200/80 mt-1">Finding the perfect dining spot just for you...</p>
+                      <p className="text-xs sm:text-sm text-purple-200/80 mt-1">Finding the perfect dining spot just for you...</p>
                     </div>
                   </div>
                 )}
@@ -466,60 +571,44 @@ export default function BookingsPage() {
                     initial={{ opacity: 0, y: -20, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="mb-5 relative overflow-hidden rounded-2xl border border-purple-500/50 shadow-2xl shadow-purple-500/20"
+                    className="mb-4 sm:mb-5 relative overflow-hidden rounded-xl sm:rounded-2xl border border-purple-500/50 shadow-2xl shadow-purple-500/20"
                   >
-                    {/* Animated gradient background */}
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-600/30 via-violet-600/20 to-blue-600/30 animate-pulse-slow"></div>
                     <div className="absolute inset-0 backdrop-blur-md bg-gray-900/50"></div>
                     
-                    {/* Content */}
-                    <div className="relative p-6">
-                      <div className="flex items-start gap-4">
-                        {/* AI Icon */}
+                    <div className="relative p-4 sm:p-6">
+                      <div className="flex items-start gap-3 sm:gap-4">
                         <div className="relative flex-shrink-0">
-                          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-                            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                            </svg>
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg">
+                            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                           </div>
-                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-gray-900 animate-pulse"></div>
+                          <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-green-400 rounded-full border-2 border-gray-900 animate-pulse"></div>
                         </div>
-                        
-                        {/* Recommendation Content */}
-                        <div className="flex-1">
+
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-bold text-lg bg-gradient-to-r from-purple-300 via-violet-300 to-blue-300 bg-clip-text text-transparent">
-                              AI Recommendation
-                            </h4>
-                            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                            <h3 className="font-bold text-white text-sm sm:text-base md:text-lg">AI Recommendation</h3>
+                            <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-yellow-400 flex-shrink-0" />
                           </div>
-                          <p className="text-gray-200 leading-relaxed mb-4">{aiRecommendation.reasoning}</p>
+                          <p className="text-gray-200 leading-relaxed mb-3 sm:mb-4 text-xs sm:text-sm md:text-base break-words">{aiRecommendation.recommendation}</p>
                           
-                          <button
-                            type="button"
-                            onClick={() => setFormData({...formData, tableArea: aiRecommendation.tableArea})}
-                            className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 rounded-xl text-white font-medium shadow-lg hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
-                          >
-                            <svg className="w-5 h-5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            Use {getAreaDisplayName(aiRecommendation.tableArea)}
-                            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </button>
+                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-xs sm:text-sm">
+                            <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 sm:py-2 rounded-lg backdrop-blur-sm">
+                              <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-purple-300 flex-shrink-0" />
+                              <span className="text-purple-200 font-medium truncate">{aiRecommendation.tableArea}</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                     
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl"></div>
+                    <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-24 sm:h-24 bg-blue-500/10 rounded-full blur-2xl"></div>
                   </motion.div>
                 )}
                 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {Object.entries(AREA_PRICING).map(([area, price], index) => {
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  {Object.entries(AREA_PRICING).map(([area, price]) => {
                     const areaImages: Record<string, string> = {
                       'indoor': 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80',
                       'outdoor': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=80',
@@ -528,27 +617,47 @@ export default function BookingsPage() {
                       'bar-area': 'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=400&q=80',
                       'patio': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80'
                     }
+                    
+                    const isRecommended = aiRecommendation?.tableArea.toLowerCase() === area.toLowerCase()
+                    
                     return (
                       <motion.div
                         key={area}
                         onClick={() => setFormData({...formData, tableArea: area})}
-                        className={`cursor-pointer rounded-xl border-2 overflow-hidden transition-all ${
-                          formData.tableArea === area
-                            ? 'border-foreground'
+                        className={`relative cursor-pointer rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all ${
+                          formData.tableArea === area 
+                            ? 'border-foreground shadow-lg shadow-foreground/20' 
                             : 'border-border hover:border-foreground/50'
-                        }`}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3, delay: index * 0.05 }}
-                        whileHover={{ scale: 1.05 }}
+                        } ${isRecommended ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-background' : ''}`}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        <div className="relative h-32">
-                          <Image src={areaImages[area]} alt={getAreaDisplayName(area)} className="w-full h-full object-cover" fill sizes="400px" />
+                        {isRecommended && (
+                          <div className="absolute top-2 right-2 z-10 bg-purple-500 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold flex items-center gap-1 shadow-lg">
+                            <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
+                            AI Pick
+                          </div>
+                        )}
+                        <div className="relative h-32 sm:h-40 md:h-48">
+                          <Image
+                            src={areaImages[area]}
+                            alt={area}
+                            fill
+                            className="object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                         </div>
-                        <div className="p-3 bg-card">
-                          <div className="font-semibold text-sm text-foreground">{getAreaDisplayName(area)}</div>
-                          <div className="text-xs text-muted mt-1">₹{price}/person</div>
+                        <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                          <h3 className="text-white font-bold mb-1 capitalize text-sm sm:text-base md:text-lg">
+                            {area.replace('-', ' ')}
+                          </h3>
+                          <p className="text-white/90 font-semibold text-xs sm:text-sm md:text-base">₹{price}/person</p>
                         </div>
+                        {formData.tableArea === area && (
+                          <div className="absolute top-2 left-2 bg-foreground text-background rounded-full p-1.5 sm:p-2">
+                            <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                          </div>
+                        )}
                       </motion.div>
                     )
                   })}
@@ -556,7 +665,7 @@ export default function BookingsPage() {
               </div>
 
               <div>
-                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                <label className="mb-2 font-medium text-foreground flex items-center gap-2 text-sm sm:text-base">
                   <Calendar className="w-4 h-4" /> Date *
                 </label>
                 <input
@@ -565,12 +674,12 @@ export default function BookingsPage() {
                   min={new Date().toISOString().split('T')[0]}
                   value={formData.bookingDate}
                   onChange={(e) => setFormData({...formData, bookingDate: e.target.value})}
-                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-card rounded-lg sm:rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all text-sm sm:text-base"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
+                <label className="mb-2 font-medium text-foreground flex items-center gap-2 text-sm sm:text-base">
                   <Clock className="w-4 h-4" /> Time *
                 </label>
                 <input
@@ -578,119 +687,89 @@ export default function BookingsPage() {
                   required
                   value={formData.bookingTime}
                   onChange={(e) => setFormData({...formData, bookingTime: e.target.value})}
-                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-card rounded-lg sm:rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all text-sm sm:text-base"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block mb-2 font-medium text-foreground">Select Table (Optional)</label>
+                <label className="block mb-2 font-medium text-foreground text-sm sm:text-base">Select Table (Optional)</label>
                 {loadingTables ? (
-                  <div className="flex items-center justify-center p-4 bg-card rounded-xl">
-                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-foreground"></div>
-                    <span className="ml-2 text-foreground">Loading available tables...</span>
+                  <div className="text-center py-8">
+                    <motion.div 
+                      className="inline-block rounded-full h-8 w-8 border-t-2 border-b-2 border-foreground"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    />
+                    <p className="mt-2 text-muted text-sm">Loading available tables...</p>
                   </div>
                 ) : availableTables.length > 0 ? (
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                    <div
-                      onClick={() => setFormData({...formData, tableNumber: undefined})}
-                      className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
-                        !formData.tableNumber
-                          ? 'border-foreground bg-foreground/10'
-                          : 'border-border bg-card hover:border-foreground/50'
-                      }`}
-                    >
-                      <div className="text-center">
-                        <div className="font-semibold text-foreground">Any Table</div>
-                        <div className="text-xs text-muted">Auto-assign</div>
-                      </div>
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {availableTables.map((table) => (
-                      <div
+                      <motion.div
                         key={table._id}
                         onClick={() => setFormData({...formData, tableNumber: table.tableNumber})}
-                        className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
+                        className={`p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 cursor-pointer transition-all ${
                           formData.tableNumber === table.tableNumber
                             ? 'border-foreground bg-foreground/10'
-                            : 'border-border bg-card hover:border-foreground/50'
+                            : 'border-border hover:border-foreground/50'
                         }`}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        <div className="text-center">
-                          <div className="text-2xl mb-1">
-                            {table.location === 'outdoor' ? '' :
-                             table.location === 'private-room' ? '' :
-                             table.location === 'rooftop' ? '' : ''}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <TableIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="font-bold text-sm sm:text-base">Table {table.tableNumber}</span>
                           </div>
-                          <div className="font-semibold text-foreground">Table #{table.tableNumber}</div>
-                          <div className="text-xs text-muted">{table.tableName}</div>
-                          <div className="text-xs text-muted">
-                            {table.capacity} seats • {table.location.split('-').join(' ')}
-                          </div>
-                          {table.features && table.features.length > 0 && (
-                            <div className="mt-1 flex flex-wrap gap-1 justify-center">
-                              {table.features.slice(0, 2).map((f: string) => (
-                                <span key={f} className="text-xs bg-card border border-border px-1 rounded">
-                                  {f === 'window-view' ? '' :
-                                   f === 'romantic' ? '' :
-                                   f === 'vip' ? '' :
-                                   f === 'accessible' ? '' : ''}
-                                </span>
-                              ))}
-                            </div>
+                          {formData.tableNumber === table.tableNumber && (
+                            <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
                           )}
                         </div>
-                      </div>
+                        <p className="text-xs sm:text-sm text-muted">{table.tableName}</p>
+                        <div className="flex items-center gap-2 mt-2 text-xs sm:text-sm">
+                          <UsersIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <span>Capacity: {table.capacity}</span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1 text-xs sm:text-sm">
+                          <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <span className="capitalize">{table.location}</span>
+                        </div>
+                      </motion.div>
                     ))}
                   </div>
                 ) : formData.bookingDate && formData.bookingTime ? (
-                  <div className="p-4 bg-card rounded-xl text-center text-muted">
-                    No tables available for the selected time. Try a different time or let us auto-assign a table.
+                  <div className="text-center py-8 border-2 border-dashed border-border rounded-xl sm:rounded-2xl">
+                    <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 text-muted" />
+                    <p className="text-muted text-sm sm:text-base">No tables available for the selected time</p>
                   </div>
                 ) : (
-                  <div className="p-4 bg-card rounded-xl text-center text-muted">
-                    Select date, time, and number of guests to see available tables
+                  <div className="text-center py-8 border-2 border-dashed border-border rounded-xl sm:rounded-2xl">
+                    <Calendar className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 text-muted" />
+                    <p className="text-muted text-sm sm:text-base">Select date, time, and number of guests to see available tables</p>
                   </div>
                 )}
               </div>
 
               <div className="md:col-span-2">
-                <label className="block mb-2 font-medium text-foreground flex items-center gap-2">
-                  <FileText className="w-4 h-4" /> Special Requests
-                </label>
+                <label className="block mb-2 font-medium text-foreground text-sm sm:text-base">Special Requests</label>
                 <textarea
                   value={formData.specialRequests}
                   onChange={(e) => setFormData({...formData, specialRequests: e.target.value})}
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-card rounded-lg sm:rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all resize-none text-sm sm:text-base"
                   rows={3}
-                  className="w-full px-4 py-3 bg-card rounded-xl border border-border focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground text-foreground transition-all"
-                  placeholder="Any dietary restrictions or special occasions?"
+                  placeholder="Any special requirements or dietary restrictions..."
                 />
               </div>
 
               <div className="md:col-span-2">
-                <div className="glass-card p-6 rounded-xl">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-lg font-semibold text-foreground flex items-center gap-2">
-                        <CreditCard className="w-5 h-5" /> Total Price
-                      </p>
-                      <p className="text-sm text-muted mt-1">
-                        {formData.numberOfGuests} guests × ₹{(AREA_PRICING as Record<string, number>)[formData.tableArea]}/person ({getAreaDisplayName(formData.tableArea)})
-                      </p>
-                    </div>
-                    <div className="text-3xl font-bold text-green-500">
-                      ₹{calculateBookingPrice(formData.numberOfGuests, formData.tableArea).toFixed(2)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="md:col-span-2">
-                <button
+                <motion.button
                   type="submit"
-                  className="w-full px-6 py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
+                  className="w-full bg-foreground text-background py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg hover:opacity-90 transition-all"
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
                 >
-                  <CreditCard className="w-5 h-5" />
-                  Proceed to Payment
-                </button>
+                  Proceed to Payment (₹{calculateBookingPrice(formData.numberOfGuests, formData.tableArea)})
+                </motion.button>
               </div>
             </form>
           </motion.div>
@@ -699,164 +778,140 @@ export default function BookingsPage() {
 
         {/* Payment Section */}
         {showPayment && orderId && (
-          <div className="mb-8">
-            <PaymentForm
-              formData={formData}
-              orderId={orderId}
-              keyId={keyId}
-              totalAmount={totalAmount}
-              onSuccess={() => {
-                setShowPayment(false)
-                setShowForm(false)
-                setOrderId('')
-                setFormData({
-                  guestName: '',
-                  guestEmail: '',
-                  guestPhone: '',
-                  numberOfGuests: 2,
-                  bookingDate: '',
-                  bookingTime: '',
-                  tableNumber: undefined,
-                  tableArea: 'indoor',
-                  specialRequests: ''
-                })
-                fetchBookings()
-              }}
-              onCancel={() => {
-                setShowPayment(false)
-                setOrderId('')
-              }}
-            />
-          </div>
+          <motion.div 
+            className="glass-card p-4 sm:p-6 mb-6 sm:mb-8 rounded-xl sm:rounded-2xl"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Complete Payment</h2>
+            <div className="mb-4 sm:mb-6">
+              <div className="flex justify-between items-center mb-2 sm:mb-3 text-sm sm:text-base">
+                <span className="text-muted">Booking Amount:</span>
+                <span className="font-bold text-base sm:text-lg">₹{totalAmount}</span>
+              </div>
+              <div className="flex justify-between items-center mb-2 sm:mb-3 text-sm sm:text-base">
+                <span className="text-muted">Number of Guests:</span>
+                <span className="font-semibold">{formData.numberOfGuests}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm sm:text-base">
+                <span className="text-muted">Table Area:</span>
+                <span className="font-semibold capitalize">{formData.tableArea.replace('-', ' ')}</span>
+              </div>
+            </div>
+            <motion.button
+              onClick={handlePayment}
+              className="w-full bg-green-500 text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg hover:bg-green-600 transition-all"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+            >
+              Pay Now with Razorpay
+            </motion.button>
+          </motion.div>
         )}
 
+        {/* Bookings List */}
         <motion.div 
-          className="grid gap-4"
+          className="grid gap-3 sm:gap-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           {bookings.length === 0 ? (
-            <div className="glass-card p-12 text-center rounded-2xl">
-              <div className="w-20 h-20 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-10 h-10 text-muted" />
-              </div>
-              <p className="text-xl text-foreground font-semibold mb-2">No bookings yet</p>
-              <p className="text-muted mb-6">Create your first reservation to get started!</p>
-              {userRole !== 'admin' && !showForm && (
-                <button
+            <div className="glass-card p-8 sm:p-12 rounded-xl sm:rounded-2xl text-center">
+              <Calendar className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 text-muted" />
+              <h3 className="text-xl sm:text-2xl font-bold mb-2">No Bookings Yet</h3>
+              <p className="text-muted mb-6 text-sm sm:text-base">Create your first table reservation to get started</p>
+              {userRole !== 'admin' && (
+                <motion.button
                   onClick={() => setShowForm(true)}
-                  className="bg-foreground text-background px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition-all inline-flex items-center gap-2"
+                  className="bg-foreground text-background px-6 sm:px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition-all text-sm sm:text-base"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Plus className="w-5 h-5" />
-                  Make Your First Booking
-                </button>
+                  Create Booking
+                </motion.button>
               )}
             </div>
           ) : (
             bookings.map((booking, index) => (
-              <motion.div 
-                key={booking._id} 
-                className="glass-card p-6 rounded-2xl hover:scale-[1.01] transition-all"
+              <motion.div
+                key={booking._id}
+                className="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
               >
-                <div className="flex justify-between items-start flex-wrap gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-4 flex-wrap">
-                      <h3 className="text-xl font-bold text-foreground">{booking.guestName}</h3>
-                      <span className={`px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1 border ${
-                        booking.status === 'confirmed' ? 'bg-green-500/20 text-green-500 border-green-500/30' :
-                        booking.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30' :
-                        booking.status === 'cancelled' ? 'bg-red-500/20 text-red-500 border-red-500/30' :
-                        'bg-blue-500/20 text-blue-500 border-blue-500/30'
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3">
+                      <h3 className="text-lg sm:text-xl font-bold truncate">{booking.guestName}</h3>
+                      <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${
+                        booking.status === 'confirmed' ? 'bg-green-500/20 text-green-500' :
+                        booking.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500' :
+                        booking.status === 'completed' ? 'bg-blue-500/20 text-blue-500' :
+                        'bg-red-500/20 text-red-500'
                       }`}>
-                        {booking.status === 'confirmed' && <CheckCircle className="w-3 h-3" />}
-                        {booking.status === 'pending' && <AlertCircle className="w-3 h-3" />}
-                        {booking.status === 'cancelled' && <XCircle className="w-3 h-3" />}
-                        {booking.status.toUpperCase()}
+                        {booking.status}
                       </span>
+                      {booking.paymentStatus && (
+                        <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${
+                          booking.paymentStatus === 'paid' ? 'bg-green-500/20 text-green-500' : 'bg-orange-500/20 text-orange-500'
+                        }`}>
+                          {booking.paymentStatus === 'paid' ? '✓ Paid' : 'Pending Payment'}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-sm sm:text-base">
+                      <div className="flex items-center gap-2 text-muted">
+                        <Calendar className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{new Date(booking.bookingDate).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-muted">
+                        <Clock className="w-4 h-4 flex-shrink-0" />
+                        <span>{booking.bookingTime}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-muted">
+                        <UsersIcon className="w-4 h-4 flex-shrink-0" />
+                        <span>{booking.numberOfGuests} guests</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-muted">
+                        <MapPin className="w-4 h-4 flex-shrink-0" />
+                        <span className="capitalize truncate">{booking.tableArea.replace('-', ' ')}</span>
+                      </div>
                       {booking.tableNumber && (
-                        <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-500 border border-purple-500/30 inline-flex items-center gap-1">
-                          <TableIcon className="w-3 h-3" />
-                          Table #{booking.tableNumber}
-                        </span>
-                      )}
-                      {booking.paymentStatus === 'paid' && (
-                        <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-green-500/20 text-green-500 border border-green-500/30 inline-flex items-center gap-1">
-                          <CheckCircle className="w-3 h-3" />
-                          PAID ₹{booking.paymentAmount}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-3 text-sm">
-                      <div className="flex items-center gap-2 text-foreground">
-                        <Mail className="w-4 h-4 text-muted" />
-                        <span className="text-muted">Email:</span> {booking.guestEmail}
-                      </div>
-                      <div className="flex items-center gap-2 text-foreground">
-                        <Phone className="w-4 h-4 text-muted" />
-                        <span className="text-muted">Phone:</span> {booking.guestPhone}
-                      </div>
-                      <div className="flex items-center gap-2 text-foreground">
-                        <UsersIcon className="w-4 h-4 text-muted" />
-                        <span className="text-muted">Guests:</span> {booking.numberOfGuests}
-                      </div>
-                      <div className="flex items-center gap-2 text-foreground">
-                        <Calendar className="w-4 h-4 text-muted" />
-                        <span className="text-muted">Date:</span> {new Date(booking.bookingDate).toLocaleDateString()}
-                      </div>
-                      <div className="flex items-center gap-2 text-foreground">
-                        <Clock className="w-4 h-4 text-muted" />
-                        <span className="text-muted">Time:</span> {booking.bookingTime}
-                      </div>
-                      {booking.tableArea && (
-                        <div className="flex items-center gap-2 text-foreground">
-                          <MapPin className="w-4 h-4 text-muted" />
-                          <span className="text-muted">Area:</span> {getAreaDisplayName(booking.tableArea)}
+                        <div className="flex items-center gap-2 text-muted">
+                          <TableIcon className="w-4 h-4 flex-shrink-0" />
+                          <span>Table {booking.tableNumber}</span>
                         </div>
                       )}
-                    </div>
-
-                    {booking.specialRequests && (
-                      <div className="mt-4 p-4 bg-card border border-border rounded-xl">
-                        <div className="flex items-start gap-2">
-                          <FileText className="w-4 h-4 text-muted mt-0.5" />
-                          <div>
-                            <span className="font-semibold text-foreground text-sm">Special Requests:</span>
-                            <p className="text-muted text-sm mt-1">{booking.specialRequests}</p>
-                          </div>
+                      {booking.paymentAmount && (
+                        <div className="flex items-center gap-2 text-muted">
+                          <span className="font-semibold">₹{booking.paymentAmount}</span>
                         </div>
-                      </div>
-                    )}
-
-                    <div className="mt-4 text-xs text-muted flex items-center gap-2">
-                      <Clock className="w-3 h-3" />
-                      Created: {new Date(booking.createdAt).toLocaleString()}
+                      )}
                     </div>
                   </div>
-
-                  <div className="flex gap-2">
+                  
+                  <div className="flex flex-row lg:flex-col gap-2">
                     {booking.status === 'pending' && (
-                      <button
+                      <motion.button
                         onClick={() => cancelBooking(booking._id)}
-                        className="px-4 py-2.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/30 rounded-xl font-semibold transition-all flex items-center gap-2"
+                        className="flex-1 lg:flex-none bg-red-500/20 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500/30 transition-all flex items-center justify-center gap-2 text-sm font-semibold"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                       >
-                        <XCircle className="w-4 h-4" />
-                        Cancel
-                      </button>
+                        <Trash2 className="w-4 h-4" />
+                        <span className="hidden sm:inline">Cancel</span>
+                      </motion.button>
                     )}
-                    {booking.status === 'completed' && (
-                      <Link
-                        href={`/reviews?booking=${booking._id}`}
-                        className="px-4 py-2.5 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 border border-yellow-500/30 rounded-xl font-semibold transition-all flex items-center gap-2"
-                      >
-                        <Star className="w-4 h-4" />
-                        Write Review
-                      </Link>
-                    )}
+                    <Link
+                      href={`/bookings/${booking._id}`}
+                      className="flex-1 lg:flex-none bg-foreground/10 text-foreground px-4 py-2 rounded-lg hover:bg-foreground/20 transition-all flex items-center justify-center gap-2 text-sm font-semibold"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span className="hidden sm:inline">View</span>
+                    </Link>
                   </div>
                 </div>
               </motion.div>
