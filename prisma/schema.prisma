@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+model User {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String    @unique
+  password        String
+  image           String?
+  provider        String    @default("credentials")
+  role            String    @default("user")
+  phone           String?   @unique
+  phoneVerified   Boolean   @default(false)
+  otpCode         String?
+  otpExpiry       DateTime?
+  resetToken      String?
+  resetTokenExpiry DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  bookings        Booking[]
+  reviews         Review[]
+  confirmedBookings Booking[] @relation("ConfirmedBy")
+  
+  @@map("users")
+}
+
+model Booking {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String    @db.ObjectId
+  guestName       String
+  guestEmail      String
+  guestPhone      String
+  numberOfGuests  Int
+  bookingDate     DateTime
+  bookingTime     String
+  tableNumber     Int?
+  tableArea       String?
+  status          String    @default("pending")
+  specialRequests String?
+  paymentStatus   String    @default("pending")
+  paymentAmount   Float
+  paymentId       String?
+  paymentMethod   String?
+  confirmedById   String?   @db.ObjectId
+  confirmedAt     DateTime?
+  cancelledReason String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  confirmedBy     User?     @relation("ConfirmedBy", fields: [confirmedById], references: [id])
+  reviews         Review[]
+
+  @@map("bookings")
+}
+
+model Table {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  tableNumber     Int       @unique
+  tableName       String
+  capacity        Int
+  location        String    @default("indoor")
+  pricePerPerson  Float     @default(0)
+  status          String    @default("available")
+  features        String[]
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("tables")
+}
+
+model Review {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String    @db.ObjectId
+  bookingId       String?   @db.ObjectId
+  name            String
+  email           String
+  rating          Int
+  title           String
+  comment         String
+  category        String    @default("overall")
+  status          String    @default("pending")
+  adminReply      String?
+  repliedAt       DateTime?
+  helpfulCount    Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  booking         Booking?  @relation(fields: [bookingId], references: [id])
+
+  @@map("reviews")
+}
