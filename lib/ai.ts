@@ -1,9 +1,20 @@
-import OpenAI from 'openai'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-})
+// Initialize Gemini client
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY || '')
+
+/**
+ * Helper function to extract JSON from Gemini responses
+ * Gemini sometimes wraps JSON in markdown code blocks
+ */
+function extractJSON(text: string): string {
+  // Remove markdown code blocks if present
+  const codeBlockMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/)
+  if (codeBlockMatch) {
+    return codeBlockMatch[1].trim()
+  }
+  return text.trim()
+}
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant'
@@ -15,17 +26,20 @@ export interface ChatMessage {
  * Handles queries about menu, bookings, table availability, etc.
  */
 export async function chatWithAI(messages: ChatMessage[]): Promise<string> {
-  const apiKey = process.env.OPENAI_API_KEY
+  const apiKey = process.env.GEMINI_KEY
   
   // Detailed API key check
-  console.log('=== OpenAI API Check ===')
+  console.log('=== GEMINI API DEBUG ===')
   console.log('API Key exists:', !!apiKey)
   console.log('API Key length:', apiKey?.length || 0)
-  console.log('API Key prefix:', apiKey?.substring(0, 10) || 'none')
+  console.log('API Key prefix:', apiKey?.substring(0, 20) || 'none')
+  console.log('API Key ends with:', apiKey?.substring(apiKey.length - 10) || 'none')
+  console.log('Environment:', process.env.NODE_ENV)
+  console.log('========================')
   
-  if (!apiKey || apiKey.trim() === '' || apiKey.includes('your-openai-api-key')) {
-    console.error('OpenAI API key not configured or invalid')
-    console.error('Please set OPENAI_API_KEY in your .env.local file')
+  if (!apiKey || apiKey.trim() === '' || apiKey.includes('your-gemini-api-key')) {
+    console.error('❌ Gemini API key not configured or invalid')
+    console.error('Please set GEMINI_KEY in your .env.local file')
     return getFallbackResponse(messages[messages.length - 1]?.content || '')
   }
 
@@ -71,54 +85,112 @@ RESPONSE GUIDELINES:
 
 Remember: You're here to help with ANYTHING the user asks while maintaining focus on providing excellent restaurant service.`
 
-    console.log('Calling OpenAI API with', messages.length, 'messages...')
+    console.log('Calling Gemini API with', messages.length, 'messages...')
     
     const startTime = Date.now()
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...messages,
-      ],
-      temperature: 0.8,
-      max_tokens: 500,
-      presence_penalty: 0.6,
-      frequency_penalty: 0.3,
+    
+    // Get the model
+    const model = genAI.getGenerativeModel({ 
+      model: 'gemini-2.5-flash',
+      generationConfig: {
+        temperature: 0.8,
+        maxOutputTokens: 500,
+      },
     })
     
+    // Get the last user message
+    const lastUserMessage = messages[messages.length - 1]?.content || ''
+    
+    let response: string
+    
+    // Check if this is a simple single message or conversation
+    if (messages.length === 1) {
+      // First message - include system prompt
+      const promptWithContext = systemPrompt + '\\n\\nUser: ' + lastUserMessage + '\\n\\nAssistant:'
+      console.log('Sending single message with context')
+      
+      const result = await model.generateContent(promptWithContext)
+      response = result.response.text()
+    } else {
+      // Multi-turn conversation
+      console.log('Sending multi-turn conversation')
+      
+      // Build chat history (excluding system messages)
+      const chatHistory = messages
+        .slice(0, -1)
+        .filter(msg => msg.role !== 'system')
+        .map(msg => ({
+          role: msg.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: msg.content }],
+        }))
+      
+      console.log('Chat history length:', chatHistory.length)
+      
+      // Gemini requires chat history to start with 'user' role
+      // If first message is 'model', we need to handle it differently
+      if (chatHistory.length > 0 && chatHistory[0].role === 'model') {
+        console.log('First message is from model, using simpler approach')
+        // For conversations starting with assistant message, use generateContent with context
+        const conversationContext = messages
+          .slice(0, -1)
+          .map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
+          .join('\\n\\n')
+        
+        const promptWithHistory = systemPrompt + '\\n\\n' + conversationContext + '\\n\\nUser: ' + lastUserMessage + '\\n\\nAssistant:'
+        
+        const result = await model.generateContent(promptWithHistory)
+        response = result.response.text()
+      } else {
+        // Normal multi-turn conversation starting with user
+        const chat = model.startChat({
+          history: chatHistory,
+          generationConfig: {
+            temperature: 0.8,
+            maxOutputTokens: 500,
+          },
+        })
+        
+        // Send the last user message
+        const result = await chat.sendMessage(lastUserMessage)
+        response = result.response.text()
+      }
+    }
+    
     const endTime = Date.now()
-    const response = completion.choices[0]?.message?.content
     
-    console.log('OpenAI response received in', endTime - startTime, 'ms')
+    console.log('✅ Gemini response received in', endTime - startTime, 'ms')
     console.log('Response preview:', response?.substring(0, 100))
-    console.log('Tokens used:', completion.usage?.total_tokens || 'unknown')
+    console.log('Response length:', response?.length || 0)
     
-    if (!response) {
-      console.error('Empty response from OpenAI - using fallback')
-      return getFallbackResponse(messages[messages.length - 1]?.content || '')
+    if (!response || response.trim() === '') {
+      console.error('Empty response from Gemini - using fallback')
+      return getFallbackResponse(lastUserMessage)
     }
     
     return response
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error))
-    console.error('OpenAI API Error:', err)
+    console.error('Gemini API Error:', err)
     console.error('Error type:', err.constructor.name)
     console.error('Error message:', err.message)
-    console.error('Error status:', (error as Record<string, unknown>).status)
-    console.error('Error code:', (error as Record<string, unknown>).code)
+    console.error('Error stack:', err.stack)
+    
+    // Log full error object for debugging
+    console.error('Full error:', JSON.stringify(error, null, 2))
     
     // Provide specific error feedback - but use fallback responses for better UX
-    if ((error as Record<string, unknown>).status === 401) {
+    if (err.message.includes('API_KEY') || err.message.includes('401') || err.message.includes('API key')) {
       console.error('Authentication failed - API key may be invalid')
+      console.error('Please check GEMINI_KEY in .env.local')
       return getFallbackResponse(messages[messages.length - 1]?.content || '')
     }
     
-    if ((error as Record<string, unknown>).status === 429) {
+    if (err.message.includes('429') || err.message.includes('quota') || err.message.includes('rate limit')) {
       console.error('Rate limit exceeded - using fallback response')
       return getFallbackResponse(messages[messages.length - 1]?.content || '')
     }
     
-    if ((error as Record<string, unknown>).code === 'ENOTFOUND' || (error as Record<string, unknown>).code === 'ECONNREFUSED') {
+    if (err.message.includes('ENOTFOUND') || err.message.includes('ECONNREFUSED')) {
       console.error('Network connection issue')
       return getFallbackResponse(messages[messages.length - 1]?.content || '')
     }
@@ -281,18 +353,14 @@ Format your response as JSON:
   "reasoning": "brief explanation"
 }`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: 'You are a restaurant table recommendation expert. Respond only in valid JSON format.' },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.5,
-      max_tokens: 150,
-    })
-
-    const response = completion.choices[0]?.message?.content || '{}'
-    const parsed = JSON.parse(response)
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+    
+    const result = await model.generateContent(prompt)
+    const response = result.response.text()
+    
+    // Extract JSON from response (handles markdown code blocks)
+    const jsonText = extractJSON(response)
+    const parsed = JSON.parse(jsonText)
 
     return {
       recommendation: `Recommended for ${numberOfGuests} guests`,
@@ -331,18 +399,14 @@ Provide JSON response:
   "keywords": ["key1", "key2", "key3"]
 }`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: 'You are a sentiment analysis expert. Respond only in valid JSON format.' },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.3,
-      max_tokens: 200,
-    })
-
-    const response = completion.choices[0]?.message?.content || '{}'
-    const parsed = JSON.parse(response)
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+    
+    const result = await model.generateContent(prompt)
+    const response = result.response.text()
+    
+    // Extract JSON from response (handles markdown code blocks)
+    const jsonText = extractJSON(response)
+    const parsed = JSON.parse(jsonText)
 
     return {
       sentiment: parsed.sentiment || 'neutral',
@@ -378,18 +442,14 @@ Date: ${date}
 Suggest 3 best alternative time slots (hours 11-23) avoiding congestion.
 Respond as JSON: {"times": ["HH:00", "HH:00", "HH:00"]}`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: 'You are a restaurant scheduling optimizer. Respond only in valid JSON format.' },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.4,
-      max_tokens: 100,
-    })
-
-    const response = completion.choices[0]?.message?.content || '{"times": []}'
-    const parsed = JSON.parse(response)
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+    
+    const result = await model.generateContent(prompt)
+    const response = result.response.text()
+    
+    // Extract JSON from response (handles markdown code blocks)
+    const jsonText = extractJSON(response)
+    const parsed = JSON.parse(jsonText)
 
     return parsed.times || ['18:00', '19:00', '20:00']
   } catch (error) {

@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("MONGODB_URI")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id              Int       @id @default(autoincrement())
   name            String
   email           String    @unique
   password        String
@@ -35,8 +35,8 @@ model User {
 }
 
 model Booking {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String    @db.ObjectId
+  id              Int       @id @default(autoincrement())
+  userId          Int
   guestName       String
   guestEmail      String
   guestPhone      String
@@ -51,7 +51,7 @@ model Booking {
   paymentAmount   Float
   paymentId       String?
   paymentMethod   String?
-  confirmedById   String?   @db.ObjectId
+  confirmedById   Int?
   confirmedAt     DateTime?
   cancelledReason String?
   createdAt       DateTime  @default(now())
@@ -65,7 +65,7 @@ model Booking {
 }
 
 model Table {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id              Int       @id @default(autoincrement())
   tableNumber     Int       @unique
   tableName       String
   capacity        Int
@@ -81,9 +81,9 @@ model Table {
 }
 
 model Review {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String    @db.ObjectId
-  bookingId       String?   @db.ObjectId
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  bookingId       Int?
   name            String
   email           String
   rating          Int
