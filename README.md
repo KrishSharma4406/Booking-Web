@@ -216,7 +216,6 @@ booking-web/
 │   ├── users.ts                  # User utilities
 │   ├── pricing.ts                # Pricing calculations
 │   ├── sms.ts                    # SMS service
-│   ├── socket.ts                 # Socket.IO setup
 │   └── useTimezone.ts            # Timezone utilities
 ├── models/                       # Mongoose schemas
 │   ├── User.ts                   # User model
