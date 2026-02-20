@@ -333,6 +333,85 @@ export default function Home() {
       {/* Separator */}
       <div className="relative h-px bg-border"></div>
 
+      {/* Infinite Scrolling Timeline Section */}
+      <section className="bg-background text-foreground py-16 sm:py-20 md:py-24 overflow-hidden">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6 mb-12">
+          <motion.div 
+            className="text-center"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 uppercase tracking-tighter text-foreground">
+              Our Journey
+            </h2>
+            <p className="text-muted text-base sm:text-lg font-light">Milestones that shaped our story</p>
+          </motion.div>
+        </div>
+
+        <div className="relative">
+          {/* Gradient Overlays */}
+          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10"></div>
+
+          {/* Scrolling Timeline Container */}
+          <div className="flex gap-8" style={{ animation: 'scrollLeft 40s linear infinite' }}>
+            {/* First Set of Timeline Items */}
+            {[
+              { year: "2024", title: "Platform Launch", description: "Revolutionizing restaurant reservations" },
+              { year: "2024", title: "AI Integration", description: "Intelligent recommendations & chatbot" },
+              { year: "2024", title: "First 100 Diners", description: "Reached our first major milestone" },
+              { year: "2025", title: "Payment Gateway", description: "Secure payment processing" },
+              { year: "2025", title: "500+ Happy Diners", description: "Community growing strong" },
+              { year: "2025", title: "Mobile App Beta", description: "Enhanced mobile experience" },
+              { year: "2026", title: "Going Global", description: "Expanding worldwide" },
+              { year: "2026", title: "Advanced Analytics", description: "Data-driven insights" }
+            ].map((item, index) => (
+              <div
+                key={`timeline-1-${index}`}
+                className="flex-shrink-0 w-80 glass-card rounded-xl p-6 border border-border"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="bg-card px-4 py-1.5 rounded-full text-sm font-bold border border-border">
+                    {item.year}
+                  </div>
+                </div>
+                <h3 className="font-bold text-xl mb-2 text-foreground">{item.title}</h3>
+                <p className="text-muted text-sm leading-relaxed">{item.description}</p>
+              </div>
+            ))}
+            {/* Duplicate Set for Seamless Loop */}
+            {[
+              { year: "2024", title: "Platform Launch", description: "Revolutionizing restaurant reservations" },
+              { year: "2024", title: "AI Integration", description: "Intelligent recommendations & chatbot" },
+              { year: "2024", title: "First 100 Diners", description: "Reached our first major milestone" },
+              { year: "2025", title: "Payment Gateway", description: "Secure payment processing" },
+              { year: "2025", title: "500+ Happy Diners", description: "Community growing strong" },
+              { year: "2025", title: "Mobile App Beta", description: "Enhanced mobile experience" },
+              { year: "2026", title: "Going Global", description: "Expanding worldwide" },
+              { year: "2026", title: "Advanced Analytics", description: "Data-driven insights" }
+            ].map((item, index) => (
+              <div
+                key={`timeline-2-${index}`}
+                className="flex-shrink-0 w-80 glass-card rounded-xl p-6 border border-border"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="bg-card px-4 py-1.5 rounded-full text-sm font-bold border border-border">
+                    {item.year}
+                  </div>
+                </div>
+                <h3 className="font-bold text-xl mb-2 text-foreground">{item.title}</h3>
+                <p className="text-muted text-sm leading-relaxed">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Separator */}
+      <div className="relative h-px bg-border"></div>
+
       {/* Process Section */}
       <section className="bg-background text-foreground py-24 px-4">
         <div className="container mx-auto max-w-6xl">
