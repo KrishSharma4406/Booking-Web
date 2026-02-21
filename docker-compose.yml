@@ -6,16 +6,22 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       - NODE_ENV=production
-      # Add your environment variables here
-      - DATABASE_URL=${DATABASE_URL}
-      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3001}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - MONGODB_URI=mongodb://host.docker.internal:27017/bookingweb
+      - NEXTAUTH_URL=http://localhost:3001
+      - NEXTAUTH_SECRET=8fb5a71adf6b8d773839d1e41e4ab6507a2adc390110e9f66707c143583e152a
+      - EMAIL_FROM_NAME=Booking Web
+      - SMS_PROVIDER=console
+      - RAZORPAY_KEY_ID=rzp_test_S678YI4P13mIvl
+      - RAZORPAY_KEY_SECRET=V7dnZt1MHcsvQRSF3pfwbOLi
+      - GEMINI_KEY=AIzaSyCs9in5qJiWoz3GW2hFSzysLNpzf9eapBA
     env_file:
       - .env
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - mega-network
 
