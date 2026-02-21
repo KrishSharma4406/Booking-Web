@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   eslint: {
     // Don't fail build on ESLint errors in production
     ignoreDuringBuilds: true,
