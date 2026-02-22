@@ -317,19 +317,22 @@ export default function BookingsPage() {
       order_id: orderId,
       handler: async function (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) {
         try {
-          const verifyRes = await fetch('/api/payment/verify', {
+          const bookingRes = await fetch('/api/bookings', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              ...response,
-              bookingData: formData
+              ...formData,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              paymentAmount: totalAmount,
             })
           })
 
-          const data = await verifyRes.json()
+          const data = await bookingRes.json()
 
-          if (verifyRes.ok) {
-            toast.success('Payment successful! Booking confirmed.')
+          if (bookingRes.ok) {
+            toast.success(data.message || 'Booking confirmed! Payment successful. Check your email for confirmation.')
             setShowForm(false)
             setShowPayment(false)
             fetchBookings()
@@ -345,10 +348,10 @@ export default function BookingsPage() {
               specialRequests: ''
             })
           } else {
-            toast.error(data.error || 'Payment verification failed')
+            toast.error(data.error || 'Booking failed after payment. Please contact support.')
           }
         } catch {
-          toast.error('Error verifying payment')
+          toast.error('Error creating booking after payment')
         }
       },
       prefill: {

@@ -20,31 +20,39 @@ const providers: Provider[] = [
       password: { label: "Password", type: "password" }
     },
     async authorize(credentials) {
-      if (!credentials?.email || !credentials?.password) {
-        throw new Error('Please enter email and password')
-      }
+      try {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('Please enter email and password')
+        }
 
-      const user = await findUserByEmail(credentials.email)
+        // Ensure database connection is established
+        await connectDB()
 
-      if (!user) {
-        throw new Error('No user found with this email')
-      }
+        const user = await findUserByEmail(credentials.email)
 
-      const isPasswordValid = await bcrypt.compare(
-        credentials.password,
-        user.password
-      )
+        if (!user) {
+          throw new Error('Invalid email or password')
+        }
 
-      if (!isPasswordValid) {
-        throw new Error('Invalid password')
-      }
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        )
 
-      return {
-        id: user.id,
-        email: user.email,
-        name: user.name || user.email,
-        phone: user.phone,
-        role: user.role,
+        if (!isPasswordValid) {
+          throw new Error('Invalid email or password')
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name || user.email,
+          phone: user.phone,
+          role: user.role,
+        }
+      } catch (error) {
+        console.error('Authorization error:', error)
+        throw error
       }
     }
   }),

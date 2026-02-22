@@ -44,12 +44,21 @@ const Signup = () => {
     }
 
     try {
+      // Trim and lowercase email for consistency
+      const trimmedEmail = email.trim().toLowerCase()
+      const trimmedPhone = phone.trim()
+      
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, name, phone }),
+        body: JSON.stringify({ 
+          email: trimmedEmail, 
+          password, 
+          name: name.trim(), 
+          phone: trimmedPhone || undefined 
+        }),
       })
 
       const data = await response.json()
@@ -60,18 +69,19 @@ const Signup = () => {
         return
       }
 
+      // Auto-login after successful signup
       const result = await signIn('credentials', {
         redirect: false,
-        email,
+        email: trimmedEmail,
         password,
       })
 
-      if (result?.error) {
-        setError('Account created! Please wait for admin approval before logging in.')
-        setTimeout(() => { window.location.href = '/Login' }, 3000)
-      } else if (result?.ok) {
-        setError('Account created! Please wait for admin approval to access all features.')
-        setTimeout(() => { window.location.href = '/dashboard' }, 2000)
+      if (result?.ok) {
+        setError('Account created successfully! Redirecting to dashboard...')
+        setTimeout(() => { window.location.href = '/dashboard' }, 1000)
+      } else {
+        setError('Account created! Logging you in...')
+        setTimeout(() => { window.location.href = '/dashboard' }, 1500)
       }
     } catch (error) {
       console.error('Signup error:', error)

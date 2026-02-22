@@ -7,6 +7,7 @@ import User from '@/models/User'
 import Table from '@/models/Table'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
+import { sendBookingConfirmation } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 
@@ -166,17 +167,47 @@ export async function POST(req: Request) {
       paymentId: razorpayPaymentId,
       paymentStatus: 'paid',
       paymentMethod: 'razorpay',
-      status: 'pending', // Set to pending for admin approval
+      status: 'confirmed', // Auto-confirm booking after successful payment
     })
 
     await booking.populate('user', 'name email')
 
-    // Email will be sent by admin when booking is confirmed
-    console.log('✅ Booking created successfully with pending status. Awaiting admin approval.')
+    // Send booking confirmation email immediately
+    console.log('Sending booking confirmation email...')
+    try {
+      const emailResult = await sendBookingConfirmation({
+        guestName,
+        guestEmail,
+        guestPhone,
+        numberOfGuests,
+        bookingDate,
+        bookingTime,
+        specialRequests,
+        tableNumber,
+        tableArea: tableArea || 'indoor',
+        paymentAmount,
+        paymentId: razorpayPaymentId,
+        paymentStatus: 'paid',
+        paymentMethod: 'razorpay',
+        status: 'confirmed'
+      })
+      
+      if (emailResult.success) {
+        console.log('Booking confirmation email sent successfully!')
+      } else {
+        console.error('Failed to send confirmation email:', emailResult.error)
+        // Don't fail the booking if email fails
+      }
+    } catch (emailError) {
+      console.error('Error sending confirmation email:', emailError)
+      // Don't fail the booking if email fails
+    }
+
+    console.log('Booking created and confirmed successfully!')
 
     return NextResponse.json({ 
       booking, 
-      message: 'Booking created successfully! Payment confirmed. Awaiting admin approval.' 
+      message: 'Booking confirmed! Payment successful. A confirmation email has been sent to your email address.' 
     }, { status: 201 })
   } catch (error: unknown) {
     const err = error as Error

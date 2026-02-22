@@ -26,9 +26,12 @@ const Login = () => {
     setError('')
 
     try {
+      // Trim and lowercase email for consistency
+      const trimmedEmail = email.trim().toLowerCase()
+      
       const result = await signIn('credentials', {
         redirect: false,
-        email,
+        email: trimmedEmail,
         password,
       })
 
