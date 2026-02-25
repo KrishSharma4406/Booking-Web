@@ -19,16 +19,16 @@ A full-stack restaurant booking platform with **AI-powered recommendations**, re
 
 ---
 
-## ✨ Features
+## Features
 
-### 🤖 **AI-Powered Intelligence** (NEW!)
+### **AI-Powered Intelligence** (NEW!)
 - **Smart Chatbot Assistant** - 24/7 AI support for reservations and inquiries
 - **Intelligent Table Recommendations** - ML-based dining area suggestions
 - **Sentiment Analysis** - Automated review analysis and insights
 - **Smart Booking Suggestions** - AI-optimized time slot recommendations
 - **Personalized Experience** - Learns from guest preferences
 
-### 🔐 **Authentication & Security**
+### **Authentication & Security**
 - NextAuth.js integration with multiple providers (Credentials, Google, GitHub, Facebook)
 - Secure password hashing with bcrypt
 - Email verification and password reset via SendGrid
@@ -37,14 +37,14 @@ A full-stack restaurant booking platform with **AI-powered recommendations**, re
 - User approval workflow
 - **Online-only payment enforcement** (NEW!)
 
-### 📊 **Admin Dashboard**
+### **Admin Dashboard**
 - Comprehensive analytics and statistics
 - User management (approve, reject, delete)
 - Table CRUD operations with real-time updates
 - Booking management and confirmation system
 - Dynamic role assignment
 
-### 🪑 **Smart Table Management**
+### **Smart Table Management**
 - Create tables with customizable properties:
   - Capacity (1-20 guests)
   - Location types (Indoor, Outdoor, Private Room, Bar Area, Terrace)
@@ -54,7 +54,7 @@ A full-stack restaurant booking platform with **AI-powered recommendations**, re
 - Automatic or manual table assignment
 - **AI-recommended table assignments** (NEW!)
 
-### 📅 **Enhanced Booking System**
+### **Enhanced Booking System**
 - Intelligent date and time selection
 - Guest count-based filtering
 - Instant availability verification
@@ -64,7 +64,7 @@ A full-stack restaurant booking platform with **AI-powered recommendations**, re
 - User booking history and management
 - Email notifications for bookings
 
-### 🎨 **Modern UI/UX**
+### **Modern UI/UX**
 - Responsive design for all devices
 - Framer Motion animations for smooth interactions
 - Glass morphism effects and gradient backgrounds
@@ -158,9 +158,9 @@ Before you begin, ensure you have the following installed:
 
 6. **Open your browser**
    
-   Navigate to [http://localhost:3001](http://localhost:3000)
+   Navigate to http://localhost:3001
 
-### 🎯 Initial Setup
+### Initial Setup
 
 1. **Create an account** - Navigate to `/SignUp` and register
 2. **Become admin** - Visit `/make-admin` (only works when no admin exists)
