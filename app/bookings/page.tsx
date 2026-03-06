@@ -95,7 +95,7 @@ interface RazorpayInstance {
 
 declare global {
   interface Window {
-    Razorpay: new (options: RazorpayOptions) => RazorpayInstance
+    RazorpayConstructor: new (options: RazorpayOptions) => RazorpayInstance
   }
 }
 

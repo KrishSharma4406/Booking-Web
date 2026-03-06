@@ -78,7 +78,15 @@ export async function POST(req: Request) {
 
     await connectDB()
     const User = (await import('@/models/User')).default
-    const user = await User.findOne({ email: session.user.email })
+    
+    // Ensure email is lowercase and exists
+    const userEmail = session.user?.email?.toLowerCase()
+    
+    if (!userEmail) {
+      return NextResponse.json({ error: 'User email not found in session' }, { status: 400 })
+    }
+    
+    const user = await User.findOne({ email: userEmail })
 
     if (!user || user.role !== 'admin') {
       return NextResponse.json(

@@ -16,7 +16,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret'
 })
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions)
     
@@ -26,7 +26,14 @@ export async function GET(req: Request) {
 
     await connectDB()
 
-    const user = await User.findOne({ email: session.user.email })
+    // Ensure email is lowercase and exists
+    const userEmail = session.user?.email?.toLowerCase()
+    
+    if (!userEmail) {
+      return NextResponse.json({ error: 'User email not found in session' }, { status: 400 })
+    }
+
+    const user = await User.findOne({ email: userEmail })
     
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
@@ -60,10 +67,19 @@ export async function POST(req: Request) {
 
     await connectDB()
 
-    const user = await User.findOne({ email: session.user.email })
+    // Ensure email is lowercase and exists
+    const userEmail = session.user?.email?.toLowerCase()
+    
+    if (!userEmail) {
+      console.error('Session user email is missing:', session)
+      return NextResponse.json({ error: 'User email not found in session' }, { status: 400 })
+    }
+
+    const user = await User.findOne({ email: userEmail })
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      console.error('User not found for email:', userEmail)
+      return NextResponse.json({ error: 'User not found. Please log in again.' }, { status: 404 })
     }
 
     const body = await req.json()

@@ -210,7 +210,7 @@ export const authOptions: NextAuthOptions = {
             if (dbUser) {
               token.id = dbUser.id
               token.name = dbUser.name
-              token.email = dbUser.email
+              token.email = dbUser.email?.toLowerCase()
               token.phone = dbUser.phone
               token.role = dbUser.role
               token.provider = account?.provider || 'credentials'
@@ -218,7 +218,7 @@ export const authOptions: NextAuthOptions = {
               // Fallback to user object from OAuth
               token.id = user.id
               token.name = user.name
-              token.email = user.email
+              token.email = user.email?.toLowerCase()
               token.phone = (user as any).phone
               token.role = 'user' // Default role
               token.provider = account?.provider || 'credentials'
@@ -228,7 +228,7 @@ export const authOptions: NextAuthOptions = {
             // Fallback to basic user data
             token.id = user.id
             token.name = user.name
-            token.email = user.email
+            token.email = user.email?.toLowerCase()
             token.phone = (user as any).phone
             token.role = 'user'
             token.provider = account?.provider || 'credentials'
@@ -237,7 +237,7 @@ export const authOptions: NextAuthOptions = {
           // For credentials/phone login, use data from user object
           token.id = user.id
           token.name = user.name
-          token.email = user.email
+          token.email = user.email?.toLowerCase()
           token.phone = (user as any).phone
           token.role = (user as any).role
           token.provider = account?.provider || 'credentials'
@@ -249,7 +249,7 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         session.user.id = token.id
         session.user.name = token.name
-        session.user.email = token.email
+        session.user.email = token.email?.toLowerCase() || token.email
         session.user.phone = token.phone as string
         session.user.role = token.role as string
         session.user.provider = token.provider

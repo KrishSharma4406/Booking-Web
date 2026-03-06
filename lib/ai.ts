@@ -89,9 +89,9 @@ Remember: You're here to help with ANYTHING the user asks while maintaining focu
     
     const startTime = Date.now()
     
-    // Get the model
+    // Get the model - use gemini-1.5-flash (faster) or gemini-1.5-pro (more capable)
     const model = genAI.getGenerativeModel({ 
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       generationConfig: {
         temperature: 0.8,
         maxOutputTokens: 500,
@@ -353,7 +353,7 @@ Format your response as JSON:
   "reasoning": "brief explanation"
 }`
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
     
     const result = await model.generateContent(prompt)
     const response = result.response.text()
@@ -399,7 +399,7 @@ Provide JSON response:
   "keywords": ["key1", "key2", "key3"]
 }`
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
     
     const result = await model.generateContent(prompt)
     const response = result.response.text()
@@ -442,7 +442,7 @@ Date: ${date}
 Suggest 3 best alternative time slots (hours 11-23) avoiding congestion.
 Respond as JSON: {"times": ["HH:00", "HH:00", "HH:00"]}`
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
     
     const result = await model.generateContent(prompt)
     const response = result.response.text()
