@@ -1,4 +1,3 @@
-// filepath: c:\Users\Krish Kumar\OneDrive\Desktop\Mega Project\mega\app\bookings\page.tsx
 'use client'
 
 import { useSession } from 'next-auth/react'
@@ -130,6 +129,10 @@ export default function BookingsPage() {
       if (res.ok) {
         const data = await res.json()
         setUserRole(data.role)
+      } else if (res.status === 404) {
+        // User profile not found - this can happen after OAuth login
+        console.log('User profile not found, may need to complete profile')
+        setUserRole('user') // Set default role
       }
     } catch (err) {
       console.error('Error fetching user role:', err)
@@ -142,7 +145,12 @@ export default function BookingsPage() {
       const data = await res.json()
       if (res.ok) {
         setBookings(data.bookings || [])
+      } else if (res.status === 404) {
+        // User not found in database - silent fail, just show empty bookings
+        console.log('User profile not complete, showing empty bookings list')
+        setBookings([])
       } else {
+        // Only show error toast for actual errors, not "user not found"
         toast.error(data.error || 'Failed to fetch bookings')
       }
     } catch {

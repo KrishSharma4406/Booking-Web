@@ -1,4 +1,4 @@
-import connectDB from './mongodb'
+import { connectDB } from './mongodb'
 import User from '@/models/User'
 import bcrypt from 'bcryptjs'
 import type { IUser, UserPublic, UserWithPassword } from '@/types/models'
@@ -25,10 +25,11 @@ export async function createUser(
     }
   }
 
-  // For OAuth providers, generate a random password since it won't be used
-  const hashedPassword: string = provider === 'credentials'
+  // For OAuth providers, generate a secure random password since it won't be used
+  // For credentials, use the provided password
+  const hashedPassword: string = provider === 'credentials' && password
     ? await bcrypt.hash(password, 10)
-    : await bcrypt.hash(Math.random().toString(36).slice(-8), 10)
+    : await bcrypt.hash(Math.random().toString(36) + Date.now().toString(36), 10)
 
   const userData: Record<string, string> = {
     email: email.toLowerCase(),
@@ -41,7 +42,11 @@ export async function createUser(
     userData.phone = phone
   }
 
+  console.log('Creating user with provider:', provider, 'email:', email)
+  
   const user: IUser = await User.create(userData)
+  
+  console.log('User created successfully:', user._id.toString())
 
   return {
     id: user._id.toString(),

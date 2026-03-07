@@ -179,33 +179,81 @@ export const authOptions: NextAuthOptions = {
     },
     async signIn({ user, account, profile }: { user: NextAuthUser; account: Account | null; profile?: Profile }) {
       // For OAuth providers, sync with database
-      if (account?.provider !== 'credentials' && account?.provider !== 'phone') {
+      if (account?.provider !== 'credentials' && account?.provider !== 'phone' && account) {
         try {
+          console.log('OAuth signIn callback - provider:', account.provider, 'email:', user.email)
+          
+          // Ensure database connection
+          await connectDB()
+          console.log('Database connected successfully')
+          
           const existingUser = await findUserByEmail(user.email ?? '')
+          const provider = account.provider
 
           if (!existingUser) {
+            console.log('Creating new OAuth user:', user.email, 'provider:', provider)
+            
+            // Get name from profile or user object
+            const profileName = (profile && 'name' in profile) ? (profile as { name?: string }).name : undefined
+            
             // Create new user for OAuth login
-            await createUser(
+            const newUser = await createUser(
               user.email ?? '',
-              '', // No password for OAuth users
-              user.name || profile?.name || user.email || '',
-              account!.provider
+              '', // Empty password, will be replaced with random hash
+              user.name || profileName || user.email || '',
+              provider
             )
+            
+            console.log('✅ OAuth user created successfully in DB:', newUser.id)
+            
+            // Update user object with database ID
+            user.id = newUser.id
+          } else {
+            console.log('✅ OAuth user already exists in DB:', existingUser.id)
+            
+            // Update user object with database ID
+            user.id = existingUser.id
+            
+            // Update provider if changed
+            if (existingUser.provider !== provider) {
+              console.log('Updating user provider from', existingUser.provider, 'to', provider)
+              await User.findOneAndUpdate(
+                { email: user.email?.toLowerCase() },
+                { provider }
+              )
+            }
           }
         } catch (error) {
-          console.error('Error in signIn callback:', error)
-          // Allow sign-in to proceed even if database sync fails
-          // User will still get authenticated session
+          console.error('❌ Error in signIn callback:', error)
+          if (error instanceof Error) {
+            console.error('Error message:', error.message)
+            console.error('Error stack:', error.stack)
+          }
+          // If user already exists error, that's fine - allow sign-in
+          if (error instanceof Error && error.message === 'User already exists') {
+            console.log('User already exists, allowing sign-in')
+            return true
+          }
+          // For other errors, log but still allow OAuth sign-in
+          // The OAuth authentication itself succeeded
+          console.error('⚠️ Failed to sync OAuth user to database, but allowing sign-in')
           return true
         }
       }
       return true
     },
-    async jwt({ token, user, account, trigger }: { token: JWT; user?: NextAuthUser; account?: Account | null; trigger?: string }) {
+    async jwt({ token, user, account }: { token: JWT; user?: NextAuthUser; account?: Account | null }) {
       if (user) {
+        // Type assertion for user with additional fields
+        type ExtendedUser = NextAuthUser & { phone?: string; role?: string }
+        const extendedUser = user as ExtendedUser
+        
         // For OAuth providers, fetch complete user data from database
         if (account?.provider !== 'credentials' && account?.provider !== 'phone') {
           try {
+            // Ensure database connection
+            await connectDB()
+            
             const dbUser = await findUserByEmail(user.email ?? '')
             if (dbUser) {
               token.id = dbUser.id
@@ -216,10 +264,11 @@ export const authOptions: NextAuthOptions = {
               token.provider = account?.provider || 'credentials'
             } else {
               // Fallback to user object from OAuth
+              console.log('User not found in database during JWT callback, using OAuth data')
               token.id = user.id
               token.name = user.name
               token.email = user.email?.toLowerCase()
-              token.phone = (user as any).phone
+              token.phone = extendedUser.phone
               token.role = 'user' // Default role
               token.provider = account?.provider || 'credentials'
             }
@@ -229,7 +278,7 @@ export const authOptions: NextAuthOptions = {
             token.id = user.id
             token.name = user.name
             token.email = user.email?.toLowerCase()
-            token.phone = (user as any).phone
+            token.phone = extendedUser.phone
             token.role = 'user'
             token.provider = account?.provider || 'credentials'
           }
@@ -238,8 +287,8 @@ export const authOptions: NextAuthOptions = {
           token.id = user.id
           token.name = user.name
           token.email = user.email?.toLowerCase()
-          token.phone = (user as any).phone
-          token.role = (user as any).role
+          token.phone = extendedUser.phone
+          token.role = extendedUser.role || 'user'
           token.provider = account?.provider || 'credentials'
         }
       }
