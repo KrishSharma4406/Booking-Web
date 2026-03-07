@@ -22,7 +22,7 @@ interface PaymentFormProps {
   onCancel: () => void
 }
 
-export default function PaymentForm({ 
+export default function PaymentForm({
   formData, 
   orderId,
   keyId,

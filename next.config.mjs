@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  // Ensure public folder is included in standalone build
+  experimental: {
+    outputFileTracingIncludes: {
+      '/': ['./public/**/*'],
+    },
+  },
   eslint: {
     // Don't fail build on ESLint errors in production
     ignoreDuringBuilds: true,
@@ -10,6 +16,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    unoptimized: true, // Disable image optimization in Docker for faster builds
     remotePatterns: [
       {
         protocol: 'https',

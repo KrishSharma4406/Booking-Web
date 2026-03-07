@@ -71,34 +71,6 @@ const calculateBookingPrice = (guests: number, area: string): number => {
   return basePrice + guestMultiplier
 }
 
-interface RazorpayOptions {
-  key: string
-  amount: number
-  currency: string
-  name: string
-  description: string
-  order_id: string
-  handler: (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void
-  prefill: {
-    name: string
-    email: string
-    contact: string
-  }
-  theme: {
-    color: string
-  }
-}
-
-interface RazorpayInstance {
-  open: () => void
-}
-
-declare global {
-  interface Window {
-    RazorpayConstructor: new (options: RazorpayOptions) => RazorpayInstance
-  }
-}
-
 export default function BookingsPage() {
   const { status } = useSession()
   const router = useRouter()
@@ -183,6 +155,28 @@ export default function BookingsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    // Validate all required fields
+    if (!formData.guestName.trim()) {
+      toast.error('Please enter guest name')
+      return
+    }
+    if (!formData.guestEmail.trim()) {
+      toast.error('Please enter email address')
+      return
+    }
+    if (!formData.guestPhone.trim()) {
+      toast.error('Please enter phone number')
+      return
+    }
+    if (!formData.bookingDate) {
+      toast.error('Please select booking date')
+      return
+    }
+    if (!formData.bookingTime) {
+      toast.error('Please select booking time')
+      return
+    }
+
     const amount = calculateBookingPrice(formData.numberOfGuests, formData.tableArea)
     setTotalAmount(amount)
 
@@ -208,8 +202,9 @@ export default function BookingsPage() {
       } else {
         toast.error(data.error || 'Failed to initialize payment')
       }
-    } catch {
-      toast.error('Error initializing payment')
+    } catch (error) {
+      console.error('Payment initialization error:', error)
+      toast.error('Error initializing payment. Please try again.')
     }
   }
 
@@ -304,19 +299,25 @@ export default function BookingsPage() {
 
   const handlePayment = async () => {
     if (!window.Razorpay) {
-      toast.error('Payment gateway not loaded')
+      toast.error('Payment gateway not loaded. Please refresh the page.')
       return
     }
 
-    const options = {
+    const options: RazorpayOptions = {
       key: keyId,
       amount: totalAmount * 100,
       currency: 'INR',
       name: 'Restaurant Booking',
       description: 'Table Reservation',
       order_id: orderId,
-      handler: async function (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) {
+      handler: async function (response: RazorpayResponse) {
         try {
+          console.log('Payment successful, creating booking...', {
+            orderId: response.razorpay_order_id,
+            paymentId: response.razorpay_payment_id,
+            formData: formData
+          })
+
           const bookingRes = await fetch('/api/bookings', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -330,12 +331,19 @@ export default function BookingsPage() {
           })
 
           const data = await bookingRes.json()
+          console.log('Booking API response:', { ok: bookingRes.ok, status: bookingRes.status, data })
 
           if (bookingRes.ok) {
             toast.success(data.message || 'Booking confirmed! Payment successful. Check your email for confirmation.')
-            setShowForm(false)
+            
+            // Reset all states
             setShowPayment(false)
-            fetchBookings()
+            setShowForm(false)
+            setOrderId('')
+            setKeyId('')
+            setTotalAmount(0)
+            
+            // Reset form data
             setFormData({
               guestName: '',
               guestEmail: '',
@@ -347,11 +355,19 @@ export default function BookingsPage() {
               tableArea: 'indoor',
               specialRequests: ''
             })
+
+            // Refresh bookings list
+            await fetchBookings()
+
+            // Scroll to top to show updated bookings
+            window.scrollTo({ top: 0, behavior: 'smooth' })
           } else {
+            console.error('Booking creation failed:', data)
             toast.error(data.error || 'Booking failed after payment. Please contact support.')
           }
-        } catch {
-          toast.error('Error creating booking after payment')
+        } catch (error) {
+          console.error('Error creating booking after payment:', error)
+          toast.error(`Error creating booking: ${error instanceof Error ? error.message : 'Unknown error'}`)
         }
       },
       prefill: {
@@ -361,6 +377,12 @@ export default function BookingsPage() {
       },
       theme: {
         color: '#000000'
+      },
+      modal: {
+        ondismiss: function() {
+          toast.info('Payment cancelled')
+          setShowPayment(false)
+        }
       }
     }
 

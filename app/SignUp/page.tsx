@@ -251,7 +251,7 @@ const Signup = () => {
             title="Sign up with Google"
           >
             <Image
-              src="http://pluspng.com/img-png/google-logo-png-open-2000.png"
+              src="/google-logo.png"
               alt="Google"
               width={20}
               height={20}
@@ -266,7 +266,7 @@ const Signup = () => {
             title="Sign up with GitHub"
           >
             <Image
-              src="https://raw.githubusercontent.com/sidiDev/remote-assets/0d3b55a09c6bb8155ca19f43283dc6d88ff88bf5/github-icon.svg"
+              src="/github-icon.svg"
               alt="GitHub"
               width={20}
               height={20}

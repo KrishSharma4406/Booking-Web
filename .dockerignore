@@ -14,6 +14,9 @@ out
 build
 dist
 
+# But keep public folder images and assets
+!public/
+
 # Production
 .vercel
 .netlify
@@ -42,9 +45,10 @@ Dockerfile
 .dockerignore
 docker-compose*.yml
 
-# Documentation
+# Documentation (but keep public folder accessible)
 README.md
 *.md
+!public/**
 
 # Python
 __pycache__

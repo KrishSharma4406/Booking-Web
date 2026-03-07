@@ -36,13 +36,17 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy necessary files
-COPY --from=builder /app/public ./public
+# Copy package.json
 COPY --from=builder /app/package.json ./package.json
 
-# Copy built application
+# Copy built application (standalone includes server.js)
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+
+# Copy static assets with proper ownership
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copy public folder with proper ownership (must be after standalone copy)
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Copy Prisma files
 COPY --from=builder /app/prisma ./prisma

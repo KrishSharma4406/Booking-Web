@@ -232,7 +232,7 @@ const Navbar = () => {
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="text-muted hover:text-foreground transition-colors"
                 aria-label="Menu"
-                aria-expanded={isMobileMenuOpen ? "true" : "false"}
+                aria-expanded={isMobileMenuOpen}
               >
                 <svg className="w-6 h-6" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
                   {isMobileMenuOpen ? (

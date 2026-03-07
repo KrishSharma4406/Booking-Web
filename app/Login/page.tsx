@@ -497,7 +497,7 @@ const Login = () => {
             className="flex items-center justify-center gap-3 py-3 border border-border rounded-xl hover:bg-card duration-200 active:scale-95 transition-all group"
           >
             <Image
-              src="http://pluspng.com/img-png/google-logo-png-open-2000.png"
+              src="/google-logo.png"
               alt="Google"
               width={20}
               height={20}
@@ -512,7 +512,7 @@ const Login = () => {
             className="flex items-center justify-center gap-3 py-3 border border-border rounded-xl hover:bg-card duration-200 active:scale-95 transition-all group"
           >
             <Image
-              src="https://raw.githubusercontent.com/sidiDev/remote-assets/0d3b55a09c6bb8155ca19f43283dc6d88ff88bf5/github-icon.svg"
+              src="/github-icon.svg"
               alt="Github"
               width={20}
               height={20}
