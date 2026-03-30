@@ -102,7 +102,6 @@ public/           Static assets
 ## Environment Variables
 
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/booking_web
 NEXTAUTH_URL=http://localhost:3001
 NEXTAUTH_SECRET=generate-with-openssl-rand-base64-32
 GOOGLE_CLIENT_ID=your-id
