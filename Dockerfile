@@ -5,8 +5,6 @@ FROM node:20-alpine AS base
 FROM base AS deps
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
-
-# Copy package files
 COPY package.json package-lock.json* ./
 RUN npm ci
 
@@ -15,20 +13,13 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Generate Prisma Client
 RUN npx prisma generate
-
-# Disable telemetry during build
 ENV NEXT_TELEMETRY_DISABLED=1
-
-# Build Next.js application
 RUN npm run build
 
 # Production stage
 FROM base AS runner
 WORKDIR /app
-
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -39,14 +30,16 @@ RUN adduser --system --uid 1001 nextjs
 # Copy package.json
 COPY --from=builder /app/package.json ./package.json
 
-# Copy built application (standalone includes server.js)
+# Copy built application
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-
-# Copy static assets with proper ownership
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Copy public folder with proper ownership (must be after standalone copy)
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
+USER nextjs
+
+EXPOSE 3001
+
+CMD ["node", "server.js"]
 
 # Copy Prisma files
 COPY --from=builder /app/prisma ./prisma
