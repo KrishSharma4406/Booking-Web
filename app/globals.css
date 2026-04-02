@@ -2,26 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-:root[data-theme="dark"] {
-  --background: #000000;
-  --foreground: #ffffff;
-  --muted: #a1a1aa;
-  --card: #18181b;
-  --card-foreground: #ffffff;
-  --border: #27272a;
-  --primary: #ffffff;
-  --primary-foreground: #000000;
-}
+@layer base {
+  :root {
+    --background: #FDFBF7; /* Cream/Off-white */
+    --foreground: #2C3E50; /* Midnight Blue / Dark Gray */
+    --primary: #D35400; /* Burnt Orange */
+    --primary-foreground: #FFFFFF;
+    --secondary: #2C3E50; /* Midnight Blue */
+    --secondary-foreground: #FFFFFF;
+    --accent: #E67E22; /* Soft Orange */
+    --accent-foreground: #FFFFFF;
+    --muted: #7F8C8D; /* Medium Gray */
+    --success: #27AE60; /* Vibrant Green */
+    --card: #FFFFFF; 
+    --card-foreground: #2C3E50;
+    --border: #EBEBEB; /* Light Gray */
+  }
 
-:root[data-theme="light"] {
-  --background: #ffffff;
-  --foreground: #000000;
-  --muted: #71717a;
-  --card: #f4f4f5;
-  --card-foreground: #000000;
-  --border: #e4e4e7;
-  --primary: #000000;
-  --primary-foreground: #ffffff;
+  :root[data-theme="dark"] {
+    /* Forcing light aesthetic everywhere for Savor & Hearth brand consistency */
+    --background: #FDFBF7;
+    --foreground: #2C3E50;
+    --primary: #D35400;
+    --primary-foreground: #FFFFFF;
+    --secondary: #2C3E50;
+    --secondary-foreground: #FFFFFF;
+    --accent: #E67E22;
+    --accent-foreground: #FFFFFF;
+    --muted: #7F8C8D;
+    --success: #27AE60;
+    --card: #FFFFFF;
+    --card-foreground: #2C3E50;
+    --border: #EBEBEB;
+  }
 }
 
 html,
@@ -33,146 +46,18 @@ body {
 
 /* Ensure sections use theme background */
 section {
-  background-color: var(--background) !important;
-  color: var(--foreground);
+  background-color: transparent !important;
 }
 
-/* Override any gradient backgrounds */
-[data-theme="dark"] .theme-bg {
-  background: #000000 !important;
-}
-
-[data-theme="light"] .theme-bg {
-  background: #ffffff !important;
-}
-
-/* Performance optimized animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes fadeInDelay {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.1);
-  }
-}
-
-@keyframes scrollLeft {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.8s ease-out forwards;
-}
-
-.animate-fade-in-delay {
-  animation: fadeInDelay 0.5s ease-out 0.4s forwards;
-  opacity: 0;
-}
-
-/* Removed blob animations for cleaner design */
-
-/* Minimalist Utilities */
-[data-theme="dark"] .glass {
-  background: rgba(0, 0, 0, 0.5);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-}
-
-[data-theme="light"] .glass {
-  background: rgba(255, 255, 255, 0.5);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-}
-
-[data-theme="dark"] .glass-card {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
-  will-change: transform;
-}
-
-[data-theme="light"] .glass-card {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
-  will-change: transform;
-}
-
-[data-theme="dark"] .glass-card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-[data-theme="light"] .glass-card:hover {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.2);
-}
-
-/* Theme-aware text colors */
-[data-theme="dark"] .theme-text {
-  color: #ffffff !important;
-}
-
-[data-theme="light"] .theme-text {
-  color: #000000 !important;
-}
-
-[data-theme="dark"] .theme-muted {
-  color: #a1a1aa !important;
-}
-
-[data-theme="light"] .theme-muted {
-  color: #71717a !important;
-}
-
-/* Grain Texture */
-.grain-texture {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)'/%3E%3C/svg%3E");
-  filter: contrast(170%) brightness(1000%);
-  mix-blend-mode: overlay;
-}
-
-/* Grid Background */
-.grid-bg {
-  background-image: linear-gradient(to right, #80808008 1px, transparent 1px),
-    linear-gradient(to bottom, #80808008 1px, transparent 1px);
-  background-size: 40px 40px;
+/* Base Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), serif;
+  color: var(--secondary);
 }
 
 /* Smooth Transitions */
 * {
-  transition-property: background-color, border-color, color, transform;
+  transition-property: background-color, border-color, color;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
 }
@@ -188,12 +73,12 @@ section {
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--muted);
   border-radius: 3px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
+  background: var(--secondary);
 }
 
 /* Mobile touch optimizations */
@@ -207,14 +92,7 @@ section {
   }
 }
 
-/* Responsive text utilities */
-@media (max-width: 640px) {
-  .text-responsive-sm {
-    font-size: 0.875rem;
-  }
-}
-
-/* ===== AI Chatbot Custom Styles ===== */
+/* AI Chatbot Custom Styles (kept for functionality) */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -237,75 +115,10 @@ section {
   }
 }
 
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
 .animate-slideIn {
   animation: slideIn 0.3s ease-out forwards;
 }
 
 .animate-fadeIn {
   animation: fadeIn 0.4s ease-out forwards;
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 3s ease-in-out infinite;
-}
-
-/* Custom Scrollbar for Chatbot */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #9333ea, #7c3aed);
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #7c3aed, #6d28d9);
-}
-
-/* Glassmorphism Effects */
-.glass-effect {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Gradient Text */
-.gradient-text {
-  background: linear-gradient(to right, #9333ea, #3b82f6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Shimmer Effect */
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-.shimmer {
-  animation: shimmer 2s infinite;
-  background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
-  background-size: 1000px 100%;
 }

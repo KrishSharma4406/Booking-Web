@@ -2,7 +2,6 @@ import { type NextAuthOptions, type User as NextAuthUser, type Account, type Pro
 import type { Provider } from 'next-auth/providers/index'
 import GitHubProvider from 'next-auth/providers/github'
 import GoogleProvider from 'next-auth/providers/google'
-import FacebookProvider from 'next-auth/providers/facebook'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { findUserByEmail, createUser } from '@/lib/users'
@@ -131,16 +130,6 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           response_type: "code"
         }
       }
-    })
-  )
-}
-
-if (process.env.FACEBOOK_ID && process.env.FACEBOOK_SECRET &&
-    process.env.FACEBOOK_ID !== 'your-facebook-app-id-here') {
-  providers.push(
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_ID,
-      clientSecret: process.env.FACEBOOK_SECRET,
     })
   )
 }

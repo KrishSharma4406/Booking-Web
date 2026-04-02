@@ -53,9 +53,17 @@ export async function POST(req: Request) {
     )
   } catch (error: unknown) {
     const err = error as Error
-    console.error('Signup error:', error)
+    console.error('❌ Signup error - Full Details:')
+    console.error('Error message:', err?.message)
+    console.error('Error stack:', err?.stack)
+    console.error('Error type:', error?.constructor?.name)
+    console.error('Full error object:', JSON.stringify(error, null, 2))
+    
     return NextResponse.json(
-      { error: err.message || 'Failed to create user' },
+      { 
+        error: err?.message || 'Failed to create user',
+        details: process.env.NODE_ENV === 'development' ? err?.message : undefined
+      },
       { status: 500 }
     )
   }
