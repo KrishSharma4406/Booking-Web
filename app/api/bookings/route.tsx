@@ -8,52 +8,91 @@ import Table from '@/models/Table'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { sendBookingConfirmation } from '@/lib/email'
+import { ensureUserExists } from '@/lib/ensure-user'
 
 export const dynamic = 'force-dynamic'
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_dummy_key',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret'
-})
+// Initialize Razorpay with environment variables
+let razorpay: Razorpay | null = null
+
+try {
+  if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+    razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET
+    })
+    console.log('Razorpay initialized successfully')
+  } else {
+    console.warn('Razorpay environment variables not set')
+  }
+} catch (error) {
+  console.error('Error initializing Razorpay:', error)
+}
 
 export async function GET() {
   try {
+    console.log('📍 [GET /api/bookings] Starting request...')
+    
     const session = await getServerSession(authOptions)
+    console.log('📍 [GET /api/bookings] Session check completed:', session ? `User: ${session.user?.email}` : 'No session')
     
     if (!session) {
+      console.log('❌ [GET /api/bookings] No session found - returning 401')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    console.log('📍 [GET /api/bookings] Connecting to database...')
     await connectDB()
+    console.log('✅ [GET /api/bookings] Database connection successful')
+
+    // Ensure user exists in database (auto-create if missing)
+    console.log('📍 [GET /api/bookings] Ensuring user exists in database...')
+    const dbUser = await ensureUserExists(session)
+    console.log('✅ [GET /api/bookings] User exists in database')
 
     // Ensure email is lowercase and exists
     const userEmail = session.user?.email?.toLowerCase()
+    console.log('📍 [GET /api/bookings] User email from session:', userEmail)
     
     if (!userEmail) {
+      console.log('❌ [GET /api/bookings] User email not found in session - returning 400')
       return NextResponse.json({ error: 'User email not found in session' }, { status: 400 })
     }
 
+    console.log('📍 [GET /api/bookings] Querying user by email...')
     const user = await User.findOne({ email: userEmail })
+    console.log('📍 [GET /api/bookings] User query result:', user ? `Found - Role: ${user.role}` : 'Not found')
     
     if (!user) {
+      console.log('❌ [GET /api/bookings] User not found in database - returning 404')
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    console.log('📍 [GET /api/bookings] Fetching bookings. User role:', user.role)
     let bookings
     if (user.role === 'admin') {
+      console.log('📍 [GET /api/bookings] Fetching all bookings (admin user)')
       bookings = await Booking.find()
         .populate('user', 'name email')
         .sort({ createdAt: -1 })
     } else {
+      console.log('📍 [GET /api/bookings] Fetching user-specific bookings')
       bookings = await Booking.find({ user: user._id })
         .populate('user', 'name email')
         .sort({ createdAt: -1 })
     }
-
+    
+    console.log('✅ [GET /api/bookings] Successfully fetched', bookings.length, 'bookings')
     return NextResponse.json({ bookings }, { status: 200 })
   } catch (error) {
-    console.error('Error fetching bookings:', error)
-    return NextResponse.json({ error: 'Failed to fetch bookings' }, { status: 500 })
+    console.error('❌ [GET /api/bookings] Exception caught:', error instanceof Error ? error.message : String(error))
+    if (error instanceof Error) {
+      console.error('Stack trace:', error.stack)
+    }
+    return NextResponse.json({ 
+      error: 'Failed to fetch bookings',
+      details: error instanceof Error ? error.message : String(error)
+    }, { status: 500 })
   }
 }
 
@@ -114,9 +153,16 @@ export async function POST(req: Request) {
 
     // Verify Razorpay payment signature
     try {
+      if (!process.env.RAZORPAY_KEY_SECRET) {
+        console.warn('RAZORPAY_KEY_SECRET not set, skipping signature verification')
+        return NextResponse.json({ 
+          error: 'Payment gateway not configured' 
+        }, { status: 500 })
+      }
+
       const body = razorpayOrderId + '|' + razorpayPaymentId
       const expectedSignature = crypto
-        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
         .update(body.toString())
         .digest('hex')
 
@@ -129,6 +175,13 @@ export async function POST(req: Request) {
 
       // Fetch payment details from Razorpay
       try {
+        if (!razorpay) {
+          console.warn('Razorpay not initialized, cannot fetch payment details')
+          return NextResponse.json({ 
+            error: 'Payment gateway not configured' 
+          }, { status: 500 })
+        }
+
         const payment = await razorpay.payments.fetch(razorpayPaymentId)
         console.log('Payment status from Razorpay:', payment.status)
         
