@@ -4,37 +4,38 @@ import { authOptions } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
 import { ensureUserExists } from '@/lib/ensure-user'
+import Booking from '@/models/Booking'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    console.log('📍 [GET /api/users/me] Starting request...')
+    console.log('[GET /api/users/me] Starting request...')
     
     const session = await getServerSession(authOptions)
-    console.log('📍 [GET /api/users/me] Session check completed:', session ? `User: ${session.user?.email}` : 'No session')
+    console.log('[GET /api/users/me] Session check completed:', session ? `User: ${session.user?.email}` : 'No session')
 
     if (!session) {
-      console.log('❌ [GET /api/users/me] No session found - returning 401')
+      console.log('[GET /api/users/me] No session found - returning 401')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.log('📍 [GET /api/users/me] Connecting to database...')
+    console.log('[GET /api/users/me] Connecting to database...')
     await connectDB()
-    console.log('✅ [GET /api/users/me] Database connection successful')
+    console.log('[GET /api/users/me] Database connection successful')
 
     // Ensure user exists in database (auto-create if missing)
-    console.log('📍 [GET /api/users/me] Ensuring user exists in database...')
+    console.log('[GET /api/users/me] Ensuring user exists in database...')
     await ensureUserExists(session)
-    console.log('✅ [GET /api/users/me] User exists in database')
+    console.log('[GET /api/users/me] User exists in database')
 
-    console.log('📍 [GET /api/users/me] Querying user by email:', session.user?.email)
+    console.log('[GET /api/users/me] Querying user by email:', session.user?.email)
     const user = await User.findOne({ email: session.user.email })
       .select('-password')
-    console.log('📍 [GET /api/users/me] User query result:', user ? 'Found' : 'Not found')
+    console.log('[GET /api/users/me] User query result:', user ? 'Found' : 'Not found')
 
     if (!user) {
-      console.log('❌ [GET /api/users/me] User not found in database - returning 404')
+      console.log('[GET /api/users/me] User not found in database - returning 404')
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
@@ -52,10 +53,10 @@ export async function GET() {
       updatedAt: user.updatedAt?.toISOString() || new Date().toISOString()
     }
 
-    console.log('✅ [GET /api/users/me] Returning user data successfully')
+    console.log('[GET /api/users/me] Returning user data successfully')
     return NextResponse.json(userData, { status: 200 })
   } catch (error) {
-    console.error('❌ [GET /api/users/me] Exception caught:', error instanceof Error ? error.message : String(error))
+    console.error('[GET /api/users/me] Exception caught:', error instanceof Error ? error.message : String(error))
     if (error instanceof Error) {
       console.error('Stack trace:', error.stack)
     }
