@@ -2,18 +2,23 @@
 .git
 .gitignore
 .gitmodules
+.gitattributes
 
 # Dependencies
 node_modules
 npm-debug.log
 yarn-error.log
 yarn-debug.log
+pnpm-error.log
+lerna-debug.log
 package-lock.json.bak
 
 # Testing
 coverage
 .nyc_output
 test
+.jest-cache
+.mocha_output
 
 # Next.js
 .next
@@ -26,6 +31,7 @@ dist
 .env
 .env.local
 .env.*.local
+.env.example
 
 # IDE
 .vscode
@@ -34,20 +40,31 @@ dist
 *.swo
 *~
 .DS_Store
+.sublime-project
+.sublime-workspace
 
 # CI/CD
 .github
 .gitlab-ci.yml
 .circleci
+azure-pipelines.yml
+.travis.yml
 
 # Docker
 docker-compose*.yml
 Dockerfile*
 .dockerignore
 
+# Documentation
+DOCKER_SETUP.md
+README.md
+docs/
+
 # Misc
 .vercel
 .netlify
+.now
+.cache
 README.md
 DOCKER_SETUP.md
 CONFIG_SETUP.md
